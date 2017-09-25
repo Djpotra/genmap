@@ -1,7 +1,9 @@
+#include <stdio.h>
+
 #include "linalg.h"
 #include "csr.h"
 
-void test_1() {
+int test_1() {
   double va[13] = {2, 1,          \
                    1, 2, 1,       \
                       1, 2, 1,    \
@@ -18,7 +20,7 @@ void test_1() {
   double vy[5];
   double vans[5] = {3.0, 4.0, 4.0, 4.0, 3.0};
 
-  CSRMatrix A = { .ia = ia, .ja = ja, .va = va };
+  CSRMatrix A = { .nrows = 5, .ia = ia, .ja = ja, .va = va };
   Vector x = { .size = 5, .vv = vx };
   Vector y = { .size = 5, .vv = vy };
   Vector answer = {.size = 5, .vv = vans };
@@ -27,11 +29,19 @@ void test_1() {
 
   int equal = is_vectors_equal(&y, &answer, 1e-12);
 
-  assert(equal == 1);
+  return equal;
 }
 
 int main() {
-  test_1();
+  int passed = 0;
+
+  passed = test_1();
+
+  if (passed) {
+    printf("Test 1: Passed.\n");
+  } else {
+    printf("Test 1: Failed.\n");
+  }
 
   return 0;
 }
