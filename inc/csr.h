@@ -9,7 +9,7 @@ struct genmap_csr {
   int nrows;
   int *ia;
   int *ja;
-  int *va;
+  double *va;
 };
 typedef struct genmap_csr CSRMatrix;
 

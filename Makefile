@@ -1,4 +1,4 @@
-TARGET=genmap
+TARGET=genmap.so
 TESTS=tests
 
 CC=gcc
@@ -7,7 +7,6 @@ FC=gfortran
 FFLAGS=
 CXX=g++
 CXXFLAGS=
-LDFLAGS =
 
 SRCROOT =.
 SRCDIR  =$(SRCROOT)/src
@@ -19,11 +18,13 @@ CSRCS:=$(SRCDIR)/rsb.c
 COBJS:=$(CSRCS:.c=.o)
 FSRCS:=
 FOBJS:=$(FSRCS:.f=.o)
+LDFLAGS:=-shared
 
 TESTCSRC:=$(TESTDIR)/ax.c
 TESTCOBJ:=$(TESTCSRC:.c=.o)
 TESTFSRC:=
 TESTFOBJ:=$(TESTFSRC:.f=.o)
+TESTLDFLAGS:=-L . -lgenmap
 
 SRCOBJS :=$(COBJS) $(FOBJS)
 TESTOBJS:=$(TESTCOBJ) $(TESTFOBJ)
@@ -42,7 +43,6 @@ $(FOBJS): %.o: %.f
 
 .PHONY: tests
 tests: $(TESTCOBJ) $(TESTFOBJ)
-	$(CC) $(TESTOBJS) -o $@ $(LDFLAGS)
 
 $(TESTCOBJ): %.o: %.c
 	$(CC) $(CFLAGS) $(INCFLAGS) -c $< -o $@
