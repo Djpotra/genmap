@@ -24,7 +24,6 @@ void test_1() {
   Vector y = { .size = 5, .vv = vy };
 
   csr_matrix_vector_multiply(&y, &A, &x);
-
 }
 
 int main() {
