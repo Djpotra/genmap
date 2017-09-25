@@ -23,6 +23,15 @@ void random_vector(Vector *x, int size);
 void ones_vector(Vector *x, int size);
 
 void zeros_vector(Vector *x, int size);
+
+double norm_vector(Vector *x, int p);
+
+void mult_scalar_add_vector(Vector *y, double alpha, Vector *x, \
+                                                        double beta);
+
+double dot_vector(Vector *x, Vector *y);
+
+void copy_vector(Vector *x, Vector *y);
 //------------------------------------------------------------------------------
 
 #endif
