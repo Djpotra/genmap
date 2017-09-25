@@ -27,9 +27,7 @@ int test_1() {
 
   csr_matrix_vector_multiply(&y, &A, &x);
 
-  int equal = is_vectors_equal(&y, &answer, 1e-12);
-
-  return equal;
+  return is_vectors_equal(&y, &answer, 1e-12);
 }
 //------------------------------------------------------------------------------
 int test_2() {
@@ -56,14 +54,56 @@ int test_2() {
 
   csr_matrix_vector_multiply(&y, &A, &x);
 
-  int equal = is_vectors_equal(&y, &answer, 1e-12);
+  return is_vectors_equal(&y, &answer, 1e-12);
+}
+//------------------------------------------------------------------------------
+int test_3() {
+  double va[4] = {2, 1,          \
+                  1, 2};
+  int ja[4]    = {0, 1,          \
+                  0, 1};
+  int ia[3]    = {0, 2, 4};
 
-  return equal;
+  double vx[2] = {0.0, 0.0};
+  double vy[2];
+  double vans[2] = {0.0, 0.0};
+
+  CSRMatrix A = { .nrows = 2, .ia = ia, .ja = ja, .va = va };
+  Vector x = { .size = 2, .vv = vx };
+  Vector y = { .size = 2, .vv = vy };
+  Vector answer = {.size = 2, .vv = vans };
+
+  csr_matrix_vector_multiply(&y, &A, &x);
+
+  return is_vectors_equal(&y, &answer, 1e-12);
+}
+//------------------------------------------------------------------------------
+int test_4() {
+  double va[4] = {2, 1,          \
+                  1, 2};
+  int ja[4]    = {0, 1,          \
+                  0, 1};
+  int ia[3]    = {0, 2, 4};
+
+  double vx[2] = {1.0, -1.0};
+  double vy[2];
+  double vans[2] = {1.0, -1.0};
+
+  CSRMatrix A = { .nrows = 2, .ia = ia, .ja = ja, .va = va };
+  Vector x = { .size = 2, .vv = vx };
+  Vector y = { .size = 2, .vv = vy };
+  Vector answer = {.size = 2, .vv = vans };
+
+  csr_matrix_vector_multiply(&y, &A, &x);
+
+  return is_vectors_equal(&y, &answer, 1e-12);
 }
 //------------------------------------------------------------------------------
 int main() {
   run_test(&test_1, "ax_1");
   run_test(&test_2, "ax_2");
+  run_test(&test_3, "ax_3");
+  run_test(&test_4, "ax_4");
 
   return 0;
 }

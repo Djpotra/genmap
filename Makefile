@@ -14,7 +14,7 @@ INCDIR  =$(SRCROOT)/inc
 INCFLAGS=-I$(INCDIR)
 TESTDIR =$(SRCROOT)/tests
 
-CSRCS:=$(SRCDIR)/rsb.c $(SRCDIR)/linalg.c $(SRCDIR)/csr.c $(TESTDIR)/test.c
+CSRCS:=$(SRCDIR)/lanczos.c $(SRCDIR)/linalg.c $(SRCDIR)/csr.c $(TESTDIR)/test.c
 COBJS:=$(CSRCS:.c=.o)
 FSRCS:=
 FOBJS:=$(FSRCS:.f=.o)
