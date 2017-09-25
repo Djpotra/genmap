@@ -11,6 +11,15 @@ int test_1() {
 }
 //------------------------------------------------------------------------------
 int test_2() {
+  double v[5] = {0., 0., 0., 0., 0.};
+
+  Vector x = { .size = 5, .vv = v };
+  Vector y = { .size = 5, .vv = v };
+
+  return vectors_equal(&y, &x, 1e-12);
+}
+//------------------------------------------------------------------------------
+int test_3() {
   Vector y;
 
   zeros_vector(&y, 5);
@@ -21,7 +30,7 @@ int test_2() {
   return (y.size == 5 && vectors_equal(&y, &answer, 1e-12));
 }
 //------------------------------------------------------------------------------
-int test_3() {
+int test_4() {
   Vector y;
 
   ones_vector(&y, 6);
@@ -32,7 +41,7 @@ int test_3() {
   return (y.size == 6 && vectors_equal(&y, &answer, 1e-12));
 }
 //------------------------------------------------------------------------------
-int test_4() {
+int test_5() {
   Vector y;
 
   random_vector(&y, 6);
@@ -46,6 +55,7 @@ int main() {
   run_test(&test_2,"vector_2");
   run_test(&test_3,"vector_3");
   run_test(&test_4,"vector_4");
+  run_test(&test_5,"vector_5");
 
   return 0;
 }
