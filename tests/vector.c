@@ -77,6 +77,8 @@ int test_7() {
   Vector answer1 = { .size = 6, .vv = vans1 };
 
   mult_scalar_add_vector(&y, 1., &x, 1.);
+
+  return vectors_equal(&answer1, &y, 1e-12);
 }
 //------------------------------------------------------------------------------
 int main() {
@@ -86,6 +88,7 @@ int main() {
   run_test(&test_4,"vector_4");
   run_test(&test_5,"vector_5");
   run_test(&test_6,"vector_6");
+  run_test(&test_7,"vector_7");
 
   return 0;
 }
