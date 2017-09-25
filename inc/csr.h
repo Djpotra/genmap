@@ -6,6 +6,7 @@
 //------------------------------------------------------------------------------
 // CSRMatrix structure
 struct genmap_csr {
+  int nrows;
   int *ia;
   int *ja;
   int *va;
