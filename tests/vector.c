@@ -11,12 +11,15 @@ int test_1() {
 }
 //------------------------------------------------------------------------------
 int test_2() {
-  double v[5] = {0., 0., 0., 0., 0.};
+  double vx[5] = {0., 0., 0., 0., 0.};
+  Vector x = { .size = 5, .vv = vx };
+  Vector y = { .size = 5, .vv = vx };
 
-  Vector x = { .size = 5, .vv = v };
-  Vector y = { .size = 5, .vv = v };
+  double vz[5] = {0., 0., 0., 0., 1.};
+  Vector z = { .size = 5, .vv = vz };
 
-  return vectors_equal(&y, &x, 1e-12);
+  return vectors_equal(&y, &x, 1e-12) && \
+                           !vectors_equal(&y, &z, 1e-12);
 }
 //------------------------------------------------------------------------------
 int test_3() {
@@ -51,16 +54,29 @@ int test_5() {
 }
 //------------------------------------------------------------------------------
 int test_6() {
-  double v1[6] = {1., -1., 1., 1., 1., -1.};
-  Vector x = { .size = 6, .vv = v1 };
+  double vx[6] = {1., -1., 1., 1., 1., -1.};
+  Vector x = { .size = 6, .vv = vx };
 
-  double v2[6] = {1., -1., 0., 2., 0., -1.};
-  Vector y = { .size = 6, .vv = v2 };
+  double vy[6] = {1., -1., 0., 2., 0., -1.};
+  Vector y = { .size = 6, .vv = vy };
 
   return (norm_vector(&x, 1) == 6.0 && \
           norm_vector(&x, 2) == 6.0 && \
           norm_vector(&y, 1) == 5.0 && \
           norm_vector(&y, 2) == 7.0 );
+}
+//------------------------------------------------------------------------------
+int test_7() {
+  double vx[6] = {1., -1., 1., 1., 1., -1.};
+  Vector x = { .size = 6, .vv = vx };
+
+  double vy[6] = {1., -1., 0., 2., 0., -1.};
+  Vector y = { .size = 6, .vv = vy };
+
+  double vans1[6] = {2., -2., 1., 3., 1., -2.};
+  Vector answer1 = { .size = 6, .vv = vans1 };
+
+  mult_scalar_add_vector(&y, 1., &x, 1.);
 }
 //------------------------------------------------------------------------------
 int main() {
