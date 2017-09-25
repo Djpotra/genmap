@@ -1,5 +1,26 @@
+#include <time.h>
+#include <stdlib.h>
+
 #include "linalg.h"
 
+//------------------------------------------------------------------------------
+void create_vector(Vector *x, int size) {
+  x = (Vector *) malloc(sizeof(Vector));
+  x->size = size;
+  x->vv = (double *) malloc(sizeof(double)*size);
+}
+//------------------------------------------------------------------------------
+void delete_vector(Vector *x, int size) {
+  if (x->vv) {
+    free(x->vv);
+    x->vv = NULL;
+  }
+
+  if (x) {
+    free(x);
+    x = NULL;
+  }
+}
 //------------------------------------------------------------------------------
 int is_vectors_equal(Vector *x, Vector *y, double tol) {
   /* Asserts:
@@ -18,5 +39,9 @@ int is_vectors_equal(Vector *x, Vector *y, double tol) {
   }
 
   return equal;
+}
+//------------------------------------------------------------------------------
+void random_vector(Vector *x, int size) {
+  create_vector(x, size);
 }
 //------------------------------------------------------------------------------

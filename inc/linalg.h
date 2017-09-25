@@ -12,7 +12,13 @@ struct genmap_vector {
 };
 typedef struct genmap_vector Vector;
 
+void create_vector(Vector *x, int size);
+
+void delete_vector(Vector *x, int size);
+
 int is_vectors_equal(Vector *x, Vector *y, double tol);
+
+void random_vector(Vector *x, int size);
 
 //------------------------------------------------------------------------------
 
