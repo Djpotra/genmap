@@ -1,4 +1,4 @@
-TARGET=genmap.so
+TARGET=libgenmap.so
 TESTS=tests
 
 CC=gcc
@@ -14,7 +14,7 @@ INCDIR  =$(SRCROOT)/inc
 INCFLAGS=-I$(INCDIR)
 TESTDIR =$(SRCROOT)/tests
 
-CSRCS:=$(SRCDIR)/rsb.c
+CSRCS:=$(SRCDIR)/rsb.c $(SRCDIR)/linalg.c $(SRCDIR)/csr.c
 COBJS:=$(CSRCS:.c=.o)
 FSRCS:=
 FOBJS:=$(FSRCS:.f=.o)
@@ -45,10 +45,10 @@ $(FOBJS): %.o: %.f
 tests: $(TESTCOBJ) $(TESTFOBJ)
 
 $(TESTCOBJ): %.o: %.c
-	$(CC) $(CFLAGS) $(INCFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) $(INCFLAGS) $< -o $@ $(TESTLDFLAGS)
 
 $(TESTFOBJ): %.o: %.f
-	$(FC) $(FFLAGS) $(INCFLAGS) -c $< -o $@
+	$(FC) $(FFLAGS) $(INCFLAGS) $< -o $@ $(TESTLDFLAGS)
 
 .PHONY: clean
 clean:

@@ -1,5 +1,3 @@
-#include <stdio.h>
-
 #include "linalg.h"
 #include "csr.h"
 
@@ -18,12 +16,18 @@ void test_1() {
 
   double vx[5] = {1.0, 1.0, 1.0, 1.0, 1.0};
   double vy[5];
+  double vans[5] = {3.0, 4.0, 4.0, 4.0, 3.0};
 
   CSRMatrix A = { .ia = ia, .ja = ja, .va = va };
   Vector x = { .size = 5, .vv = vx };
   Vector y = { .size = 5, .vv = vy };
+  Vector answer = {.size = 5, .vv = vans };
 
   csr_matrix_vector_multiply(&y, &A, &x);
+
+  int equal = is_vectors_equal(&y, &answer, 1e-12);
+
+  assert(equal == 1);
 }
 
 int main() {
