@@ -2,7 +2,9 @@
 #include <stdlib.h>
 
 #include "linalg.h"
+#include "random.h"
 
+int genmap_srand_initialized = 0;
 //------------------------------------------------------------------------------
 void create_vector(Vector *x, int size) {
   x = (Vector *) malloc(sizeof(Vector));
@@ -10,7 +12,7 @@ void create_vector(Vector *x, int size) {
   x->vv = (double *) malloc(sizeof(double)*size);
 }
 //------------------------------------------------------------------------------
-void delete_vector(Vector *x, int size) {
+void delete_vector(Vector *x) {
   if (x->vv) {
     free(x->vv);
     x->vv = NULL;
@@ -42,6 +44,46 @@ int is_vectors_equal(Vector *x, Vector *y, double tol) {
 }
 //------------------------------------------------------------------------------
 void random_vector(Vector *x, int size) {
+  /* Asserts:
+       - size > 0
+  */
+  assert(size > 0);
+
   create_vector(x, size);
+
+  if (!genmap_srand_initialized) {
+    srand(time(NULL));
+    genmap_srand_initialized = 1;
+  }
+
+  for (int i = 0; i < size; i++) {
+    x->vv[i] = (double) rand()/RAND_MAX*2. - 1.;
+  }
+}
+//------------------------------------------------------------------------------
+void ones_vector(Vector *x, int size) {
+  /* Asserts:
+       - size > 0
+  */
+  assert(size > 0);
+
+  create_vector(x, size);
+
+  for (int i = 0; i < size; i++) {
+    x->vv[i] = 1.;
+  }
+}
+//------------------------------------------------------------------------------
+void zeros_vector(Vector *x, int size) {
+  /* Asserts:
+       - size > 0
+  */
+  assert(size > 0);
+
+  create_vector(x, size);
+
+  for (int i = 0; i < size; i++) {
+    x->vv[i] = 0.;
+  }
 }
 //------------------------------------------------------------------------------

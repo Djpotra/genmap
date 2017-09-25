@@ -2,7 +2,7 @@ TARGET=libgenmap.so
 TESTS=tests
 
 CC=gcc
-CFLAGS=-std=c99 -O2 -Wall -Wextra -g
+CFLAGS=-std=c99 -O2 -Wall -Wextra -g -fPIC
 FC=gfortran
 FFLAGS=
 CXX=g++
