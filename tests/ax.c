@@ -27,7 +27,7 @@ int test_1() {
 
   csr_matrix_vector_multiply(&y, &A, &x);
 
-  return is_vectors_equal(&y, &answer, 1e-12);
+  return vectors_equal(&y, &answer, 1e-12);
 }
 //------------------------------------------------------------------------------
 int test_2() {
@@ -54,7 +54,7 @@ int test_2() {
 
   csr_matrix_vector_multiply(&y, &A, &x);
 
-  return is_vectors_equal(&y, &answer, 1e-12);
+  return vectors_equal(&y, &answer, 1e-12);
 }
 //------------------------------------------------------------------------------
 int test_3() {
@@ -75,7 +75,7 @@ int test_3() {
 
   csr_matrix_vector_multiply(&y, &A, &x);
 
-  return is_vectors_equal(&y, &answer, 1e-12);
+  return vectors_equal(&y, &answer, 1e-12);
 }
 //------------------------------------------------------------------------------
 int test_4() {
@@ -96,7 +96,7 @@ int test_4() {
 
   csr_matrix_vector_multiply(&y, &A, &x);
 
-  return is_vectors_equal(&y, &answer, 1e-12);
+  return vectors_equal(&y, &answer, 1e-12);
 }
 //------------------------------------------------------------------------------
 int main() {

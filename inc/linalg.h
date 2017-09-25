@@ -12,26 +12,26 @@ struct genmap_vector {
 };
 typedef struct genmap_vector Vector;
 
-void create_vector(Vector *x, int size);
+void   create_vector(Vector *x, int size);
 
-void delete_vector(Vector *x);
+void   delete_vector(Vector *x);
 
-int is_vectors_equal(Vector *x, Vector *y, double tol);
+int    vectors_equal(Vector *x, Vector *y, double tol);
 
-void random_vector(Vector *x, int size);
+void   random_vector(Vector *x, int size);
 
-void ones_vector(Vector *x, int size);
+void   ones_vector(Vector *x, int size);
 
-void zeros_vector(Vector *x, int size);
+void   zeros_vector(Vector *x, int size);
 
 double norm_vector(Vector *x, int p);
 
-void mult_scalar_add_vector(Vector *y, double alpha, Vector *x, \
+void   mult_scalar_add_vector(Vector *y, double alpha, Vector *x, \
                                                         double beta);
 
 double dot_vector(Vector *x, Vector *y);
 
-void copy_vector(Vector *x, Vector *y);
+void   copy_vector(Vector *x, Vector *y);
 //------------------------------------------------------------------------------
 
 #endif

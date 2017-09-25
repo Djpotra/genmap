@@ -1,5 +1,6 @@
 #include <time.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "linalg.h"
 #include "random.h"
@@ -12,9 +13,11 @@ void create_vector(Vector *x, int size) {
   */
   assert(size > 0);
 
-  x = (Vector *) malloc(sizeof(Vector));
   x->size = size;
   x->vv = (double *) malloc(sizeof(double)*size);
+  if (x->vv == NULL) {
+    printf("malloc failed in %s:%d", __FILE__, __LINE__);
+  }
 }
 //------------------------------------------------------------------------------
 void delete_vector(Vector *x) {
@@ -29,7 +32,7 @@ void delete_vector(Vector *x) {
   }
 }
 //------------------------------------------------------------------------------
-int is_vectors_equal(Vector *x, Vector *y, double tol) {
+int vectors_equal(Vector *x, Vector *y, double tol) {
   /* Asserts:
        - size of y == size of x
   */
