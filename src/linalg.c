@@ -1,6 +1,7 @@
 #include <time.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
 
 #include "linalg.h"
 #include "random.h"
@@ -92,6 +93,7 @@ double norm_vector(Vector *x, int p) {
     for (int i = 0; i < n; i++) {
       sum += x->vv[i]*x->vv[i];
     }
+    sum = sqrt(sum);
   }
 
   return sum;

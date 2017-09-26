@@ -1,6 +1,6 @@
 #include "linalg.h"
 #include "test.h"
-#include <stdio.h>
+
 //------------------------------------------------------------------------------
 int test_1() {
   Vector y;

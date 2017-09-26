@@ -16,6 +16,10 @@ typedef struct genmap_csr CSRMatrix;
 //------------------------------------------------------------------------------
 // CSRMatrix vector multiplication
 void csr_matrix_vector_multiply(Vector *y, CSRMatrix *A, Vector *x);
+
+//void csr_init(CSRMatrix *A, ....
+
+void lanczos(Vector *alpha, Vector *beta, CSRMatrix *A);
 //------------------------------------------------------------------------------
 
 #endif

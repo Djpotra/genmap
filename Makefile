@@ -18,9 +18,9 @@ CSRCS:=$(SRCDIR)/lanczos.c $(SRCDIR)/linalg.c $(SRCDIR)/csr.c $(TESTDIR)/test.c
 COBJS:=$(CSRCS:.c=.o)
 FSRCS:=
 FOBJS:=$(FSRCS:.f=.o)
-LDFLAGS:=-shared
+LDFLAGS:=-shared -lm
 
-TESTCSRC:=$(TESTDIR)/ax.c $(TESTDIR)/vector.c
+TESTCSRC:=$(TESTDIR)/ax.c $(TESTDIR)/vector.c $(TESTDIR)/lanczos.c
 TESTCOBJ:=$(TESTCSRC:.c=.o)
 TESTFSRC:=
 TESTFOBJ:=$(TESTFSRC:.f=.o)
