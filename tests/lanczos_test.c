@@ -47,10 +47,10 @@ int test_1_2() {
   CSRMatrix A = { .nrows = n, .ia = ia, .ja = ja, .va = va };
 
   Vector alpha, beta, init;
-  zeros_vector(&alpha, n + 1); zeros_vector(&beta, n + 1);
+  zeros_vector(&alpha, n); zeros_vector(&beta, n - 1);
   ones_vector(&init, n);
 
-  lanczos(&alpha, &beta, &A, &init);
+  lanczos2(&alpha, &beta, &A, &init);
 
   printf("\nalpha: "); print_vector(&alpha);
   printf("\nbeta: "); print_vector(&beta);
