@@ -87,6 +87,16 @@ int test_7() {
                         vectors_equal(&answer2, &y2, 1e-12);
 }
 //------------------------------------------------------------------------------
+int test_8() {
+  double vx[6] = {1., -1., 1., 1., 1., -1.};
+  Vector x = { .size = 6, .vv = vx };
+
+  double vy[6] = {1., -1., 0., 2., 0., -1.};
+  Vector y = { .size = 6, .vv = vy };
+
+  return (dot_vector(&x, &y) == 5.);
+}
+//------------------------------------------------------------------------------
 int main() {
   run_test(&test_1,"vector_1");
   run_test(&test_2,"vector_2");
@@ -95,6 +105,7 @@ int main() {
   run_test(&test_5,"vector_5");
   run_test(&test_6,"vector_6");
   run_test(&test_7,"vector_7");
+  run_test(&test_8,"vector_8");
 
   return 0;
 }

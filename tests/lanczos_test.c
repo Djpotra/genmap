@@ -25,17 +25,6 @@ int test_1() {
 
   lanczos(&alpha, &beta, &A, &init);
 
-//  for (int i = 0; i < n + 1; i++) {
-//    printf("%1.5f -- %1.5f\n", alpha.vv[i], beta.vv[i + 1]);
-//  }
-//
-//  printf(" --------- GGAVL Implementation -----\n");
-
-  //lanczos_ggavl(&alpha, &beta, &A);
-
-  //for (int i = 0; i < n; i++) {
-  //  printf("%1.5f -- %1.5f\n", alpha.vv[i], beta.vv[i + 1]);
-  //}
   return 1;
 }
 //------------------------------------------------------------------------------
@@ -60,16 +49,13 @@ int test_2() {
 
   lanczos(&alpha, &beta, &A, &init);
 
-  for (int i = 0; i < n + 1; i++) {
-    printf("%1.5f -- %1.5f\n", alpha.vv[i], beta.vv[i]);
-  }
-
   return 1;
 }
 //------------------------------------------------------------------------------
 int main() {
   run_test(&test_1, "lanczos1");
-//  run_test(&test_2, "lanczos2");
+  run_test(&test_2, "lanczos2");
 
   return 0;
 }
+//------------------------------------------------------------------------------
