@@ -19,7 +19,8 @@ void csr_matrix_vector_multiply(Vector *y, CSRMatrix *A, Vector *x);
 
 //void csr_init(CSRMatrix *A, ....
 
-void lanczos(Vector *alpha, Vector *beta, CSRMatrix *A);
+void lanczos(Vector *alpha, Vector *beta, CSRMatrix *A, Vector *init);
+void lanczos_ggavl(Vector *alpha, Vector *beta, CSRMatrix *A);
 //------------------------------------------------------------------------------
 
 #endif

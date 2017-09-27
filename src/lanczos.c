@@ -42,13 +42,12 @@ void lanczos(Vector *alpha, Vector *beta, CSRMatrix *A, Vector *init) {
   }
 }
 //------------------------------------------------------------------------------
-void lanczos_ggavl(Vector *alpha, Vector *beta, CSRMatrix *A, Vector *init) {
+void lanczos_ggavl(Vector *alpha, Vector *beta, CSRMatrix *A) {
   /* Asserts:
        - #Rows of A == size of alpha == size of beta - 1
   */
   // TODO: Change lanczos API to accept a random vector
   assert(A->nrows == alpha->size);
-  assert(A->nrows == init->size);
   assert(A->nrows + 1 == beta->size);
 
   int n = A->nrows;
@@ -66,8 +65,8 @@ void lanczos_ggavl(Vector *alpha, Vector *beta, CSRMatrix *A, Vector *init) {
   for (int k = 0; beta->vv[k] > 3e-16; k++) {
     if (k) {
       for (int i = 0; i < n; i++) {
-        t = w->vv[i]; w->vv[i] = v->vv[i]/beta->vv[k];
-        v->vv[i] = -beta->[k]*t;
+        t = w.vv[i]; w.vv[i] = v.vv[i]/beta->vv[k];
+        v.vv[i] = -beta->vv[k]*t;
       }
     }
 

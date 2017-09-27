@@ -19,11 +19,11 @@ int test_1() {
   int ia[6]    = {0, 2, 5, 8, 11, 13};
   CSRMatrix A = { .nrows = n, .ia = ia, .ja = ja, .va = va };
 
-  Vector alpha, beta;
+  Vector alpha, beta, init;
   zeros_vector(&alpha, n); zeros_vector(&beta, n + 1);
-  one_vector(&init, n);
+  ones_vector(&init, n);
 
-  lanczos(&alpha, &beta, &A);
+  lanczos(&alpha, &beta, &A, &init);
 
   for (int i = 0; i < n; i++) {
     printf("%1.5f -- %1.5f\n", alpha.vv[i], beta.vv[i + 1]);
@@ -49,7 +49,7 @@ int test_2() {
 
   Vector alpha, beta, init;
   zeros_vector(&alpha, n); zeros_vector(&beta, n + 1);
-  one_vector(&init, n);
+  ones_vector(&init, n);
 
   lanczos(&alpha, &beta, &A, &init);
 
