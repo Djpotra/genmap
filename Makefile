@@ -24,7 +24,7 @@ TESTCSRC:=$(TESTDIR)/ax_test.c $(TESTDIR)/vector_test.c $(TESTDIR)/lanczos_test.
 TESTCOBJ:=$(TESTCSRC:.c=.o)
 TESTFSRC:=
 TESTFOBJ:=$(TESTFSRC:.f=.o)
-TESTLDFLAGS:=-L . -lgenmap
+TESTLDFLAGS:=-L . -lgenmap -Wl,-R.
 
 SRCOBJS :=$(COBJS) $(FOBJS)
 TESTOBJS:=$(TESTCOBJ) $(TESTFOBJ)
