@@ -136,7 +136,7 @@ void copy_vector(Vector *x, Vector *y) {
 
   int n = x->size;
   for (int i = 0; i < n; i++) {
-    x->vv[i] =y->vv[i];
+    x->vv[i] = y->vv[i];
   }
 }
 //------------------------------------------------------------------------------
