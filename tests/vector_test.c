@@ -1,6 +1,7 @@
 #include "linalg.h"
 #include "test.h"
 
+#include <math.h>
 //------------------------------------------------------------------------------
 int test_1() {
   Vector y;
@@ -61,9 +62,9 @@ int test_6() {
   Vector y = { .size = 6, .vv = vy };
 
   return (norm_vector(&x, 1) == 6.0 && \
-          norm_vector(&x, 2) == 6.0 && \
+          norm_vector(&x, 2) == sqrt(6.0) && \
           norm_vector(&y, 1) == 5.0 && \
-          norm_vector(&y, 2) == 7.0 );
+          norm_vector(&y, 2) == sqrt(7.0) );
 }
 //------------------------------------------------------------------------------
 int test_7() {
@@ -71,14 +72,19 @@ int test_7() {
   Vector x = { .size = 6, .vv = vx };
 
   double vy[6] = {1., -1., 0., 2., 0., -1.};
-  Vector y = { .size = 6, .vv = vy };
+  Vector y1 = { .size = 6, .vv = vy };
+  Vector y2 = { .size = 6, .vv = vy };
 
+  mult_scalar_add_vector(&y1, 1., &x, 1.);
   double vans1[6] = {2., -2., 1., 3., 1., -2.};
   Vector answer1 = { .size = 6, .vv = vans1 };
 
-  mult_scalar_add_vector(&y, 1., &x, 1.);
+  mult_scalar_add_vector(&y2, 1., &x, -1.);
+  double vans2[6] = {0., 0., -1., 1., -1., 0.};
+  Vector answer2 = { .size = 6, .vv = vans2 };
 
-  return vectors_equal(&answer1, &y, 1e-12);
+  return vectors_equal(&answer1, &y1, 1e-12) && \
+                        vectors_equal(&answer2, &y2, 1e-12);
 }
 //------------------------------------------------------------------------------
 int main() {

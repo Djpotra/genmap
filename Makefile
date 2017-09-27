@@ -20,7 +20,7 @@ FSRCS:=
 FOBJS:=$(FSRCS:.f=.o)
 LDFLAGS:=-shared -lm
 
-TESTCSRC:=$(TESTDIR)/test_ax.c $(TESTDIR)/test_vector.c $(TESTDIR)/test_lanczos.c
+TESTCSRC:=$(TESTDIR)/ax_test.c $(TESTDIR)/vector_test.c $(TESTDIR)/lanczos_test.c
 TESTCOBJ:=$(TESTCSRC:.c=.o)
 TESTFSRC:=
 TESTFOBJ:=$(TESTFSRC:.f=.o)

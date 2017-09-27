@@ -32,6 +32,8 @@ void   mult_scalar_add_vector(Vector *y, double alpha, Vector *x, \
 double dot_vector(Vector *x, Vector *y);
 
 void   copy_vector(Vector *x, Vector *y);
+
+void   print_vector(Vector *x);
 //------------------------------------------------------------------------------
 
 #endif

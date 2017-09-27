@@ -140,3 +140,19 @@ void copy_vector(Vector *x, Vector *y) {
   }
 }
 //------------------------------------------------------------------------------
+void print_vector(Vector *x) {
+  /* Asserts:
+       - size y > 0
+  */
+  printf("(%f", x->vv[0]);
+  for (int i = 1; i < x->size-1; i++) {
+    printf(", %f", x->vv[i]);
+  }
+
+  if (x->size > 1) {
+    printf(", %f)", x->vv[x->size - 1]);
+  } else {
+    printf(")");
+  }
+}
+//------------------------------------------------------------------------------

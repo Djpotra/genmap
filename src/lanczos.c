@@ -8,11 +8,12 @@ void lanczos(Vector *alpha, Vector *beta, CSRMatrix *A, Vector *init) {
        - #Rows of A == size of alpha == size of beta - 1
   */
   // TODO: Change lanczos API to accept a random vector
-  assert(A->nrows == alpha->size);
+  assert(A->nrows + 1 == alpha->size);
   assert(A->nrows == init->size);
   assert(A->nrows + 1 == beta->size);
 
   int n = A->nrows;
+  double norm_q1;
   Vector q0, q1, u;
 
   // Set q_0 and beta_0 to zero (beta uses 1-indexing, alpha uses 0)
@@ -22,24 +23,29 @@ void lanczos(Vector *alpha, Vector *beta, CSRMatrix *A, Vector *init) {
   zeros_vector(&u, n);
 
   // Set q1 to normalized initi vector
-  ones_vector(&q1, n);
-  copy_vector(&q1, init);
-  mult_scalar_add_vector(&q1, 0., &q1, 1./norm_vector(&q1, 2));
+  create_vector(&q1,    n);
+  copy_vector  (&q1, init);
+  norm_q1 = norm_vector(&q1, 2);
+  mult_scalar_add_vector(&q1, 0., &q1, 1./norm_q1);
 
-  for (int k = 0; k < n; k++) {
+  printf("Norm q1 = %f\n", norm_vector(&q1, 2));
+
+  for (int k = 1; k <= n; k++) {
+
+    printf("q1 = "); print_vector(&q1);
     csr_matrix_vector_multiply(&u, A, &q1);
+    printf(", Aq1 = "); print_vector(&u); printf("\n");
 
     alpha->vv[k] = dot_vector(&q1, &u);
+    printf("dot q1, Aq1 = %f\n", alpha->vv[k]);
 
-    mult_scalar_add_vector(&u, 1.0, &q0, -beta ->vv[k]);
+    mult_scalar_add_vector(&u, 1.0, &q0, -beta ->vv[k - 1]);
     mult_scalar_add_vector(&u, 1.0, &q1, -alpha->vv[k]);
 
-    beta->vv[k + 1] = norm_vector(&u, 2);
-    if (beta->vv[k + 1] < 1e-17) // if zero
-      return;
+    beta->vv[k] = norm_vector(&u, 2);
 
     copy_vector(&q0, &q1);
-    mult_scalar_add_vector(&q1, 0., &u, 1./beta->vv[k + 1]);
+    mult_scalar_add_vector(&q1, 0., &u, 1./beta->vv[k]);
   }
 }
 //------------------------------------------------------------------------------

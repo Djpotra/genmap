@@ -20,22 +20,22 @@ int test_1() {
   CSRMatrix A = { .nrows = n, .ia = ia, .ja = ja, .va = va };
 
   Vector alpha, beta, init;
-  zeros_vector(&alpha, n); zeros_vector(&beta, n + 1);
+  zeros_vector(&alpha, n + 1); zeros_vector(&beta, n + 1);
   ones_vector(&init, n);
 
   lanczos(&alpha, &beta, &A, &init);
 
-  for (int i = 0; i < n; i++) {
-    printf("%1.5f -- %1.5f\n", alpha.vv[i], beta.vv[i + 1]);
-  }
+//  for (int i = 0; i < n + 1; i++) {
+//    printf("%1.5f -- %1.5f\n", alpha.vv[i], beta.vv[i + 1]);
+//  }
+//
+//  printf(" --------- GGAVL Implementation -----\n");
 
-  printf(" --------- GGAVL Implementation -----\n");
+  //lanczos_ggavl(&alpha, &beta, &A);
 
-  lanczos_ggavl(&alpha, &beta, &A);
-
-  for (int i = 0; i < n; i++) {
-    printf("%1.5f -- %1.5f\n", alpha.vv[i], beta.vv[i + 1]);
-  }
+  //for (int i = 0; i < n; i++) {
+  //  printf("%1.5f -- %1.5f\n", alpha.vv[i], beta.vv[i + 1]);
+  //}
   return 1;
 }
 //------------------------------------------------------------------------------
@@ -55,12 +55,12 @@ int test_2() {
   CSRMatrix A = { .nrows = n, .ia = ia, .ja = ja, .va = va };
 
   Vector alpha, beta, init;
-  zeros_vector(&alpha, n); zeros_vector(&beta, n + 1);
+  zeros_vector(&alpha, n + 1); zeros_vector(&beta, n + 1);
   ones_vector(&init, n);
 
   lanczos(&alpha, &beta, &A, &init);
 
-  for (int i = 0; i < n; i++) {
+  for (int i = 0; i < n + 1; i++) {
     printf("%1.5f -- %1.5f\n", alpha.vv[i], beta.vv[i]);
   }
 
@@ -69,7 +69,7 @@ int test_2() {
 //------------------------------------------------------------------------------
 int main() {
   run_test(&test_1, "lanczos1");
-  run_test(&test_2, "lanczos2");
+//  run_test(&test_2, "lanczos2");
 
   return 0;
 }
