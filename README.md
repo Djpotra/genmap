@@ -13,7 +13,7 @@ Main data structures used by `genmap` are `CSRMatrix` and `Vector`. Lanczos
 iteration takes a `CSRMatrix` (say, A) and an initial vector to be used as the
 starting vector for the lanczos iteration and then produce two arrays: diagonal
 and sub-diagonal entries of the hermitian tri-diagonal matrix which approximates 
-the eigenvalues of A.
+the eigenvalues of A. 0th entries of both of this arrays should be ignored.
 
 Below is the directory structure of the current genmap directory.
 
