@@ -68,7 +68,7 @@ void lanczos2(Vector *alpha, Vector *beta, CSRMatrix *A, Vector *init) {
   zeros_vector(&v1, n);
 
   while (i < n - 1) {
-    mult_scalar_add_vector(&v, 0., &r, b1);
+    mult_scalar_add_vector(&v, 0., &r, 1./b1);
 
     csr_matrix_vector_multiply(&p, A, &v);
 
@@ -76,7 +76,7 @@ void lanczos2(Vector *alpha, Vector *beta, CSRMatrix *A, Vector *init) {
 
     copy_vector(&r, &p);
     mult_scalar_add_vector(&r, 1., &v, -alpha->vv[i]);
-    mult_scalar_add_vector(&r, 1., &v1, b1);
+    mult_scalar_add_vector(&r, 1., &v1, -b1);
 
     b1 = norm_vector(&r, 2);
     beta->vv[i] = b1;
