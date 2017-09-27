@@ -11,7 +11,18 @@ given symmetric matirx. Lanczos iteration can be found in
 `src/lanczos.c`. There are two implementations (to compare answers)
 called `lanczos` and `lanczos2`.
 
-Main data structures used by `genmap` are `CSRMatrix` and `Vector`.
+API for calling lanczos iteration looks like below:
+
+```c
+void lanczos (Vector *alpha, Vector *beta, CSRMatrix *A, Vector *init);
+void lanczos2(Vector *alpha, Vector *beta, CSRMatrix *A, Vector *init);
+```
+
+Main data structures used by `lanczos` iterations are `CSRMatrix` and
+`Vector`. Here the input arguements are `A` and `init` and `alpha` and
+`beta` are the output `Vector`s which contain diagonal and subdiagonal
+of the final Hermition tridiagonal matrix produced by lanczos.
+
 Lanczos iteration takes a `CSRMatrix` (say, A) and an initial vector to
 be used as the starting vector for the  iteration and then produce two
 arrays: diagonal and sub-diagonal entries of the hermitian tri-diagonal
@@ -86,3 +97,14 @@ To run the tests for Lanczos iteration,
 make tests
 ./tests/lanczos_test.o
 ```
+
+### Developer documentation
+
+- csr.c/.h - Contains the definition of `CSRMatrix` and implementation
+  of `CSRMatrix` and `Vector` product.
+- linalg.c/.h - Contains the definition of `Vector` and implementation
+  of `Vector` functions.
+- random.h - Contains a single variable which keeps track whether
+  `srand()` is initialized.
+- lanczos.c - Constains the Lanczos iteration implementation.
+- tests/ - Contains tests.
