@@ -25,6 +25,9 @@ int test_1() {
 
   lanczos(&alpha, &beta, &A, &init);
 
+  printf("\nalpha: "); print_vector(&alpha);
+  printf("\nbeta: "); print_vector(&beta);
+
   return 1;
 }
 //------------------------------------------------------------------------------
@@ -48,6 +51,9 @@ int test_2() {
   ones_vector(&init, n);
 
   lanczos(&alpha, &beta, &A, &init);
+
+  printf("\nalpha: "); print_vector(&alpha);
+  printf("\nbeta: "); print_vector(&beta);
 
   return 1;
 }
