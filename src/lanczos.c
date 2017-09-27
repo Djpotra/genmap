@@ -7,7 +7,6 @@ void lanczos(Vector *alpha, Vector *beta, CSRMatrix *A, Vector *init) {
   /* Asserts:
        - #Rows of A == size of alpha - 1 == size of beta - 1 = size of init
   */
-  // TODO: Change lanczos API to accept a random vector
   assert(A->nrows + 1 == alpha->size);
   assert(A->nrows == init->size);
   assert(A->nrows + 1 == beta->size);
