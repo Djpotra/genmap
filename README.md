@@ -1,6 +1,7 @@
 # genmap
 
-Domain partitioning tool for Nek5000 using the recursive spectral bisection method.
+Domain partitioning tool for Nek5000 using the recursive spectral bisection
+method.
 
 ### Introduction
 
@@ -10,8 +11,8 @@ can be found in `src/lanczos.c`.
 
 Main data structures used by `genmap` are `CSRMatrix` and `Vector`. Lanczos
 iteration takes a `CSRMatrix` (say, A) and an initial vector to be used as the
-starting vector for the lanczos iteration and then produce two arrays: diagonal and
-sub-diagonal entries of the hermitian tri-diagonal matrix which approximates 
+starting vector for the lanczos iteration and then produce two arrays: diagonal
+and sub-diagonal entries of the hermitian tri-diagonal matrix which approximates 
 the eigenvalues of A.
 
 Below is the directory structure of the current genmap directory.
@@ -45,13 +46,13 @@ You can build `libgenmap.so` and the tests using gnu make.
 make
 ```
 
-Just to build the library use,
+Just to build the library use:
 
 ```sh
 make libgenmap.so
 ```
 
-To build only the tests,
+then to build the tests, do:
 ```sh
 make tests
 ```
