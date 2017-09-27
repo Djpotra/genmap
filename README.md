@@ -1,19 +1,21 @@
 # genmap
 
-Domain partitioning tool for Nek5000 using the recursive spectral bisection
-method.
+Domain partitioning tool for Nek5000 using the recursive spectral
+bisection method.
 
 ### Introduction
 
-Currently, the code can perform a lanczos iteration to find the tri-diagonal
-matrix whoose eigenvalues approximate the eigenvalues of A. Lanczos iteration
-can be found in `src/lanczos.c`.
+Currently, the code can perform a lanczos iteration to find the
+tri-diagonal matrix whoose eigenvalues approximate the eigenvalues of a
+given symmetric matirx. Lanczos iteration can be found in
+`src/lanczos.c`. There are two implementations (to compare answers)
+called `lanczos` and `lanczos2`.
 
-Main data structures used by `genmap` are `CSRMatrix` and `Vector`. Lanczos
-iteration takes a `CSRMatrix` (say, A) and an initial vector to be used as the
-starting vector for the lanczos iteration and then produce two arrays: diagonal
-and sub-diagonal entries of the hermitian tri-diagonal matrix which approximates 
-the eigenvalues of A. 0th entries of both of this arrays should be ignored.
+Main data structures used by `genmap` are `CSRMatrix` and `Vector`.
+Lanczos iteration takes a `CSRMatrix` (say, A) and an initial vector to
+be used as the starting vector for the  iteration and then produce two
+arrays: diagonal and sub-diagonal entries of the hermitian tri-diagonal
+matrix which approximates the eigenvalues of A.
 
 Below is the directory structure of the current genmap directory.
 
@@ -53,6 +55,7 @@ make libgenmap.so
 ```
 
 then to build the tests, do:
+
 ```sh
 make tests
 ```
@@ -64,12 +67,22 @@ vector operators. Tests fot lanczos iteration just call the lanczos method,
 it does not test anything. The tests for lanczos will be added later.
 
 To run the tests for matrix-vector multiplication,
+
 ```sh
 make tests
-./tests/ax_tests.o
+./tests/ax_test.o
 ```
+
 To run the tests for various vector operations,
+
 ```sh
 make tests
-./tests/vector_tests.o
+./tests/vector_test.o
+```
+
+To run the tests for Lanczos iteration,
+
+```sh
+make tests
+./tests/lanczos_test.o
 ```

@@ -74,7 +74,7 @@ int test_2() {
   CSRMatrix A = { .nrows = n, .ia = ia, .ja = ja, .va = va };
 
   Vector alpha, beta, init;
-  zeros_vector(&alpha, n + 1); zeros_vector(&beta, n + 1);
+  zeros_vector(&alpha, n); zeros_vector(&beta, n - 1);
   ones_vector(&init, n);
 
   lanczos(&alpha, &beta, &A, &init);
@@ -101,7 +101,7 @@ int test_2_2() {
   CSRMatrix A = { .nrows = n, .ia = ia, .ja = ja, .va = va };
 
   Vector alpha, beta, init;
-  zeros_vector(&alpha, n + 1); zeros_vector(&beta, n + 1);
+  zeros_vector(&alpha, n); zeros_vector(&beta, n - 1);
   ones_vector(&init, n);
 
   lanczos2(&alpha, &beta, &A, &init);
