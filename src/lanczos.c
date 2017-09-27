@@ -6,7 +6,7 @@
 //------------------------------------------------------------------------------
 void lanczos(Vector *alpha, Vector *beta, CSRMatrix *A, Vector *init) {
   /* Asserts:
-       - #Rows of A == size of alpha - 1 == size of beta - 1 = size of init
+       - #Rows of A == size of alpha  == size of beta + 1 = size of init
   */
   assert(A->nrows == alpha->size);
   assert(A->nrows == init->size);
@@ -52,7 +52,7 @@ void lanczos(Vector *alpha, Vector *beta, CSRMatrix *A, Vector *init) {
 
 void lanczos2(Vector *alpha, Vector *beta, CSRMatrix *A, Vector *init) {
   /* Asserts:
-       - #Rows of A == size of alpha == size of beta + 1 = size of init
+       - #Rows of A == size of alpha  == size of beta + 1 = size of init
   */
   assert(A->nrows == alpha->size);
   assert(A->nrows == beta->size + 1);
