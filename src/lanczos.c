@@ -22,6 +22,7 @@ void lanczos(Vector *alpha, Vector *beta, CSRMatrix *A, Vector *init) {
   zeros_vector(&u, n);
 
   // Set q1 to normalized initi vector
+  ones_vector(&q1, n);
   copy_vector(&q1, init);
   mult_scalar_add_vector(&q1, 0., &q1, 1./norm_vector(&q1, 2));
 
@@ -60,9 +61,10 @@ void lanczos_ggavl(Vector *alpha, Vector *beta, CSRMatrix *A) {
   beta->vv[0] = 1.;
   // Set w to zeros vector
   ones_vector(&w, n);
+  ones_vector(&u, n);
   mult_scalar_add_vector(&w, 0, &w, 1./norm_vector(&w, 2));
 
-  for (int k = 0; beta->vv[k] > 3e-16; k++) {
+  for (int k = 0; beta->vv[k] > 3e-16;) {
     if (k) {
       for (int i = 0; i < n; i++) {
         t = w.vv[i]; w.vv[i] = v.vv[i]/beta->vv[k];
@@ -73,9 +75,10 @@ void lanczos_ggavl(Vector *alpha, Vector *beta, CSRMatrix *A) {
     csr_matrix_vector_multiply(&u, A, &w);
     mult_scalar_add_vector(&v, 1, &u, 1);
 
+    k = k + 1;
     alpha->vv[k] = dot_vector(&w, &v);
     mult_scalar_add_vector(&v, 1, &w, alpha->vv[k]);
-    beta->vv[k + 1] = norm_vector(&v, 2);
+    beta->vv[k] = norm_vector(&v, 2);
   }
 }
 //------------------------------------------------------------------------------

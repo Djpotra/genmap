@@ -29,6 +29,13 @@ int test_1() {
     printf("%1.5f -- %1.5f\n", alpha.vv[i], beta.vv[i + 1]);
   }
 
+  printf(" --------- GGAVL Implementation -----\n");
+
+  lanczos_ggavl(&alpha, &beta, &A);
+
+  for (int i = 0; i < n; i++) {
+    printf("%1.5f -- %1.5f\n", alpha.vv[i], beta.vv[i + 1]);
+  }
   return 1;
 }
 //------------------------------------------------------------------------------
