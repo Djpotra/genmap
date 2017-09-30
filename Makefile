@@ -7,24 +7,25 @@ FC=gfortran
 FFLAGS=
 CXX=g++
 CXXFLAGS=
+GSDIR=${HOME}/Nek5000/3rd_party/gslib/src
 
 SRCROOT =.
 SRCDIR  =$(SRCROOT)/src
 INCDIR  =$(SRCROOT)/inc
-INCFLAGS=-I$(INCDIR)
+INCFLAGS=-I$(INCDIR) -I$(GSDIR)
 TESTDIR =$(SRCROOT)/tests
 
 CSRCS:=$(SRCDIR)/lanczos.c $(SRCDIR)/linalg.c $(SRCDIR)/csr.c $(TESTDIR)/test.c
 COBJS:=$(CSRCS:.c=.o)
 FSRCS:=
 FOBJS:=$(FSRCS:.f=.o)
-LDFLAGS:=-shared -lm
+LDFLAGS:=-shared -lm -L${GSDIR} -lgs
 
-TESTCSRC:=$(TESTDIR)/ax_test.c $(TESTDIR)/vector_test.c $(TESTDIR)/lanczos_test.c
+TESTCSRC:=$(TESTDIR)/ax_test.c $(TESTDIR)/vector_test.c $(TESTDIR)/lanczos_test.c $(TESTDIR)/gs_test.c
 TESTCOBJ:=$(TESTCSRC:.c=.o)
 TESTFSRC:=
 TESTFOBJ:=$(TESTFSRC:.f=.o)
-TESTLDFLAGS:=-L . -lgenmap -Wl,-R.
+TESTLDFLAGS:=-L. -lgenmap -Wl,-R.
 
 SRCOBJS :=$(COBJS) $(FOBJS)
 TESTOBJS:=$(TESTCOBJ) $(TESTFOBJ)

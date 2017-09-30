@@ -17,7 +17,7 @@ void csr_matrix_vector_multiply(Vector *y, CSRMatrix *A, Vector *x) {
 
   for (int i=0; i<n; i++) {
     vy[i] = 0.0;
-    for (int j = ia[i]; j < ia[i+1]; j++) {
+    for (int j = ia[i]; j < ia[i + 1]; j++) {
       vy[i] += va[j]*vx[ja[j]];
     }
   }

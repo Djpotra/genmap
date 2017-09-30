@@ -16,7 +16,7 @@ void lanczos(Vector *alpha, Vector *beta, CSRMatrix *A, Vector *init) {
   double norm_q1, b = 0.;
   Vector q0, q1, u;
 
-  // Set q_0 and beta_0 to zero (both uses 1-indexing)
+  // Set q_0 and beta_0 to zero (both uses 0-indexing)
   zeros_vector(&q0, n);
   beta->vv[0] = 0.;
 
@@ -34,8 +34,8 @@ void lanczos(Vector *alpha, Vector *beta, CSRMatrix *A, Vector *init) {
 
     alpha->vv[k] = dot_vector(&q1, &u);
 
-    mult_scalar_add_vector(&u, 1.0, &q0, -b);
-    mult_scalar_add_vector(&u, 1.0, &q1, -alpha->vv[k]);
+    mult_scalar_add_vector(&u, 1., &q0, -b);
+    mult_scalar_add_vector(&u, 1., &q1, -alpha->vv[k]);
 
     beta->vv[k] = norm_vector(&u, 2);
     b = beta->vv[k];
@@ -49,7 +49,7 @@ void lanczos(Vector *alpha, Vector *beta, CSRMatrix *A, Vector *init) {
     mult_scalar_add_vector(&q1, 0., &u, 1./beta->vv[k]);
   }
 }
-
+//------------------------------------------------------------------------------
 void lanczos2(Vector *alpha, Vector *beta, CSRMatrix *A, Vector *init) {
   /* Asserts:
        - #Rows of A == size of alpha  == size of beta + 1 = size of init

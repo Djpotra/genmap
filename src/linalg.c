@@ -145,7 +145,7 @@ void print_vector(Vector *x) {
        - size y > 0
   */
   printf("(%f", x->vv[0]);
-  for (int i = 1; i < x->size-1; i++) {
+  for (int i = 1; i < x->size - 1; i++) {
     printf(", %f", x->vv[i]);
   }
 
