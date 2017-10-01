@@ -122,7 +122,7 @@ int test_3() {
                   0, 1, 2,      \
                   0, 1, 2, 3,   \
                         2, 3,};
-  int ia[6]    = {0, 3, 6, 10, 12};
+  int ia[5]    = {0, 3, 6, 10, 12};
   CSRMatrix A = { .nrows = n, .ia = ia, .ja = ja, .va = va };
 
   Vector alpha, beta, init;
@@ -147,7 +147,7 @@ int test_3_2() {
                   0, 1, 2,      \
                   0, 1, 2, 3,   \
                         2, 3,};
-  int ia[6]    = {0, 3, 6, 10, 12};
+  int ia[5]    = {0, 3, 6, 10, 12};
   CSRMatrix A = { .nrows = n, .ia = ia, .ja = ja, .va = va };
 
   Vector alpha, beta, init;
@@ -170,7 +170,36 @@ int test_4() {
   int ja[9]   = {0, 1, 2,      \
                   0, 1, 2,      \
                   0, 1, 2 };
-  int ia[9]    = {0, 3, 6, 9};
+  int ia[4]    = {0, 3, 6, 9};
+  CSRMatrix A = { .nrows = n, .ia = ia, .ja = ja, .va = va };
+
+  Vector alpha, beta, init;
+  zeros_vector(&alpha, n); zeros_vector(&beta, n - 1);
+  ones_vector(&init, n);
+
+  lanczos(&alpha, &beta, &A, &init);
+
+  printf("\nalpha: "); print_vector(&alpha);
+  printf("\nbeta: "); print_vector(&beta);
+
+  return 1;
+}
+//------------------------------------------------------------------------------
+int test_5() {
+  int n = 6;
+  double va[20] = {2,   -1,               -1,       \
+                  -1,    3,   -1,         -1,       \
+                        -1,    2,   -1,             \
+                              -1,    3,   -1,   -1, \
+                  -1,   -1,         -1,    3,       \
+                                    -1,          1};
+  int    ja[20] = {0,    1,                4,       \
+                   0,    1,    2,          4,       \
+                         1,    2,    3,             \
+                               2,    3,    4,    5, \
+                   0,    1,          3,    4,       \
+                                     3,          5};
+  int ia[7]     = {0, 3, 7, 10, 14, 18, 20};
   CSRMatrix A = { .nrows = n, .ia = ia, .ja = ja, .va = va };
 
   Vector alpha, beta, init;
@@ -193,6 +222,7 @@ int main() {
   run_test(&test_3, "lnczs3");
   run_test(&test_3_2, "lnczs3_2");
   run_test(&test_4, "lnczs4");
+  run_test(&test_5, "lnczs5");
 
   return 0;
 }

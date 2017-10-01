@@ -42,9 +42,9 @@ void lanczos(Vector *alpha, Vector *beta, CSRMatrix *A, Vector *init) {
 
     copy_vector(&q0, &q1);
 
-    if (beta->vv[k] < DBL_EPSILON) {
-      return;
-    }
+//    if (beta->vv[k] < DBL_EPSILON) {
+//      return;
+//    }
 
     mult_scalar_add_vector(&q1, 0., &u, 1./beta->vv[k]);
   }
