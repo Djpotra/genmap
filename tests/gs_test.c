@@ -1,13 +1,5 @@
-#include <stddef.h>
+#include "gswrapper.h"
 
-#include "test.h"
-#include "types.h"
-#include "name.h"
-#include "gs_defs.h"
-#include "gs_local.h"
-#include "tensor.h"
-#include "fail.h"
-#include "comm.h"
 //------------------------------------------------------------------------------
 int test_1() {
   slong id;

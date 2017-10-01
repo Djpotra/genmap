@@ -1,6 +1,5 @@
 #include "csr.h"
 #include "linalg.h"
-#include "genmap.h"
 
 #include <stdio.h>
 #include <float.h>

@@ -2,7 +2,7 @@ TARGET=libgenmap.so
 TESTS=tests
 
 CC=mpicc
-CFLAGS=-std=c99 -O2 -Wall -Wextra -g -fPIC -DMPI -DPREFIX="gslib"
+CFLAGS=-std=c99 -O2 -Wall -Wextra -g -fPIC
 #TESTCFLAGS=-std=c99 -O2 -Wall -Wextra -g -DMPI
 FC=mpif77
 FFLAGS=

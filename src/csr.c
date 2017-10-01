@@ -1,5 +1,4 @@
 #include "csr.h"
-#include "genmap.h"
 
 //------------------------------------------------------------------------------
 void csr_matrix_vector_multiply(Vector *y, CSRMatrix *A, Vector *x) {
