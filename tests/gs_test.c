@@ -19,8 +19,11 @@ int test_2() {
 }
 //------------------------------------------------------------------------------
 int main() {
+  MPI_Init(NULL, NULL);
+
   run_test(&test_1,"gs_link1");
   run_test(&test_2,"gs_comm");
 
+  MPI_Finalize();
   return 0;
 }
