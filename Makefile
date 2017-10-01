@@ -1,11 +1,12 @@
 TARGET=libgenmap.so
 TESTS=tests
 
-CC=gcc
-CFLAGS=-std=c99 -O2 -Wall -Wextra -g -fPIC
-FC=gfortran
+CC=mpicc
+CFLAGS=-std=c99 -O2 -Wall -Wextra -g -fPIC -DMPI -DPREFIX="gslib"
+#TESTCFLAGS=-std=c99 -O2 -Wall -Wextra -g -DMPI
+FC=mpif77
 FFLAGS=
-CXX=g++
+CXX=mpic++
 CXXFLAGS=
 GSDIR=${HOME}/Nek5000/3rd_party/gslib/src
 
@@ -19,13 +20,13 @@ CSRCS:=$(SRCDIR)/lanczos.c $(SRCDIR)/linalg.c $(SRCDIR)/csr.c $(TESTDIR)/test.c
 COBJS:=$(CSRCS:.c=.o)
 FSRCS:=
 FOBJS:=$(FSRCS:.f=.o)
-LDFLAGS:=-shared -lm -L${GSDIR} -lgs
+LDFLAGS:=-shared -lm -L$(GSDIR) -l:libgs.a
 
 TESTCSRC:=$(TESTDIR)/ax_test.c $(TESTDIR)/vector_test.c $(TESTDIR)/lanczos_test.c $(TESTDIR)/gs_test.c
 TESTCOBJ:=$(TESTCSRC:.c=.o)
 TESTFSRC:=
 TESTFOBJ:=$(TESTFSRC:.f=.o)
-TESTLDFLAGS:=-L. -lgenmap -Wl,-R.
+TESTLDFLAGS:=-L. -lgenmap -Wl,-R. -L$(GSDIR) -l:libgs.a
 
 SRCOBJS :=$(COBJS) $(FOBJS)
 TESTOBJS:=$(TESTCOBJ) $(TESTFOBJ)

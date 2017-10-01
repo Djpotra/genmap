@@ -1,10 +1,11 @@
+#include "linalg.h"
+#include "random.h"
+#include "genmap.h"
+
 #include <time.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-
-#include "linalg.h"
-#include "random.h"
 
 int genmap_srand_initialized = 0;
 //------------------------------------------------------------------------------
