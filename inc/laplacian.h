@@ -6,7 +6,8 @@
 
 extern int rsb_setup;
 
-void ax_setup(struct gs_data *gsh, long npts, long nelt, long *glo_num);
+void ax_setup(struct gs_data *gsh, long **weights, struct comm *c, \
+                            long npts, long nelt, long *glo_num);
 
 void ax(Vector *v, Vector *u);
 

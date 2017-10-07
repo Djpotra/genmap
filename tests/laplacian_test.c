@@ -5,24 +5,33 @@
 #include "io.h"
 
 //------------------------------------------------------------------------------
-int test_1() {
-  Vector v, u;
-
-  struct comm c;
-  struct gs_data *gsh;
-
-  long npts, nelt, *glo_num;
+int main(int argc, char **argv) {
+  // Serial part: TODO: Do in parallel
+  long npts, nelt, *glo_num, *weights;
+  long lpts, lelt, lstart;
 
   readmap(&npts, &nelt, &glo_num, "nbrhd.map");
 
-//  ax(&v, &u);
+  int np, rank;
+  MPI_Init(&argc, &argv);
+  MPI_Comm_size(MPI_COMM_WORLD, &np  );
+  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-  return 1;
-}
-//------------------------------------------------------------------------------
-int main() {
-  run_test(&test_1, "lapla1");
+  lpts = npts/np;
+  lelt = nelt/np;
+  lstart = rank*lpts;
 
+  struct comm c;
+  comm_init(&c, MPI_COMM_WORLD);
+  struct gs_data *gsh;
+
+  printf("np3= %d, rank = %d\n", np, rank);
+
+  ax_setup(gsh, &weights, &c, lpts, lelt, &glo_num[lstart]);
+
+  comm_free(&c);
+
+  MPI_Finalize();
   return 0;
 }
 //------------------------------------------------------------------------------
