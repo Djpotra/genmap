@@ -7,8 +7,9 @@
 //------------------------------------------------------------------------------
 int main(int argc, char **argv) {
   // Serial part: TODO: Do in parallel
-  long npts, nelt, *glo_num, *weights;
-  long lpts, lelt, lstart;
+  long npts, nelt, *glo_num;
+  int *weights;
+  unsigned int lpts, lelt, lstart;
 
   Vector u, v;
 
@@ -29,8 +30,10 @@ int main(int argc, char **argv) {
 
   ax_setup(&gsh, &weights, &c, lpts, lelt, &glo_num[lstart]);
 
+//  printf("lstart = %ld\n", lstart);
+
   for (int i = 0; i < lelt; i++) {
-    printf("rank = %d, lelt = %d, weight = %d\n", rank, i, weights[i]);
+    printf("rank = %d, lelt = %ld, weight = %ld\n", rank, i, weights[i]);
   }
 
   random_vector(&v, lelt); ones_vector(&u, lelt);

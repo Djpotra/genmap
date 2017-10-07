@@ -7,8 +7,8 @@
 extern int rsb_setup;
 
 void ax_setup(struct gs_data *gsh, long **weights, struct comm *c, \
-                            long npts, long nelt, long *glo_num);
+                            unsigned int npts, unsigned int nelt, long *glo_num);
 
-void ax(Vector *v, Vector *u, struct gs_data *gsh, long *weights, int nc);
+void ax(Vector *v, Vector *u, struct gs_data *gsh, int *weights, int nc);
 
 #endif
