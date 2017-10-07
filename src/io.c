@@ -24,7 +24,7 @@ void readmap(long *npts, long *nel, long **glo_num, char* name) {
 
   *glo_num = malloc(sizeof(long)*(*npts));
 
-  for (long i = 0; i < nel; i++) {
+  for (long i = 0; i < *nel; i++) {
       cnt = fscanf(fp, "%ld", &jnk);
       if (cnt != 1) {
         fprintf(stderr, "Unable to read .map file.\n");

@@ -1,4 +1,4 @@
-TARGET=libgenmap.a
+TARGET=libgenmap.so
 TESTS=tests
 GSLIB=gslib
 
