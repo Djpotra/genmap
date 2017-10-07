@@ -3,6 +3,8 @@
 
 #include <stdio.h>
 
-void readmap(int *npts, int *glo_num, char* name);
+#include "gswrapper.h"
+
+void readmap(long *npts, long **glo_num, char* name);
 
 #endif

@@ -19,14 +19,14 @@ int test_2() {
 }
 //------------------------------------------------------------------------------
 int test_3() {
-  int npts, glo_num;
+  slong npts, glo_num;
   struct comm c;
 
   comm_init(&c, MPI_COMM_WORLD);
 
   readmap(&npts, &glo_num, "nbrhd.map");
 
-  gs_setup(&glo_num, npts, &c, 0, gs_auto, 1);
+  gs_setup(&glo_num, npts, &c, 0, gs_crystal_router, 1);
 
   comm_free(&c);
 
@@ -37,7 +37,8 @@ int main() {
   MPI_Init(NULL, NULL);
 
   run_test(&test_1,"gs_link1");
-  run_test(&test_2,"gs_comm");
+  run_test(&test_2,"gs_comm1");
+  run_test(&test_3,"gs_comm2");
 
   MPI_Finalize();
   return 0;

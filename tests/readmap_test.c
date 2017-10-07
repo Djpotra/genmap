@@ -1,13 +1,18 @@
 #include "io.h"
 #include "test.h"
+#include "gswrapper.h"
 
 //------------------------------------------------------------------------------
 int test_1() {
-  int npts, glo_num;
+  long npts, *glo_num;
 
   readmap(&npts, &glo_num, "nbrhd.map");
 
-  printf("npts = %d\n", npts);
+  printf("npts = %ld\n", npts);
+
+  for (long i = 0; i < npts; i++) {
+    printf("%ld\n", glo_num[i]);
+  }
 
   return 1;
 }

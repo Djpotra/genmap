@@ -1,39 +1,41 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void readmap(int *npts, int* glo_num, char* name) {
+#include "gswrapper.h"
+//------------------------------------------------------------------------------
+void readmap(long *npts, long **glo_num, char* name) {
   FILE *fp;
 
-  int nel, nactive, depth, d2, nrank, noutflow;
-  int nc, cnt, jnk;
+  long nel, nactive, depth, d2, nrank, noutflow;
+  long nc, cnt, jnk;
 
   fp = fopen(name, "r");
   if (fp == NULL) {
     fprintf(stderr, "Unable to open the file.\n");
   }
 
-  cnt = fscanf(fp, "%d %d %d %d %d %d %d\n",
+  cnt = fscanf(fp, "%ld %ld %ld %ld %ld %ld %ld\n",
         &nel, &nactive, &depth, &d2, npts, &nrank, &noutflow);
-  if (cnt != 6) {
-    fprintf(stderr, "Unable to read .rea file.\n");
+  if (cnt != 7) {
+    fprintf(stderr, "Unable to read .map file.\n");
   }
 
   nc  = *npts/nel;
 
-  glo_num = malloc(sizeof(int)*(*npts));
+  *glo_num = malloc(sizeof(long)*(*npts));
 
-  for (int i = 0; i < nel; i++) {
-      cnt = fscanf(fp, "%d", &jnk);
+  for (long i = 0; i < nel; i++) {
+      cnt = fscanf(fp, "%ld", &jnk);
       if (cnt != 1) {
         fprintf(stderr, "Unable to read .rea file.\n");
       }
-      for (int j = 0; j < nc-1; j++) {
-        cnt = fscanf(fp, "%d", &glo_num[i*nc + j]);
+      for (long j = 0; j < nc - 1; j++) {
+        cnt = fscanf(fp, "%ld", *glo_num + (i*nc + j));
         if (cnt != 1) {
           fprintf(stderr, "Unable to read .rea file.\n");
         }
       }
-      cnt = fscanf(fp, "%d\n", &glo_num[i*nc + nc - 1]);
+      cnt = fscanf(fp, "%ld\n", *glo_num + (i*nc + nc - 1));
       if (cnt != 1) {
         fprintf(stderr, "Unable to read .rea file.\n");
       }
