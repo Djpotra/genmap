@@ -27,14 +27,23 @@ int main(int argc, char **argv) {
   comm_init(&c, MPI_COMM_WORLD);
   struct gs_data *gsh;
 
-  ax_setup(gsh, &weights, &c, lpts, lelt, &glo_num[lstart]);
+  ax_setup(&gsh, &weights, &c, lpts, lelt, &glo_num[lstart]);
 
   for (int i = 0; i < lelt; i++) {
     printf("rank = %d, lelt = %d, weight = %d\n", rank, i, weights[i]);
   }
-//  zero_vector(
 
-  ax(&v, &u, gsh);
+  random_vector(&v, lelt); ones_vector(&u, lelt);
+
+  for (int i = 0; i < lelt; i++) {
+    printf("v before: %lf\n", v.vv[i]);
+  }
+
+  ax(&v, &u, gsh, weights, lpts/lelt);
+
+  for (int i = 0; i < lelt; i++) {
+    printf("v after: %lf\n", v.vv[i]);
+  }
 
   comm_free(&c);
 
