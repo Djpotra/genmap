@@ -1,4 +1,4 @@
-TARGET=libgenmap.so
+TARGET=libgenmap.a
 TESTS=tests
 GSLIB=gslib
 
@@ -14,18 +14,19 @@ SRCDIR  =$(SRCROOT)/src
 INCDIR  =$(SRCROOT)/inc
 INCFLAGS=-I$(INCDIR) -I$(GSDIR)
 TESTDIR =$(SRCROOT)/tests
-GSDIR ?= $(SRCROOT)/../gslib/src
 
 CSRCS:=$(SRCDIR)/io.c $(SRCDIR)/lanczos.c $(SRCDIR)/linalg.c \
-    $(SRCDIR)/csr.c $(TESTDIR)/test.c
+    $(SRCDIR)/csr.c $(TESTDIR)/test.c $(SRCDIR)/laplacian.c
 COBJS:=$(CSRCS:.c=.o)
 FSRCS:=
 FOBJS:=$(FSRCS:.f=.o)
 LDFLAGS:=-shared -lm -L$(GSDIR) -lgs
 
+GSDIR ?= $(SRCROOT)/../gslib/src
+
 TESTCSRC:=$(TESTDIR)/readmap_test.c $(TESTDIR)/ax_test.c \
     $(TESTDIR)/vector_test.c $(TESTDIR)/lanczos_test.c   \
-    $(TESTDIR)/gs_test.c
+    $(TESTDIR)/gs_test.c $(TESTDIR)/laplacian_test.c
 TESTCOBJ:=$(TESTCSRC:.c=.o)
 TESTFSRC:=
 TESTFOBJ:=$(TESTFSRC:.f=.o)
