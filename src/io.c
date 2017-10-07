@@ -1,12 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "gswrapper.h"
+#include "io.h"
 //------------------------------------------------------------------------------
-void readmap(long *npts, long **glo_num, char* name) {
+void readmap(long *npts, long *nel, long **glo_num, char* name) {
   FILE *fp;
 
-  long nel, nactive, depth, d2, nrank, noutflow;
+  long nactive, depth, d2, nrank, noutflow;
   long nc, cnt, jnk;
 
   fp = fopen(name, "r");
@@ -15,12 +15,12 @@ void readmap(long *npts, long **glo_num, char* name) {
   }
 
   cnt = fscanf(fp, "%ld %ld %ld %ld %ld %ld %ld\n",
-        &nel, &nactive, &depth, &d2, npts, &nrank, &noutflow);
+        nel, &nactive, &depth, &d2, npts, &nrank, &noutflow);
   if (cnt != 7) {
     fprintf(stderr, "Unable to read .map file.\n");
   }
 
-  nc  = *npts/nel;
+  nc  = *npts/(*nel);
 
   *glo_num = malloc(sizeof(long)*(*npts));
 

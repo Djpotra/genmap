@@ -4,9 +4,9 @@
 
 //------------------------------------------------------------------------------
 int test_1() {
-  long npts, *glo_num;
+  long npts, nelt, *glo_num;
 
-  readmap(&npts, &glo_num, "nbrhd.map");
+  readmap(&npts, &nelt, &glo_num, "nbrhd.map");
 
   printf("npts = %ld\n", npts);
 
