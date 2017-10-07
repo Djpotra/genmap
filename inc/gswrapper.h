@@ -4,6 +4,10 @@
 #define MPI
 #define PREFIX gslib
 
+#ifdef NEK_EXITT
+  #undef NEK_EXITT
+#endif
+
 // For using functions in comm.h
 #include "test.h"
 #include "types.h"
@@ -13,5 +17,20 @@
 #include "tensor.h"
 #include "fail.h"
 #include "comm.h"
+
+// For gssetup
+#include "c99.h"
+#include "mem.h"
+#include "crystal.h"
+#include "sarray_transfer.h"
+#include "sarray_sort.h"
+#include "sort.h"
+#include "comm.h"
+#include "gs_local.h"
+#include "gs_defs.h"
+#include "types.h"
+#include "fail.h"
+#include "name.h"
+#include "gs.h"
 
 #endif

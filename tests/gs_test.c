@@ -18,6 +18,21 @@ int test_2() {
   return 1;
 }
 //------------------------------------------------------------------------------
+int test_3() {
+  int npts, glo_num;
+  struct comm c;
+
+  comm_init(&c, MPI_COMM_WORLD);
+
+  readmap(&npts, &glo_num, "nbrhd.map");
+
+  gs_setup(&glo_num, npts, &c, 0, gs_auto, 1);
+
+  comm_free(&c);
+
+  return 1;
+}
+//------------------------------------------------------------------------------
 int main() {
   MPI_Init(NULL, NULL);
 
