@@ -10,6 +10,8 @@ int main(int argc, char **argv) {
   long npts, nelt, *glo_num, *weights;
   long lpts, lelt, lstart;
 
+  Vector u, v;
+
   readmap(&npts, &nelt, &glo_num, "nbrhd.map");
 
   int np, rank;
@@ -25,9 +27,14 @@ int main(int argc, char **argv) {
   comm_init(&c, MPI_COMM_WORLD);
   struct gs_data *gsh;
 
-  printf("np3= %d, rank = %d\n", np, rank);
-
   ax_setup(gsh, &weights, &c, lpts, lelt, &glo_num[lstart]);
+
+  for (int i = 0; i < lelt; i++) {
+    printf("rank = %d, lelt = %d, weight = %d\n", rank, i, weights[i]);
+  }
+//  zero_vector(
+
+  ax(&v, &u, gsh);
 
   comm_free(&c);
 
