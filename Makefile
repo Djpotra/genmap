@@ -14,14 +14,14 @@ SRCDIR  =$(SRCROOT)/src
 INCDIR  =$(SRCROOT)/inc
 INCFLAGS=-I$(INCDIR) -I$(GSDIR)
 TESTDIR =$(SRCROOT)/tests
-GSDIR ?= $(SRCROOT)/../gslib/3rd_party/gslib/src
+GSDIR ?= $(SRCROOT)/../gslib/src
 
 CSRCS:=$(SRCDIR)/io.c $(SRCDIR)/lanczos.c $(SRCDIR)/linalg.c \
     $(SRCDIR)/csr.c $(TESTDIR)/test.c
 COBJS:=$(CSRCS:.c=.o)
 FSRCS:=
 FOBJS:=$(FSRCS:.f=.o)
-LDFLAGS:=-shared -lm -L$(GSDIR) -l:libgs.a
+LDFLAGS:=-shared -lm -L$(GSDIR) -lgs
 
 TESTCSRC:=$(TESTDIR)/readmap_test.c $(TESTDIR)/ax_test.c \
     $(TESTDIR)/vector_test.c $(TESTDIR)/lanczos_test.c   \
@@ -29,7 +29,7 @@ TESTCSRC:=$(TESTDIR)/readmap_test.c $(TESTDIR)/ax_test.c \
 TESTCOBJ:=$(TESTCSRC:.c=.o)
 TESTFSRC:=
 TESTFOBJ:=$(TESTFSRC:.f=.o)
-TESTLDFLAGS:=-L. -lgenmap -Wl,-rpath=. -L$(GSDIR) libgs.a
+TESTLDFLAGS:=-L. -lgenmap -Wl,-rpath=. -L$(GSDIR) -lgs
 
 SRCOBJS :=$(COBJS) $(FOBJS)
 TESTOBJS:=$(TESTCOBJ) $(TESTFOBJ)
@@ -63,5 +63,5 @@ $(TESTFOBJ): %.o: %.f
 	$(FC) $(FFLAGS) $(INCFLAGS) $< -o $@ $(TESTLDFLAGS)
 
 .PHONY: clean
-clean: $(SRCOBJS) $(TESTOBJS) $(TARGET)
+clean:
 	rm -f $(SRCOBJS) $(TESTOBJS) $(TARGET)

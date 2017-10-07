@@ -4,10 +4,6 @@
 #define MPI
 #define PREFIX gslib
 
-#ifdef NEK_EXITT
-  #undef NEK_EXITT
-#endif
-
 // For using functions in comm.h
 #include "test.h"
 #include "types.h"
