@@ -29,18 +29,19 @@ TESTCSRC:=$(TESTDIR)/readmap_test.c $(TESTDIR)/ax_test.c \
 TESTCOBJ:=$(TESTCSRC:.c=.o)
 TESTFSRC:=
 TESTFOBJ:=$(TESTFSRC:.f=.o)
-TESTLDFLAGS:=-L. -lgenmap -Wl,-rpath=. -L$(GSDIR) -l:libgs.a
+TESTLDFLAGS:=-L. -lgenmap -Wl,-rpath=. -L$(GSDIR) libgs.a
 
 SRCOBJS :=$(COBJS) $(FOBJS)
 TESTOBJS:=$(TESTCOBJ) $(TESTFOBJ)
 
 .PHONY: all
 all: $(TARGET) $(TESTS)
-#
+
 #.PHONY: $(GSLIB)
-#$(GSLIB):
-#
-#    $(MAKE) -j -B -C $(GSDIR) MPI=1 CC=$(CC) CFLAGS=$(CFLAGS) ADDUS=0 lib
+#$(GSLIB): $(GSDIR)
+#    cd $(GSDIR) && $(MAKE) -j -B
+#MPI=1
+#CC=$(CC) CFLAGS=$(CFLAGS) ADDUS=0 lib
 
 .PHONY: $(TARGET)
 $(TARGET): $(COBJS) $(FOBJS)
@@ -62,5 +63,5 @@ $(TESTFOBJ): %.o: %.f
 	$(FC) $(FFLAGS) $(INCFLAGS) $< -o $@ $(TESTLDFLAGS)
 
 .PHONY: clean
-clean:
+clean: $(SRCOBJS) $(TESTOBJS) $(TARGET)
 	rm -f $(SRCOBJS) $(TESTOBJS) $(TARGET)
