@@ -10,7 +10,7 @@ int rsb_setup = 0;
 void ax_setup(struct gs_data **gsh, int **weights, struct comm *c, \
                             unsigned int npts, unsigned int nelt, long *glo_num)
 {
-  *gsh = gs_setup(glo_num, npts, c, 0, gs_auto, 1);
+  *gsh = gs_setup(glo_num, npts, c, 1, gs_auto, 1);
 
   int *u = malloc(sizeof(int)*npts);
   int nc = npts/nelt;

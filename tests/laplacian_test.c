@@ -8,7 +8,7 @@
 int main(int argc, char **argv) {
   // Serial part: TODO: Do in parallel
   long npts, nelt, *glo_num;
-  int *weights;
+  int *weights, nc;
   unsigned int lpts, lelt, lstart;
 
   Vector u, v;
@@ -20,9 +20,13 @@ int main(int argc, char **argv) {
   MPI_Comm_size(MPI_COMM_WORLD, &np  );
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-  lpts = npts/np;
+  nc = npts/nelt;
   lelt = nelt/np;
-  lstart = rank*lpts;
+  lstart = rank*lelt;
+  if (rank == np - 1) {
+    lelt = nelt - lstart;
+  }
+  lpts = lelt*nc;
 
   struct comm c;
   comm_init(&c, MPI_COMM_WORLD);
@@ -33,7 +37,7 @@ int main(int argc, char **argv) {
 //  printf("lstart = %ld\n", lstart);
 
   for (int i = 0; i < lelt; i++) {
-    printf("rank = %d, lelt = %ld, weight = %ld\n", rank, i, weights[i]);
+    printf("rank = %d, lelt = %d, weight = %d\n", rank, i, weights[i]);
   }
 
   random_vector(&v, lelt); ones_vector(&u, lelt);
