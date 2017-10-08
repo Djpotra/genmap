@@ -8,9 +8,9 @@
 int rsb_setup = 0;
 //------------------------------------------------------------------------------
 void ax_setup(struct gs_data **gsh, int **weights, struct comm *c, \
-                            unsigned int npts, unsigned int nelt, long *glo_num)
+                 unsigned int npts, unsigned int nelt, long *glo_num)
 {
-  *gsh = gs_setup(glo_num, npts, c, 1, gs_auto, 1);
+  *gsh = gs_setup(glo_num, npts, c, 1, gs_all_reduce, 1);
 
   int *u = malloc(sizeof(int)*npts);
   int nc = npts/nelt;
@@ -25,15 +25,15 @@ void ax_setup(struct gs_data **gsh, int **weights, struct comm *c, \
     }
   }
 
-//  for (long i = 0; i < nelt; i++) {
+//  for (unsigned int i = 0; i < nelt; i++) {
 //    for (int j = 0; j < nc; j++) {
-//      printf("u = %ld\n", u[nelt*i + j]);
+//      printf("u = %d\n", u[nelt*i + j]);
 //    }
 //  }
 
   gs(u, gs_int, gs_add, 0, *gsh, NULL);
 
-  *weights = malloc(sizeof(long)*nelt);
+  *weights = malloc(sizeof(int)*nelt);
   for (long i = 0; i < nelt; i++) {
     *(*weights + i) = 0;
     for (long j = 0; j < nc; j++) {
