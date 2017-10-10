@@ -10,14 +10,14 @@ int rsb_setup = 0;
 void ax_setup(struct gs_data **gsh, int **weights, struct comm *c, \
                  unsigned int npts, unsigned int nelt, long *glo_num)
 {
-  *gsh = gs_setup(glo_num, npts, c, 1, gs_all_reduce, 1);
+  *gsh = gs_setup(glo_num, npts, c, 1, gs_all_reduce, 0);
 
   int *u = malloc(sizeof(int)*npts);
   int nc = npts/nelt;
 
-  printf("npts = %u\n", npts);
-  printf("nelt = %u\n", nelt);
-  printf("nc = %d\n", nc);
+//  printf("npts = %u\n", npts);
+//  printf("nelt = %u\n", nelt);
+//  printf("nc = %d\n", nc);
 
   for (unsigned int i = 0; i < nelt; i++) {
     for (int j = 0; j < nc; j++) {
