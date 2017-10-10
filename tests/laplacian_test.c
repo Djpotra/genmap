@@ -34,15 +34,11 @@ int main(int argc, char **argv) {
 
   ax_setup(&gsh, &weights, &c, lpts, lelt, &glo_num[lstart]);
 
-//  for (int i = 0; i < lelt; i++) {
-//    printf("rank = %d, lelt = %d, weight = %d\n", rank, i, weights[i]);
-//  }
-
   random_vector(&v, lelt); ones_vector(&u, lelt);
 
-//  for (int i = 0; i < lelt; i++) {
-//    printf("v before: %lf\n", v.vv[i]);
-//  }
+  for (int i = 0; i < lelt; i++) {
+    printf("v before: %lf\n", v.vv[i]);
+  }
 
   ax(&v, &u, gsh, weights, lpts/lelt);
 
@@ -53,6 +49,11 @@ int main(int argc, char **argv) {
   comm_free(&c);
 
   MPI_Finalize();
+
+//  delete_vector(&v); delete_vector(&u);
+
+  free(glo_num); free(weights);
+
   return 0;
 }
 //------------------------------------------------------------------------------

@@ -13,23 +13,16 @@ void ax_setup(struct gs_data **gsh, int **weights, struct comm *c, \
   *gsh = gs_setup(glo_num, npts, c, 1, gs_all_reduce, 0);
 
   int *u = malloc(sizeof(int)*npts);
+  if (u == NULL) {
+    printf("malloc failed in %s:%d", __FILE__, __LINE__);
+  }
   int nc = npts/nelt;
-
-//  printf("npts = %u\n", npts);
-//  printf("nelt = %u\n", nelt);
-//  printf("nc = %d\n", nc);
 
   for (unsigned int i = 0; i < nelt; i++) {
     for (int j = 0; j < nc; j++) {
-      u[nelt*i + j] = 1;
+      u[nc*i + j] = 1;
     }
   }
-
-//  for (unsigned int i = 0; i < nelt; i++) {
-//    for (int j = 0; j < nc; j++) {
-//      printf("u = %d\n", u[nelt*i + j]);
-//    }
-//  }
 
   gs(u, gs_int, gs_add, 0, *gsh, NULL);
 
@@ -37,14 +30,12 @@ void ax_setup(struct gs_data **gsh, int **weights, struct comm *c, \
   for (long i = 0; i < nelt; i++) {
     *(*weights + i) = 0;
     for (long j = 0; j < nc; j++) {
-//      printf("u = %d\n", u[nelt*i + j]);
-      *(*weights + i) += u[nelt*i + j];
+      *(*weights + i) += u[nc*i + j];
     }
   }
 
-//  for (int i = 0; i < nelt; i++) {
-//    printf("lelt = %d, weight = %ld\n", i, (*weights)[i]);
-//  }
+  free(u);
+
   rsb_setup = 1;
 }
 //------------------------------------------------------------------------------
@@ -61,10 +52,13 @@ void ax(Vector *v, Vector *u, struct gs_data *gsh, int *weights, long nc) {
   int size = v->size;
 
   double *ucv = malloc(sizeof(double)*nc*size);
+  if (ucv == NULL) {
+    printf("malloc failed in %s:%d", __FILE__, __LINE__);
+  }
 
   for (int i = 0; i < size; i++) {
     for (int j = 0; j < nc; j++) {
-      ucv[size*i + j] = uv[i];
+      ucv[nc*i + j] = uv[i];
     }
   }
 
@@ -73,9 +67,10 @@ void ax(Vector *v, Vector *u, struct gs_data *gsh, int *weights, long nc) {
   for (int i = 0; i < size; i++) {
     vv[i] = weights[i]*uv[i];
     for (int j = 0; j < nc; j++) {
-      vv[i] -= ucv[size*i + j];
+      vv[i] -= ucv[nc*i + j];
     }
   }
 
+  free(ucv);
 }
 //------------------------------------------------------------------------------
