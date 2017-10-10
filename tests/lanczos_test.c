@@ -23,7 +23,7 @@ int test_1() {
   zeros_vector(&alpha, n); zeros_vector(&beta, n - 1);
   ones_vector(&init, n);
 
-  lanczos(&alpha, &beta, &A, &init);
+  lanczos_serial(&alpha, &beta, &A, &init);
 
   printf("\nalpha: "); print_vector(&alpha);
   printf("\nbeta: "); print_vector(&beta);
@@ -50,7 +50,7 @@ int test_1_2() {
   zeros_vector(&alpha, n); zeros_vector(&beta, n - 1);
   ones_vector(&init, n);
 
-  lanczos2(&alpha, &beta, &A, &init);
+  lanczos_serial2(&alpha, &beta, &A, &init);
 
   printf("\nalpha: "); print_vector(&alpha);
   printf("\nbeta: "); print_vector(&beta);
@@ -77,7 +77,7 @@ int test_2() {
   zeros_vector(&alpha, n); zeros_vector(&beta, n - 1);
   ones_vector(&init, n);
 
-  lanczos(&alpha, &beta, &A, &init);
+  lanczos_serial(&alpha, &beta, &A, &init);
 
   printf("\nalpha: "); print_vector(&alpha);
   printf("\nbeta: "); print_vector(&beta);
@@ -104,7 +104,7 @@ int test_2_2() {
   zeros_vector(&alpha, n); zeros_vector(&beta, n - 1);
   ones_vector(&init, n);
 
-  lanczos2(&alpha, &beta, &A, &init);
+  lanczos_serial2(&alpha, &beta, &A, &init);
 
   printf("\nalpha: "); print_vector(&alpha);
   printf("\nbeta: "); print_vector(&beta);
@@ -129,7 +129,7 @@ int test_3() {
   zeros_vector(&alpha, n); zeros_vector(&beta, n - 1);
   ones_vector(&init, n);
 
-  lanczos(&alpha, &beta, &A, &init);
+  lanczos_serial(&alpha, &beta, &A, &init);
 
   printf("\nalpha: "); print_vector(&alpha);
   printf("\nbeta: "); print_vector(&beta);
@@ -154,7 +154,7 @@ int test_3_2() {
   zeros_vector(&alpha, n); zeros_vector(&beta, n - 1);
   ones_vector(&init, n);
 
-  lanczos2(&alpha, &beta, &A, &init);
+  lanczos_serial2(&alpha, &beta, &A, &init);
 
   printf("\nalpha: "); print_vector(&alpha);
   printf("\nbeta: "); print_vector(&beta);
@@ -177,7 +177,7 @@ int test_4() {
   zeros_vector(&alpha, n); zeros_vector(&beta, n - 1);
   ones_vector(&init, n);
 
-  lanczos(&alpha, &beta, &A, &init);
+  lanczos_serial(&alpha, &beta, &A, &init);
 
   printf("\nalpha: "); print_vector(&alpha);
   printf("\nbeta: "); print_vector(&beta);
@@ -206,7 +206,7 @@ int test_5() {
   zeros_vector(&alpha, n); zeros_vector(&beta, n - 1);
   ones_vector(&init, n);
 
-  lanczos(&alpha, &beta, &A, &init);
+  lanczos_serial(&alpha, &beta, &A, &init);
 
   printf("\nalpha: "); print_vector(&alpha);
   printf("\nbeta: "); print_vector(&beta);
@@ -215,14 +215,14 @@ int test_5() {
 }
 //------------------------------------------------------------------------------
 int main() {
-  run_test(&test_1, "lnczs1");
+  run_test(&test_1,   "lnczs1"  );
   run_test(&test_1_2, "lnczs1_2");
-  run_test(&test_2, "lnczs2");
+  run_test(&test_2,   "lnczs2"  );
   run_test(&test_2_2, "lnczs2_2");
-  run_test(&test_3, "lnczs3");
+  run_test(&test_3,   "lnczs3"  );
   run_test(&test_3_2, "lnczs3_2");
-  run_test(&test_4, "lnczs4");
-  run_test(&test_5, "lnczs5");
+  run_test(&test_4,   "lnczs4"  );
+  run_test(&test_5,   "lnczs5"  );
 
   return 0;
 }

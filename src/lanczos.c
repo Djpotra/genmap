@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <float.h>
 //------------------------------------------------------------------------------
-void lanczos(Vector *alpha, Vector *beta, CSRMatrix *A, Vector *init) {
+void lanczos_serial(Vector *alpha, Vector *beta, CSRMatrix *A, Vector *init) {
   /* Asserts:
        - #Rows of A == size of alpha  == size of beta + 1 = size of init
   */
@@ -50,7 +50,7 @@ void lanczos(Vector *alpha, Vector *beta, CSRMatrix *A, Vector *init) {
   }
 }
 //------------------------------------------------------------------------------
-void lanczos2(Vector *alpha, Vector *beta, CSRMatrix *A, Vector *init) {
+void lanczos_serial2(Vector *alpha, Vector *beta, CSRMatrix *A, Vector *init) {
   /* Asserts:
        - #Rows of A == size of alpha  == size of beta + 1 = size of init
   */
