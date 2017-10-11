@@ -6,7 +6,7 @@
 int test_1() {
   long npts, nelt, *glo_num;
 
-  readmap(&npts, &nelt, &glo_num, "nbrhd.map");
+  readmap(&npts, &nelt, &glo_num, "nbrhd/nbrhd.map");
 
   printf("npts = %ld\n", npts);
 

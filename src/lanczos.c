@@ -1,8 +1,57 @@
 #include "csr.h"
 #include "linalg.h"
+#include "gswrapper.h"
+#include "laplacian.h"
+#include "io.h"
 
 #include <stdio.h>
 #include <float.h>
+#include <mpi.h>
+//------------------------------------------------------------------------------
+void lanczos(Vector *alpha, Vector *beta, Vector *init) {
+//  /* Asserts:
+//       - #Rows of A == size of alpha  == size of beta + 1 = size of init
+//  */
+//  assert(alpha->size== init->size);
+//  assert(alpha->size== beta->size + 1);
+//
+//  int n = alpha->size;
+//  double norm_q1, b = 0.;
+//  Vector q0, q1, u;
+//
+//  // Set q_0 and beta_0 to zero (both uses 0-indexing)
+//  zeros_vector(&q0, n);
+//  beta->vv[0] = 0.;
+//
+//  // Create vector u
+//  create_vector(&u, n);
+//
+//  // Set q1 to normalized initial vector
+//  create_vector(&q1,    n);
+//  copy_vector  (&q1, init);
+//  norm_q1 = norm_vector(&q1, 2);
+//  mult_scalar_add_vector(&q1, 0., &q1, 1./norm_q1);
+//
+//  for (int k = 0; k < n; k++) {
+//    alpha->vv[k] = dot_vector(&q1, &u);
+//
+//    mult_scalar_add_vector(&u, 1., &q0, -b);
+//    mult_scalar_add_vector(&u, 1., &q1, -alpha->vv[k]);
+//
+//    beta->vv[k] = norm_vector(&u, 2);
+//    b = beta->vv[k];
+//
+//    copy_vector(&q0, &q1);
+//
+////    if (beta->vv[k] < DBL_EPSILON) {
+////      return;
+////    }
+//
+//    mult_scalar_add_vector(&q1, 0., &u, 1./beta->vv[k]);
+//  }
+//
+}
+
 //------------------------------------------------------------------------------
 void lanczos_serial(Vector *alpha, Vector *beta, CSRMatrix *A, Vector *init) {
   /* Asserts:
@@ -49,6 +98,7 @@ void lanczos_serial(Vector *alpha, Vector *beta, CSRMatrix *A, Vector *init) {
     mult_scalar_add_vector(&q1, 0., &u, 1./beta->vv[k]);
   }
 }
+
 //------------------------------------------------------------------------------
 void lanczos_serial2(Vector *alpha, Vector *beta, CSRMatrix *A, Vector *init) {
   /* Asserts:

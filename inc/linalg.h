@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <math.h>
-
+#include <mpi.h>
 //------------------------------------------------------------------------------
 struct genmap_vector {
   int size;
@@ -19,6 +19,7 @@ void   delete_vector(Vector *x);
 int    vectors_equal(Vector *x, Vector *y, double tol);
 
 void   random_vector(Vector *x, int size);
+void   parallel_random_vector(Vector *x, int size, int seed);
 
 void   ones_vector(Vector *x, int size);
 

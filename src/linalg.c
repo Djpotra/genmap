@@ -65,6 +65,19 @@ void random_vector(Vector *x, int size) {
   }
 }
 //------------------------------------------------------------------------------
+void parallel_random_vector(Vector *x, int size, int seed) {
+  create_vector(x, size);
+
+  if (!genmap_srand_initialized) {
+    srand(time(NULL) + seed);
+    genmap_srand_initialized = 1;
+  }
+
+  for (int i = 0; i < size; i++) {
+    x->vv[i] = (double) rand()/RAND_MAX*2. - 1.;
+  }
+}
+//------------------------------------------------------------------------------
 void ones_vector(Vector *x, int size) {
   create_vector(x, size);
 
