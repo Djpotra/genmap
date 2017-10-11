@@ -43,21 +43,21 @@ int main(int argc, char **argv) {
 //    printf("u[%d]=%lf\n",i,u.vv[i]);
 //  }
 
-  if (rank == 0) {
-    for (int i = 0; i < npts; i++) {
-      printf("glo_num[%d] = %ld\n", i, glo_num[i]);
-    }
-  }
+//  if (rank == 0) {
+//    for (int i = 0; i < npts; i++) {
+//      printf("glo_num[%d] = %ld\n", i, glo_num[i]);
+//    }
+//  }
 
-//  ax(&v, &u, gsh, weights, lpts/lelt);
+  ax(&v, &u, gsh, weights, lpts/lelt);
 
 //  for (int i = 0; i < lelt; i++) {
 //    printf("v after: %lf\n", v.vv[i]);
 //  }
 
-  for (int i = 0; i < lelt; i++) {
-    printf("rank = %d, weight[%d] = %lf\n", rank, i, weights[i]);
-  }
+//  for (int i = 0; i < lelt; i++) {
+//    printf("rank = %d, weight[%d] = %lf\n", rank, i, weights[i]);
+//  }
 
   comm_free(&c);
   gs_free(gsh);

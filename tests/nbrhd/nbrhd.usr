@@ -181,7 +181,7 @@ c-----------------------------------------------------------------------
          call gs_op(gsh_rsb,u8,1,1,0)  ! +
          do e=1,nelt
             weights(e) = vlsum(u8(1,e),lc)
-            write(6, *) 'nid =',nid,' weights[',e,'] = ',weights(e)
+!            write(6, *) 'nid =',nid,' weights[',e,'] = ',weights(e) !! Thilina
          enddo
 
       endif
@@ -189,11 +189,11 @@ c-----------------------------------------------------------------------
 c     Compute v = Gu
 
 !! Thilina
-!      call rone(u,nelt) 
-!      do e=1,nelt
-!        u(e)=e
+      call rone(u,nelt) 
+      do e=1,nelt
+        u(e)=e
 !        write(6,*) 'u(',e,')=',u(e)
-!      enddo
+      enddo
 !!! Thilina
 
       do e=1,nelt

@@ -26,11 +26,6 @@ void ax_setup(struct gs_data **gsh, double **weights, struct comm *c, \
 
   gs(u, gs_double, gs_add, 1, *gsh, NULL);
 
- for (unsigned int i = 0; i < nelt; i++) {
-   for (int j = 0; j < nc; j++) {
-     printf("u[%d, %d] = %lf\n", i, j, u[nc*i + j]);
-   }
- }
   *weights = malloc(sizeof(double)*nelt);
   for (long i = 0; i < nelt; i++) {
     *(*weights + i) = 0;
