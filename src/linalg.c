@@ -125,6 +125,30 @@ void mult_scalar_add_vector(Vector *y, double alpha, Vector *x, \
   }
 }
 //------------------------------------------------------------------------------
+void z_axpby_vector(Vector *z, Vector *x, double alpha, \
+                                             Vector *y, double beta) {
+  /* asserts:
+       - size z = size x = size y
+  */
+  assert(z->size == x->size);
+  assert(z->size == y->size);
+
+  int n = x->size;
+  for (int i = 0; i < n; i++) {
+    z->vv[i] = alpha*x->vv[i] + beta*y->vv[i];
+  }
+}
+//------------------------------------------------------------------------------
+void scale_vector(Vector *y, Vector *x,  double alpha) {
+  /* asserts:
+       - size x = size y
+  */
+  int n = x->size;
+  for (int i = 0; i < n; i++) {
+    y->vv[i] = alpha*x->vv[i];
+  }
+}
+//------------------------------------------------------------------------------
 double dot_vector(Vector *x, Vector *y) {
   /* Asserts:
        - size y = size x
