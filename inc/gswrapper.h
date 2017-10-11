@@ -29,4 +29,14 @@
 #include "name.h"
 #include "gs.h"
 
+extern int gop_setup;
+extern struct gs_data *gop_handle;
+extern struct comm gop_comm;
+
+void gop_init();
+
+void gop(void *u, gs_dom dom, gs_op op, unsigned transpose);
+
+void gop_finalize();
+
 #endif
