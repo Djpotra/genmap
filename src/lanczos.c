@@ -8,7 +8,9 @@
 #include <float.h>
 #include <mpi.h>
 //------------------------------------------------------------------------------
-void lanczos(Vector *alpha, Vector *beta, Vector *init) {
+void lanczos(Vector *alpha, Vector *beta,
+  struct gs_data *gsh, double *weights, int nc, Vector *init) {
+
   assert(alpha->size== init->size);
   assert(alpha->size== beta->size + 1);
 
@@ -29,6 +31,7 @@ void lanczos(Vector *alpha, Vector *beta, Vector *init) {
 
   // This should be a global operation
   norm_q1 = norm_vector(&q1, 2);
+//  gs(&norm_q1, gs_double, gs_add,
 
   scale_vector(&q1, &q1, 1./norm_q1);
 
