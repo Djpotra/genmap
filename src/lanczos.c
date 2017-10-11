@@ -11,10 +11,10 @@
 void lanczos(Vector *alpha, Vector *beta,
   struct gs_data *gsh, double *weights, int nc, Vector *init, int iter) {
 
-  assert(alpha->size== init->size == iter);
+  assert(alpha->size== iter);
   assert(alpha->size== beta->size + 1);
 
-  int n = alpha->size;
+  int n = init->size;
   double norm_q1, b = 0.;
   Vector q0, q1, u;
 
@@ -58,7 +58,6 @@ void lanczos(Vector *alpha, Vector *beta,
 
     scale_vector(&q1, &u, 1./beta->vv[k]);
   }
-
 }
 
 //------------------------------------------------------------------------------
