@@ -11,7 +11,7 @@
 void lanczos(Vector *alpha, Vector *beta,
   struct gs_data *gsh, double *weights, int nc, Vector *init, int iter) {
 
-  assert(alpha->size== init->size);
+  assert(alpha->size== init->size == iter);
   assert(alpha->size== beta->size + 1);
 
   int n = alpha->size;
@@ -40,12 +40,14 @@ void lanczos(Vector *alpha, Vector *beta,
     ax(&u, &q1, gsh, weights, nc);
 
     alpha->vv[k] = dot_vector(&q1, &u);
+    gop(&alpha->vv[k], gs_double, gs_add, 0);
 
     z_axpby_vector(&u, &u, 1., &q0, -b);
     z_axpby_vector(&u, &u, 1., &q1, -alpha->vv[k]);
 
     // This should be a global operation
-    beta->vv[k] = norm_vector(&u, 2);
+    beta->vv[k] = dot_vector(&u, 2);
+    gop(&beta->vv[k], gs_double, gs_add, 0);
     b = beta->vv[k];
 
     copy_vector(&q0, &q1);
