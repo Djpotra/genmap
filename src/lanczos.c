@@ -9,7 +9,7 @@
 #include <mpi.h>
 //------------------------------------------------------------------------------
 void lanczos(Vector *alpha, Vector *beta,
-  struct gs_data *gsh, double *weights, int nc, Vector *init) {
+  struct gs_data *gsh, double *weights, int nc, Vector *init, int iter) {
 
   assert(alpha->size== init->size);
   assert(alpha->size== beta->size + 1);
@@ -29,15 +29,15 @@ void lanczos(Vector *alpha, Vector *beta,
   create_vector(&q1,    n);
   copy_vector  (&q1, init);
 
-  // This should be a global operation
-  norm_q1 = norm_vector(&q1, 2);
-//  gs(&norm_q1, gs_double, gs_add,
+  norm_q1 = dot_vector(&q1, &q1);
+  gop(&norm_q1, gs_double, gs_add, 0);
+  norm_q1 = sqrt(norm_q1);
 
   scale_vector(&q1, &q1, 1./norm_q1);
 
-  for (int k = 0; k < n; k++) {
+  for (int k = 0; k < iter; k++) {
     // Multiplication by the laplacian
-    // TODO
+    ax(&u, &q1, gsh, weights, nc);
 
     alpha->vv[k] = dot_vector(&q1, &u);
 
