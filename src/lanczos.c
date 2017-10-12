@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <float.h>
 #include <mpi.h>
+#include <math.h>
 //------------------------------------------------------------------------------
 void lanczos(Vector *alpha, Vector *beta,
   struct gs_data *gsh, double *weights, int nc, Vector *init, int iter) {
@@ -49,6 +50,7 @@ void lanczos(Vector *alpha, Vector *beta,
 
     alpha->vv[k] = dot_vector(&q1, &u);
     gop(&alpha->vv[k], gs_double, gs_add, 0);
+    alpha->vv[k] = sqrt(alpha->vv[k]);
 
     z_axpby_vector(&u, &u, 1., &q0, -b);
     z_axpby_vector(&u, &u, 1., &q1, -alpha->vv[k]);
@@ -56,6 +58,7 @@ void lanczos(Vector *alpha, Vector *beta,
     // This should be a global operation
     b = dot_vector(&u, &u);
     gop(&b, gs_double, gs_add, 0);
+    b = sqrt(b);
     if (k < iter - 1) {
       beta->vv[k] = b;
     }
