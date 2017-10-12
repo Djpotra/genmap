@@ -32,6 +32,7 @@ void lanczos(Vector *alpha, Vector *beta,
   for (int i = 0; i < n; i++) {
     sum += init->vv[i];
   }
+  gop(&sum, gs_double, gs_add, 0);
   for (int i = 0; i < n; i++) {
     init->vv[i] -= sum;
   }
