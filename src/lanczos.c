@@ -27,6 +27,14 @@ void lanczos(Vector *alpha, Vector *beta,
 
   // Set q1 to normalized initial vector
   create_vector(&q1,     n);
+  double sum = 0.;
+  for (int i = 0; i < n; i++) {
+    sum += init->vv[i];
+  }
+  for (int i = 0; i < n; i++) {
+    init->vv[i] -= sum;
+  }
+
   copy_vector  (&q1, init);
 
   norm_q1 = dot_vector(&q1, &q1);

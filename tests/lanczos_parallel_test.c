@@ -40,15 +40,20 @@ int main(int argc, char **argv) {
 
   // Setup variables for lanczos
   int iter = 8;
-  ones_vector (&init , lelt    );
+  zeros_vector (&init , lelt    );
+  for (int i = 0; i < lelt; i++) {
+    init.vv[i] = (double)lstart + i;
+  }
   zeros_vector(&alpha, iter    );
   zeros_vector(&beta , iter - 1);
 
   // Do lanczos
   lanczos(&alpha, &beta, gsh, weights, nc, &init, iter); 
-//  for (int i = 0; i < lelt; i++) {
-//    printf("v: %lf\n", v.vv[i]);
-//  }
+  if (rank == 0) {
+    for (int i = 0; i < iter; i++) {
+      printf("alpha: %lf\n", alpha.vv[i]);
+    }
+  }
 //
 //  for (int i = 0; i < lelt; i++) {
 //    printf("rank = %d, weight[%d] = %lf\n", rank, i, weights[i]);
