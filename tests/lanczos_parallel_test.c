@@ -48,10 +48,10 @@ int main(int argc, char **argv) {
   zeros_vector(&beta , iter - 1);
 
   // Do lanczos
-  lanczos(&alpha, &beta, gsh, weights, nc, &init, iter); 
+  lanczos(&alpha, &beta, gsh, weights, nc, &init, iter);
   if (rank == 0) {
-    for (int i = 0; i < iter; i++) {
-      printf("alpha: %lf\n", alpha.vv[i]);
+    for (int i = 0; i < iter - 1; i++) {
+      printf("beta: %lf\n", beta.vv[i]);
     }
   }
 //
