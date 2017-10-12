@@ -143,9 +143,11 @@ void scale_vector(Vector *y, Vector *x,  double alpha) {
   /* asserts:
        - size x = size y
   */
+  assert(x->size == y->size);
+
   int n = x->size;
   for (int i = 0; i < n; i++) {
-    y->vv[i] = alpha*x->vv[i];
+    y->vv[i] = alpha*(x->vv[i]);
   }
 }
 //------------------------------------------------------------------------------

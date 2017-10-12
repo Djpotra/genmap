@@ -11,7 +11,7 @@ int main(int argc, char **argv) {
   long npts, nelt, *glo_num;
   double *weights;
   int nc;
-  unsigned int lpts, lelt, lstart;
+  int lpts, lelt, lstart;
 
   Vector init, alpha, beta;
 
