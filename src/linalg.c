@@ -15,6 +15,7 @@ void create_vector(Vector *x, int size) {
   assert(size > 0);
 
   x->size = size;
+  x->vv = NULL;
   x->vv = (double *) malloc(sizeof(double)*size);
   if (x->vv == NULL) {
     printf("malloc failed in %s:%d", __FILE__, __LINE__);
@@ -28,7 +29,6 @@ void delete_vector(Vector *x) {
   }
 
   if (x) {
-    free(x);
     x = NULL;
   }
 }

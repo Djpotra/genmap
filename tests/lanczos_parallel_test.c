@@ -54,10 +54,6 @@ int main(int argc, char **argv) {
       printf("beta: %lf\n", beta.vv[i]);
     }
   }
-//
-//  for (int i = 0; i < lelt; i++) {
-//    printf("rank = %d, weight[%d] = %lf\n", rank, i, weights[i]);
-//  }
 
   // Free data structures
   comm_free(&c);
@@ -65,8 +61,8 @@ int main(int argc, char **argv) {
 
   MPI_Finalize();
 
-//  delete_vector(&alpha); delete_vector(&beta);
-//  delete_vector(&init);
+  delete_vector(&alpha); delete_vector(&beta);
+  delete_vector(&init);
 
   free(glo_num); free(weights);
 

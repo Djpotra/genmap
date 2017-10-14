@@ -12,7 +12,8 @@ void ax_setup(struct gs_data **gsh, double **weights, struct comm *c, \
 {
   *gsh = gs_setup(glo_num, npts, c, 0, gs_auto, 0);
 
-  double *u = malloc(sizeof(double)*npts);
+  double *u = NULL;
+  u = malloc(sizeof(double)*npts);
   if (u == NULL) {
     printf("malloc failed in %s:%d", __FILE__, __LINE__);
   }
@@ -51,7 +52,8 @@ void ax(Vector *v, Vector *u, struct gs_data *gsh, double *weights, long nc) {
   double *uv = u->vv;
   int size = v->size;
 
-  double *ucv = malloc(sizeof(double)*nc*size);
+  double *ucv = NULL;
+  ucv = malloc(sizeof(double)*nc*size);
   if (ucv == NULL) {
     printf("malloc failed in %s:%d", __FILE__, __LINE__);
   }

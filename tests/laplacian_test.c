@@ -9,7 +9,7 @@
 int main(int argc, char **argv) {
   // Serial part: TODO: Do in parallel
   long npts, nelt, *glo_num;
-  double *weights;
+  double *weights = NULL;
   int nc;
   unsigned int lpts, lelt, lstart;
 
