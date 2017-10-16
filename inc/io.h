@@ -7,4 +7,6 @@
 
 void readmap(long *npts, long *nelt, long **glo_num, char* name);
 
+void readmap_parallel(long *npts, long *nelt, long **glo_num, char* name);
+
 #endif

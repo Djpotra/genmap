@@ -15,12 +15,13 @@ int main(int argc, char **argv) {
 
   Vector init, alpha, beta;
 
+  MPI_Init(&argc, &argv);
+
   // Read the .map file
   readmap(&npts, &nelt, &glo_num, "nbrhd/nbrhd.map");
 
   // Element distribution after reading the .map file
   int np, rank;
-  MPI_Init(&argc, &argv);
   MPI_Comm_size(MPI_COMM_WORLD, &np  );
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
@@ -54,6 +55,10 @@ int main(int argc, char **argv) {
       printf("beta: %lf\n", beta.vv[i]);
     }
   }
+
+//  for (int i = 0; i < lelt; i++) {
+//    printf("rank = %d, weights[%d]=%lf", i, i, weights[i]);
+//  }
 
   // Free data structures
   comm_free(&c);
