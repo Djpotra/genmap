@@ -25,20 +25,21 @@ void lanczos(Vector *alpha, Vector *beta,
 
   // Create vector u
   create_vector(&u, n);
-
   // Set q1 to normalized initial vector
   create_vector(&q1,     n);
+
   double sum = 0.;
+  int nglobal= n;
   for (int i = 0; i < n; i++) {
     sum += init->vv[i];
   }
   gop(&sum, gs_double, gs_add, 0);
+  gop(&nglobal, gs_int, gs_add, 0);
   for (int i = 0; i < n; i++) {
-    init->vv[i] -= sum;
+    init->vv[i] -= sum/nglobal;
   }
 
-  copy_vector  (&q1, init);
-
+  copy_vector(&q1, init);
   norm_q1 = dot_vector(&q1, &q1);
   gop(&norm_q1, gs_double, gs_add, 0);
   norm_q1 = sqrt(norm_q1);
@@ -51,7 +52,6 @@ void lanczos(Vector *alpha, Vector *beta,
 
     alpha->vv[k] = dot_vector(&q1, &u);
     gop(&alpha->vv[k], gs_double, gs_add, 0);
-    alpha->vv[k] = sqrt(alpha->vv[k]);
 
     z_axpby_vector(&u, &u, 1., &q0, -b);
     z_axpby_vector(&u, &u, 1., &q1, -alpha->vv[k]);
