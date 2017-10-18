@@ -50,12 +50,28 @@ int main(int argc, char **argv) {
     printf("rank = %d, weight[%d] = %lf\n", rank, i, weights[i]);
   }
 
+  if (rank < np/2) {
+    for (int i = 0; i < lelt; i++) {
+      u.vv[i] = 0;
+    }
+  } else {
+    for (int i = 0; i < lelt; i++) {
+      u.vv[i] = 1;
+    }
+  }
+
+  ax(&v, &u, gsh, weights, lpts/lelt);
+
+  for (int i = 0; i < lelt; i++) {
+    printf("v: %lf\n", v.vv[i]);
+  }
+
   comm_free(&c);
   gs_free(gsh);
 
   MPI_Finalize();
 
-//  delete_vector(&v); delete_vector(&u);
+  delete_vector(&v); delete_vector(&u);
 
   free(glo_num); free(weights);
 

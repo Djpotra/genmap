@@ -25,7 +25,7 @@ LDFLAGS:=-shared -lm -L$(GSDIR) -lgs
 
 GSDIR ?= $(SRCROOT)/../gslib/src
 
-TESTCSRC:=$(TESTDIR)/readmap_test.c $(TESTDIR)/ax_test.c \
+TESTCSRC:=$(TESTDIR)/readmap_test.c $(TESTDIR)/csr_test.c \
     $(TESTDIR)/vector_test.c $(TESTDIR)/lanczos_serial_test.c   \
     $(TESTDIR)/gs_test.c $(TESTDIR)/laplacian_test.c     \
     $(TESTDIR)/gop_test.c $(TESTDIR)/lanczos_parallel_test.c

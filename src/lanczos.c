@@ -66,9 +66,11 @@ void lanczos(Vector *alpha, Vector *beta,
 
     copy_vector(&q0, &q1);
 
-//    if (beta->vv[k] < DBL_EPSILON) {
-//      return;
-//    }
+    if (beta->vv[k] < DBL_EPSILON) {
+      beta->size = k;
+      alpha->size = k + 1;
+      return;
+    }
 
     scale_vector(&q1, &u, 1./beta->vv[k]);
   }

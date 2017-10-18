@@ -52,13 +52,13 @@ int main(int argc, char **argv) {
   lanczos(&alpha, &beta, gsh, weights, nc, &init, iter);
   if (rank == 0) {
     printf("beta = [");
-    for (int i = 0; i < iter - 1; i++) {
-      printf("%lf, ", beta.vv[i]);
+    for (int i = 0; i < beta.size; i++) {
+      printf("%.17g, ", beta.vv[i]);
     }
     printf("]\n");
     printf("alpha= [");
-    for (int i = 0; i < iter ; i++) {
-      printf("%lf, ", alpha.vv[i]);
+    for (int i = 0; i < alpha.size; i++) {
+      printf("%.17g, ", alpha.vv[i]);
     }
     printf("]\n");
   }
