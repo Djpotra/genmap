@@ -3,6 +3,7 @@
 #include "laplacian.h"
 #include "linalg.h"
 #include "io.h"
+#include "tqli.h"
 
 #include <mpi.h>
 //------------------------------------------------------------------------------
@@ -59,6 +60,21 @@ int main(int argc, char **argv) {
     printf("alpha= [");
     for (int i = 0; i < alpha.size; i++) {
       printf("%.17g, ", alpha.vv[i]);
+    }
+    printf("]\n");
+
+    Vector d, e;
+    zeros_vector(&d, iter); zeros_vector(&e, iter);
+    copy_vector(&d, &alpha);
+    for (int i = 0; i < iter - 1; i++) {
+      e.vv[i] = beta.vv[i];
+    }
+
+    printf("pythag = %lf", pythag(3.0, 4.0));
+    tqli(d.vv, e.vv, 4, &weights);
+    printf("eVals = [");
+    for (int i = 0; i < iter; i++) {
+      printf("%.17g, ", d.vv[i]);
     }
     printf("]\n");
   }
