@@ -63,10 +63,6 @@ int main(int argc, char **argv) {
     printf("]\n");
   }
 
-//  for (int i = 0; i < lelt; i++) {
-//    printf("rank = %d, weights[%d]=%lf", i, i, weights[i]);
-//  }
-
   // Free data structures
   comm_free(&c);
   gs_free(gsh);
