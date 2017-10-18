@@ -25,20 +25,17 @@ void tqli(double *d, double *e, int n, double **z) {
   e[n - 1] = 0.0; // so e is a n vector
 
   for (l = 0; l < n; l++) {
-    printf("l=%d\n", l);
     iter = 0;
     do {
       // Look for a small subdiagonal entry to split the matrix
       for (m = l; m < n - 1; m++) {
-//        printf("m=%d\n", m);
         dd = fabs(d[m]) + fabs(d[m + 1]);
-        if (fabs(e[m]) + dd == dd) break;
+        if (fabs(e[m]) + dd == dd) {
+           break;
+        }
       }
 
-      printf("I am here\n l=%d, m=%d", l, m);
-
       if (m != l) {
-        if (iter++ == 30) printf("Too many iterations in tqli");
         g = (d[l + 1] - d[l])/(2.0*e[l]);
         r = pythag(g, 1.0);
         g = d[m] - d[l] + e[l]/(g + SIGN(r, g));
@@ -46,7 +43,6 @@ void tqli(double *d, double *e, int n, double **z) {
         p = 0.0;
 
         for (i = m - 2; i >= l; i--) {
-          printf("i=%d\n", i);
           f = s*e[i];
           b = c*e[i];
   
@@ -64,7 +60,7 @@ void tqli(double *d, double *e, int n, double **z) {
           d[i + 1] = g + (p = s*r);
           g = c*r - b;
   
-          // Loop for eigenvactors here, omitter for now
+          // Loop for eigenvactors here, omitted for now
         }
   
         if (r == 0.0 && i >= l) continue;
@@ -72,7 +68,7 @@ void tqli(double *d, double *e, int n, double **z) {
         e[l] = g;
         e[m] = 0.0;
       }
-    } while (m != l);
+    } while (m != l && (m < n - 1));
   }
 }
 //------------------------------------------------------------------------------

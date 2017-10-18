@@ -70,10 +70,9 @@ int main(int argc, char **argv) {
       e.vv[i] = beta.vv[i];
     }
 
-    printf("pythag = %lf", pythag(3.0, 4.0));
     tqli(d.vv, e.vv, 4, &weights);
     printf("eVals = [");
-    for (int i = 0; i < iter; i++) {
+    for (int i = 0; i < 4; i++) {
       printf("%.17g, ", d.vv[i]);
     }
     printf("]\n");
