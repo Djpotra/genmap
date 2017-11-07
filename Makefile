@@ -16,7 +16,7 @@ INCFLAGS=-I$(INCDIR) -I$(GSDIR)
 TESTDIR =$(SRCROOT)/tests
 
 CSRCS:=$(SRCDIR)/io.c $(SRCDIR)/lanczos.c $(SRCDIR)/linalg.c \
-    $(SRCDIR)/csr.c $(TESTDIR)/test.c $(SRCDIR)/laplacian.c  \
+    $(SRCDIR)/csr.c $(SRCDIR)/test.c $(SRCDIR)/laplacian.c  \
     $(SRCDIR)/gswrapper.c $(SRCDIR)/tqli.c
 
 COBJS:=$(CSRCS:.c=.o)
