@@ -4,8 +4,6 @@
 #include "linalg.h"
 #include "gswrapper.h"
 #include "laplacian.h"
-
-#include <mpi.h>
 //------------------------------------------------------------------------------
 // CSRMatrix structure
 struct genmap_csr {

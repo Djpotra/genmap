@@ -2,7 +2,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <mpi.h>
 //------------------------------------------------------------------------------
 // TODO
 void readmap_parallel(long *npts, long *nel, long **glo_num,

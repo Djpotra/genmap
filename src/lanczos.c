@@ -6,7 +6,6 @@
 
 #include <stdio.h>
 #include <float.h>
-#include <mpi.h>
 #include <math.h>
 //------------------------------------------------------------------------------
 void lanczos(Vector *alpha, Vector *beta,
