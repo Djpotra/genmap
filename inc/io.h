@@ -4,9 +4,16 @@
 #include <stdio.h>
 
 #include "gswrapper.h"
+//------------------------------------------------------------------------------
+long file_open(char *name, int mode);
 
-void readmap(long *npts, long *nelt, long **glo_num, char* name);
+long file_read(long fh);
 
-void readmap_parallel(long *npts, long *nelt, long **glo_num, char* name);
+long file_write(long fh);
+
+long file_close(long fh);
+
+void readmap(int nid, long *npts, long *nelt, long **glo_num, char* name);
+//------------------------------------------------------------------------------
 
 #endif

@@ -24,8 +24,6 @@ int test_3() {
 
   comm_init(&c, MPI_COMM_WORLD);
 
-  readmap(&npts, &glo_num, "nbrhd.map");
-
   gs_setup(&glo_num, npts, &c, 0, gs_crystal_router, 1);
 
   comm_free(&c);
