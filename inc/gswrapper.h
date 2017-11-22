@@ -2,7 +2,7 @@
 #define _GSWRAPPER_H
 
 #define MPI
-#define PREFIX gslib
+//#define PREFIX gslib
 
 // For using functions in comm.h
 #include "test.h"
