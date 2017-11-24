@@ -1,10 +1,6 @@
 #ifndef _LINALG_H_
 #define _LINALG_H_
 
-#include <stdlib.h>
-#include <assert.h>
-#include <math.h>
-#include <mpi.h>
 //------------------------------------------------------------------------------
 struct genmap_vector {
   int size;

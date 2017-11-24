@@ -1,13 +1,9 @@
-#include "csr.h"
-#include "linalg.h"
-#include "gswrapper.h"
 #include "laplacian.h"
-#include "io.h"
+#include "lanczos.h"
 
-#include <stdio.h>
-#include <float.h>
-#include <mpi.h>
 #include <math.h>
+#include <assert.h>
+#include <float.h>
 //------------------------------------------------------------------------------
 void lanczos(Vector *alpha, Vector *beta,
   struct gs_data *gsh, double *weights, int nc, Vector *init, int iter) {

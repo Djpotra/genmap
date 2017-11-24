@@ -1,5 +1,6 @@
 #include "csr.h"
 
+#include <assert.h>
 //------------------------------------------------------------------------------
 void csr_matrix_vector_multiply(Vector *y, CSRMatrix *A, Vector *x) {
   /* Asserts:
