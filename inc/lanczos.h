@@ -8,8 +8,8 @@
 //------------------------------------------------------------------------------
 // Lanczos iteration
 
-void lanczos(Vector *alpha, Vector *beta, \
-  struct gs_data *gsh, double *weights, int nc, Vector *init, int iter);
+void lanczos(Vector *alpha, Vector *beta, struct gs_data *gsh,
+            double *weights, int nc, Vector *init, int iter);
 
 void lanczos_serial (Vector *alpha, Vector *beta, CSRMatrix *A, Vector *init);
 

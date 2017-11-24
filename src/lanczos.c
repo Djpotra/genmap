@@ -5,9 +5,9 @@
 #include <assert.h>
 #include <float.h>
 //------------------------------------------------------------------------------
-void lanczos(Vector *alpha, Vector *beta,
-  struct gs_data *gsh, double *weights, int nc, Vector *init, int iter) {
-
+void lanczos(Vector *alpha, Vector *beta, struct gs_data *gsh,
+            double *weights, int nc, Vector *init, int iter)
+{
   assert(alpha->size == iter);
   assert(alpha->size == beta->size + 1);
 
@@ -49,7 +49,7 @@ void lanczos(Vector *alpha, Vector *beta,
     alpha->vv[k] = dot_vector(&q1, &u);
     gop(&alpha->vv[k], gs_double, gs_add, 0);
 
-    z_axpby_vector(&u, &u, 1., &q0, -b);
+    z_axpby_vector(&u, &u, 1., &q0, -b           );
     z_axpby_vector(&u, &u, 1., &q1, -alpha->vv[k]);
 
     // This should be a global operation
