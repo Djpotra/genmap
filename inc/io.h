@@ -10,8 +10,10 @@ long file_write(long fh);
 
 long file_close(long fh);
 
-void readmap_dev(int nid, long *npts, long *nelt, long **glo_num, char* name);
-//TODO: Get rid of this one
+void readmap_mpi(int nid, long *npts, long *nelt, long **glo_num, char* name);
+
+void readmap_serial(long *npts, long *nelt, long **glo_num, char* name);
+
 void readmap(long *npts, long *nelt, long **glo_num, char* name);
 //------------------------------------------------------------------------------
 

@@ -2,8 +2,7 @@
 #include "gswrapper.h"
 #include "laplacian.h"
 #include "linalg.h"
-
-#include <mpi.h>
+#include "mpiwrapper.h"
 //------------------------------------------------------------------------------
 int main(int argc, char **argv) {
   int np, rank;

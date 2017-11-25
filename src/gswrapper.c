@@ -4,7 +4,7 @@
 int gop_setup = 0;
 struct gs_data *gop_handle;
 struct comm gop_comm;
-
+//------------------------------------------------------------------------------
 void gop_init() {
   comm_init(&gop_comm, MPI_COMM_WORLD);
 
@@ -25,6 +25,6 @@ void gop(void *u, gs_dom dom, gs_op op, unsigned transpose) {
 void gop_finalize() {
   comm_free(&gop_comm);
 
-  gs_free(&gop_handle);
+  gs_free(gop_handle);
 }
 //------------------------------------------------------------------------------

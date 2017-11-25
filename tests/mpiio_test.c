@@ -1,7 +1,6 @@
 #include "io.h"
 #include "test.h"
-
-#include <mpi.h>
+#include "mpiwrapper.h"
 
 #define FILESIZE (1024 * 1024)
 //------------------------------------------------------------------------------

@@ -3,8 +3,7 @@
 #include "laplacian.h"
 #include "linalg.h"
 #include "io.h"
-
-#include <mpi.h>
+#include "mpiwrapper.h"
 //------------------------------------------------------------------------------
 int main(int argc, char **argv) {
   // Serial part: TODO: Do in parallel

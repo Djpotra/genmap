@@ -1,5 +1,7 @@
-TARGET=libgenmap.a
+TARGET=genmap
+LIB=lib$(TARGET).a
 TESTS=tests
+
 GSLIB=gslib
 GSDIR ?= $(SRCROOT)/../gslib/src
 MPI ?= 1
@@ -55,8 +57,8 @@ all: $(TARGET) $(TESTS)
 
 .PHONY: $(TARGET)
 $(TARGET): $(COBJS) $(FOBJS)
-	@$(AR) cr $(TARGET) $(SRCOBJS)
-	@ranlib $(TARGET)
+	@$(AR) cr $(LIB) $(SRCOBJS)
+	@ranlib $(LIB)
 
 $(COBJS): %.o: %.c
 	$(CC) $(CFLAGS) $(INCFLAGS) -c $< -o $@
