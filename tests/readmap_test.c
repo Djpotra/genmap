@@ -1,6 +1,6 @@
 #include "io.h"
 #include "test.h"
-#include "gswrapper.h"
+#include "mpiwrapper.h"
 
 //------------------------------------------------------------------------------
 int test_1() {

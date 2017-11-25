@@ -1,4 +1,4 @@
-#include "gswrapper.h"
+#include "mpiwrapper.h"
 
 //------------------------------------------------------------------------------
 int test_1() {
@@ -8,6 +8,7 @@ int test_1() {
   return id;
 }
 //------------------------------------------------------------------------------
+#ifdef MPI
 int test_2() {
   struct comm c;
 
@@ -31,14 +32,20 @@ int test_3() {
   return 1;
 }
 //------------------------------------------------------------------------------
+#endif
 int main() {
+#ifdef MPI
   MPI_Init(NULL, NULL);
+#endif
 
   run_test(&test_1,"gs_link1");
+#ifdef MPI
   run_test(&test_2,"gs_comm1");
   run_test(&test_3,"gs_comm2");
 
   MPI_Finalize();
+#endif
+
   return 0;
 }
 //------------------------------------------------------------------------------

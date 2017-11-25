@@ -19,9 +19,15 @@ int main(int argc, char **argv) {
   nelt = header[NEL];
 
   int np, rank;
+#ifdef MPI
   MPI_Init(&argc, &argv);
   MPI_Comm_size(MPI_COMM_WORLD, &np  );
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+#else
+  np = 1;
+  rank = 0;
+  int MPI_COMM_WORLD = 0;
+#endif
 
   nc = npts/nelt;
   lelt = nelt/np;
@@ -70,7 +76,9 @@ int main(int argc, char **argv) {
   comm_free(&c);
   gs_free(gsh);
 
+#ifdef MPI
   MPI_Finalize();
+#endif
 
   delete_vector(&v); delete_vector(&u);
 

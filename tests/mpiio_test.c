@@ -8,7 +8,7 @@ int test_1()
   char *name = "nbrhd/nbrhd.map.bin";
   long *header, *glo_num;
 
-  readmap_serial(&header, &glo_num, name);
+  readmap(&header, &glo_num, name);
 
   return 1;
 }

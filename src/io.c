@@ -2,20 +2,26 @@
 #include "mpiwrapper.h"
 
 #include <stdio.h>
-#include <stdlib.h>
 //------------------------------------------------------------------------------
 #ifdef MPI
 void readmap_mpi(long **header, long **glo_num, char* name)
 {
   MPI_File fh;
   MPI_Offset offset;
+  MPI_Status st;
 
-  MPI_File_open(MPI_COMM_WORLD, name, mode, MPI_INFO_NULL, &fh);
-
-  int file_size = MPI_File_get_size(fh, &offset);
-  printf("File size = %d\n", offset);
+  MPI_File_open(MPI_COMM_WORLD, name, MPI_MODE_RDONLY, MPI_INFO_NULL, &fh);
 
   MPI_File_seek(fh, 0, MPI_SEEK_SET);
+  MPI_File_get_size(fh, &offset);
+  printf("Size of file in parallel: %d\n", offset);
+
+  *header = malloc(sizeof(long)*MAP_HEADER_SIZE);
+  long *header_val = *header;
+  MPI_File_read(fh, header_val, MAP_HEADER_SIZE, MPI_LONG, &st);
+
+//  MPI_File_seek(fh, rank*chunk_size, fh);
+//  MPI_File_read(fh, *header, MAP_HEADER_SIZE, MPI_LONG, &st);
 
   MPI_File_close(&fh);
 }
@@ -41,7 +47,6 @@ void readmap_serial(long **header, long **glo_num, char* name)
 
   // nel, nactive, depth, d2, npts, nrank, noutflow
   fread(header_val, sizeof(long), MAP_HEADER_SIZE, fp);
-
   printf("Size of file in serial: %d\n", size);
 
   // nc = npts/nel
