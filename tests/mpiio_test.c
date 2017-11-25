@@ -2,9 +2,13 @@
 #include "test.h"
 
 #include <mpi.h>
+
+#define FILESIZE (1024 * 1024)
 //------------------------------------------------------------------------------
 int test_1()
 {
+  char *buf, rank, nprocs, nints, bufsize;
+
   file_open("nbrhd/nbrhd.map", MPI_MODE_RDONLY);
   return 1;
 }
