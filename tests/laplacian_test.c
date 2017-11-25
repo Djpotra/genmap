@@ -14,7 +14,7 @@ int main(int argc, char **argv) {
 
   Vector u, v;
 
-  readmap(&header, &glo_num, "nbrhd/nbrhd.map.bin");
+  readmap_serial(&header, &glo_num, "nbrhd/nbrhd.map.bin");
   npts = header[NPTS];
   nelt = header[NEL];
 

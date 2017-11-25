@@ -6,6 +6,8 @@
 #include "mpiwrapper.h"
 //------------------------------------------------------------------------------
 int main(int argc, char **argv) {
+
+#ifdef MPI
   // Serial part: TODO: Do in parallel
   long npts, nelt, *glo_num, *header;
   double *weights;
@@ -81,6 +83,7 @@ int main(int argc, char **argv) {
   delete_vector(&init);
 
   free(glo_num); free(weights);
+#endif
 
   return 0;
 }

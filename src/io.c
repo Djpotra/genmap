@@ -4,9 +4,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 //------------------------------------------------------------------------------
-long file_open(char *header, char *data, char* name, int mode)
-{
 #ifdef MPI
+void readmap_mpi(long **header, long **glo_num, char* name)
+{
   MPI_File fh;
   MPI_Offset offset;
 
@@ -18,16 +18,8 @@ long file_open(char *header, char *data, char* name, int mode)
   MPI_File_seek(fh, 0, MPI_SEEK_SET);
 
   MPI_File_close(&fh);
-#else
-  printf("Serial !!!!\n");
+}
 #endif
-  return 1;
-}
-//------------------------------------------------------------------------------
-void readmap_mpi(int nid, long *npts, long *nel, long **glo_num,
-            char* name)
-{
-}
 //------------------------------------------------------------------------------
 void readmap_serial(long **header, long **glo_num, char* name)
 {
@@ -69,10 +61,8 @@ void readmap_serial(long **header, long **glo_num, char* name)
 //------------------------------------------------------------------------------
 void readmap(long **header, long **glo_num, char* name)
 {
-  int nid = 0;
-  long npts, nelt;
 #ifdef MPI
-  readmap_mpi(nid, npts, nelt, glo_num, name);
+  readmap_mpi   (header, glo_num, name);
 #else
   readmap_serial(header, glo_num, name);
 #endif
