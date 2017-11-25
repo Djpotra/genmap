@@ -1,7 +1,5 @@
 #include "gswrapper.h"
-#include "mpiwrapper.h"
 
-#include <stdlib.h>
 //------------------------------------------------------------------------------
 int gop_setup = 0;
 struct gs_data *gop_handle;

@@ -4,14 +4,14 @@
 #include <stdlib.h>
 #include <stddef.h>
 
+#include "c99.h"
 #include "types.h"
 #include "name.h"
 #include "fail.h"
+#include "mem.h"
 #include "comm.h"
 #include "gs_defs.h"
-
-//------------------------------------------------------------------------------
-typedef enum {gs_auto, gs_pairwise, gs_crystal_router, gs_all_reduce} gs_method;
+#include "gs.h"
 
 //------------------------------------------------------------------------------
 extern int gop_setup;

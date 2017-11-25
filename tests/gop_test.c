@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include "test.h"
 #include "laplacian.h"
 #include "linalg.h"
