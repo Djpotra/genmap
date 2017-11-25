@@ -1,8 +1,9 @@
-#include <stdio.h>
-
 #include "gswrapper.h"
 #include "laplacian.h"
 #include "linalg.h"
+
+#include <stdio.h>
+#include <stdlib.h>
 
 int rsb_setup = 0;
 //------------------------------------------------------------------------------

@@ -17,7 +17,7 @@ INCFLAGS=-I$(INCDIR) -I$(GSDIR)
 TESTDIR =$(SRCROOT)/tests
 
 CSRCS:=$(SRCDIR)/io.c $(SRCDIR)/lanczos.c $(SRCDIR)/linalg.c \
-    $(SRCDIR)/csr.c $(TESTDIR)/test.c $(SRCDIR)/laplacian.c  \
+    $(SRCDIR)/csr.c $(SRCDIR)/test.c $(SRCDIR)/laplacian.c  \
     $(SRCDIR)/gswrapper.c
 
 COBJS:=$(CSRCS:.c=.o)
@@ -29,6 +29,7 @@ TESTCSRC:=$(TESTDIR)/readmap_test.c $(TESTDIR)/csr_test.c \
     $(TESTDIR)/vector_test.c $(TESTDIR)/lanczos_serial_test.c   \
     $(TESTDIR)/gs_test.c $(TESTDIR)/laplacian_test.c     \
     $(TESTDIR)/gop_test.c $(TESTDIR)/lanczos_parallel_test.c
+
 TESTCOBJ:=$(TESTCSRC:.c=.o)
 TESTFSRC:=
 TESTFOBJ:=$(TESTFSRC:.f=.o)

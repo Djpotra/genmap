@@ -1,5 +1,5 @@
-#ifndef _GSWRAPPER_H
-#define _GSWRAPPER_H
+#ifndef _GSWRAPPER_H_
+#define _GSWRAPPER_H_
 
 #define MPI
 //#define PREFIX gslib

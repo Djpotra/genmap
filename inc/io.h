@@ -1,11 +1,8 @@
 #ifndef _IO_H_
-#define _IO_H
+#define _IO_H_
 
-#include <stdio.h>
-
-#include "gswrapper.h"
 //------------------------------------------------------------------------------
-long file_open(char *name, int mode);
+long file_open(char *name, char *mode);
 
 long file_read(long fh);
 
@@ -13,7 +10,9 @@ long file_write(long fh);
 
 long file_close(long fh);
 
-void readmap(int nid, long *npts, long *nelt, long **glo_num, char* name);
+void readmap_dev(int nid, long *npts, long *nelt, long **glo_num, char* name);
+//TODO: Get rid of this one
+void readmap(long *npts, long *nelt, long **glo_num, char* name);
 //------------------------------------------------------------------------------
 
 #endif
