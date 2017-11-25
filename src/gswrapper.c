@@ -18,7 +18,7 @@ void init_genmap(struct comm *c, int argc, char **argv)
 
 void finalize_genmap(struct comm *c)
 {
-  comm_free(&c);
+  comm_free(c);
 
 #ifdef MPI
   MPI_Finalize();

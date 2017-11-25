@@ -9,9 +9,9 @@ int test_1(struct comm *c) {
 
   printf("npts = %ld\n", header[NPTS]);
 
-  for (long i = 0; i < header[NPTS]; i++) {
-    printf("%ld\n", glo_num[i]);
-  }
+//  for (long i = 0; i < header[NPTS]; i++) {
+//    printf("%ld\n", glo_num[i]);
+//  }
 
   return 1;
 }
