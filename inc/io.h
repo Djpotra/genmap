@@ -15,6 +15,7 @@
 #define NPTS     4
 #define NRANK    5
 #define NOUTFLOW 6
+#define MYCHUNK  7
 //------------------------------------------------------------------------------
 #ifdef MPI
 void readmap_mpi   (struct comm *c, long **header, long **glo_num, char* name);

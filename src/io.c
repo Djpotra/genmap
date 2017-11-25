@@ -13,14 +13,30 @@ void readmap_mpi(struct comm *c, long **header, long **glo_num, char* name)
 
   MPI_File_seek(fh, 0, MPI_SEEK_SET);
   MPI_File_get_size(fh, &offset);
+#ifdef DEBUG
   printf("Size of file in parallel: %lld\n", offset);
+#endif
 
-  *header = malloc(sizeof(long)*MAP_HEADER_SIZE);
-  long *header_val = *header;
-  MPI_File_read(fh, header_val, MAP_HEADER_SIZE, MPI_LONG, &st);
+  *header = malloc(sizeof(long)*(MAP_HEADER_SIZE + 1));
+  MPI_File_read(fh, *header, MAP_HEADER_SIZE, MPI_LONG, &st);
 
-//  MPI_File_seek(fh, rank*chunk_size, fh);
-//  MPI_File_read(fh, *header, MAP_HEADER_SIZE, MPI_LONG, &st);
+  long numbers = offset / sizeof(long); numbers -= MAP_HEADER_SIZE;
+#ifdef DEBUG
+  printf("Total number to be read: %lld\n", numbers);
+#endif
+
+  long chunk_size = numbers / c->np;
+  long start = c->id*chunk_size;
+  if (c->id == c->np - 1) chunk_size = numbers - start;
+#ifdef DEBUG
+  printf("My chunk_size: %lld\n", chunk_size);
+#endif
+
+  *glo_num = malloc(sizeof(long)*chunk_size);
+  MPI_File_seek(fh, start, MPI_SEEK_CUR);
+  MPI_File_read(fh, *glo_num, chunk_size, MPI_LONG, &st);
+
+  (*header)[MYCHUNK] = chunk_size;
 
   MPI_File_close(&fh);
 }

@@ -5,6 +5,7 @@ TESTS=tests
 GSLIB=gslib
 GSDIR ?= $(SRCROOT)/../gslib/src
 MPI ?= 1
+DEBUG ?= 1
 
 CC=mpicc
 CFLAGS=-std=c99 -O2 -Wall -Wextra -g -Wno-unused-function
@@ -44,6 +45,9 @@ TESTOBJS:=$(TESTCOBJ) $(TESTFOBJ)
 
 ifeq ($(MPI),1)
 	CFLAGS+= -DMPI
+endif
+ifeq ($(DEBUG),1)
+	CFLAGS+= -DDEBUG
 endif
 
 .PHONY: all
