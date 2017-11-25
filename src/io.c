@@ -7,15 +7,22 @@
 long file_open(char* name, int mode)
 {
 #ifdef MPI
-//  MPI_Status status;
+  MPI_Status status;
   MPI_File fh;
-//  MPI_Offset offset;
+  MPI_Offset offset;
 
   MPI_File_open(MPI_COMM_WORLD, name, mode, MPI_INFO_NULL, &fh);
+
+  int file_size = MPI_File_get_size(fh, &offset);
+  printf("File size = %d\n", offset);
+
+  MPI_File_seek(fh, 0, MPI_SEEK_SET);
+
   MPI_File_close(&fh);
 #else
   printf("Serial !!!!\n");
 #endif
+  return 1;
 }
 //------------------------------------------------------------------------------
 long file_read(long fh)
@@ -36,7 +43,6 @@ long file_close(long fh)
 void readmap_mpi(int nid, long *npts, long *nel, long **glo_num,
             char* name)
 {
-//    file_open(name,
 }
 //------------------------------------------------------------------------------
 void readmap_serial(long *npts, long *nel, long **glo_num, char* name)

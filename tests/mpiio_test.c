@@ -8,7 +8,7 @@ int test_1()
 {
   char *buf, rank, nprocs, nints, bufsize;
 
-  file_open("nbrhd/nbrhd.map", MPI_MODE_RDONLY);
+  file_open("nbrhd/nbrhd.map.bin", MPI_MODE_RDONLY);
   return 1;
 }
 //------------------------------------------------------------------------------
