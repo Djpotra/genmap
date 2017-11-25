@@ -29,56 +29,52 @@ void readmap_mpi(int nid, long *npts, long *nel, long **glo_num,
 {
 }
 //------------------------------------------------------------------------------
-void readmap_serial(long *npts, long *nel, long **glo_num, char* name)
+void readmap_serial(long **header, long **glo_num, char* name)
 {
   FILE *fp;
-  long nactive, depth, d2, nrank, noutflow;
-  long nc, cnt, jnk;
+  long nc, jnk;
 
-  fp = fopen(name, "r");
+  fp = fopen(name, "rb");
   if (fp == NULL) {
-    fprintf(stderr, "Unable to open the file.\n");
+    printf("Unable to open the file.\n");
     exit(1);
   }
 
-  cnt = fscanf(fp, "%ld %ld %ld %ld %ld %ld %ld\n",
-        nel, &nactive, &depth, &d2, npts, &nrank, &noutflow);
-  if (cnt != 7) {
-    fprintf(stderr, "Unable to read .map file.\n");
-    exit(1);
-  }
+  fseek(fp, 0, SEEK_END);
+  int size = ftell(fp);
+  fseek(fp, 0, SEEK_SET);
 
-  nc  = *npts/(*nel);
+  *header = malloc(sizeof(long)*MAP_HEADER_SIZE);
+  long *header_val = *header;
 
-  *glo_num = malloc(sizeof(long)*(*npts));
+  // nel, nactive, depth, d2, npts, nrank, noutflow
+  fread(header_val, sizeof(long), MAP_HEADER_SIZE, fp);
 
-  for (long i = 0; i < *nel; i++) {
-      cnt = fscanf(fp, "%ld", &jnk);
-      if (cnt != 1) {
-        fprintf(stderr, "Unable to read .map file.\n");
-      }
-      for (long j = 0; j < nc - 1; j++) {
-        cnt = fscanf(fp, "%ld", *glo_num + (i*nc + j));
-        if (cnt != 1) {
-          fprintf(stderr, "Unable to read .map file.\n");
-        }
-      }
-      cnt = fscanf(fp, "%ld\n", *glo_num + (i*nc + nc - 1));
-      if (cnt != 1) {
-        fprintf(stderr, "Unable to read .map file.\n");
-      }
+  printf("Size of file in serial: %d\n", size);
+
+  // nc = npts/nel
+  nc  = header_val[NPTS]/header_val[NEL];
+
+  *glo_num = malloc(sizeof(long)*header_val[NPTS]);
+
+  long count = 0;
+  for (long i = 0; i < header_val[NEL]; i++) {
+    fread(&jnk, sizeof(long), 1, fp);
+    fread(*glo_num + count, sizeof(long), nc, fp);
+    count += nc;
   }
 
   fclose(fp);
 }
 //------------------------------------------------------------------------------
-void readmap(long *npts, long *nelt, long **glo_num, char* name)
+void readmap(long **header, long **glo_num, char* name)
 {
   int nid = 0;
+  long npts, nelt;
 #ifdef MPI
   readmap_mpi(nid, npts, nelt, glo_num, name);
 #else
-  readmap_serial(npts, nelt, glo_num, name);
+  readmap_serial(header, glo_num, name);
 #endif
 }
 //------------------------------------------------------------------------------

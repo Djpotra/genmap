@@ -7,14 +7,16 @@
 //------------------------------------------------------------------------------
 int main(int argc, char **argv) {
   // Serial part: TODO: Do in parallel
-  long npts, nelt, *glo_num;
+  long npts, nelt, *glo_num, *header;
   double *weights = NULL;
   int nc;
   unsigned int lpts, lelt, lstart;
 
   Vector u, v;
 
-  readmap(&npts, &nelt, &glo_num, "nbrhd/nbrhd.map");
+  readmap(&header, &glo_num, "nbrhd/nbrhd.map.bin");
+  npts = header[NPTS];
+  nelt = header[NEL];
 
   int np, rank;
   MPI_Init(&argc, &argv);

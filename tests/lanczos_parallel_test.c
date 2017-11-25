@@ -7,7 +7,7 @@
 //------------------------------------------------------------------------------
 int main(int argc, char **argv) {
   // Serial part: TODO: Do in parallel
-  long npts, nelt, *glo_num;
+  long npts, nelt, *glo_num, *header;
   double *weights;
   int nc;
   int lpts, lelt, lstart;
@@ -17,7 +17,9 @@ int main(int argc, char **argv) {
   MPI_Init(&argc, &argv);
 
   // Read the .map file
-  readmap(&npts, &nelt, &glo_num, "nbrhd/nbrhd.map");
+  readmap(&header, &glo_num, "nbrhd/nbrhd.map.bin");
+  npts = header[NPTS];
+  nelt = header[NEL];
 
   // Element distribution after reading the .map file
   int np, rank;

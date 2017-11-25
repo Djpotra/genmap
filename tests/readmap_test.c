@@ -4,13 +4,13 @@
 
 //------------------------------------------------------------------------------
 int test_1() {
-  long npts, nelt, *glo_num;
+  long *glo_num, *header;
 
-  readmap(&npts, &nelt, &glo_num, "nbrhd/nbrhd.map");
+  readmap(&header, &glo_num, "nbrhd/nbrhd.map.bin");
 
-  printf("npts = %ld\n", npts);
+  printf("npts = %ld\n", header[NPTS]);
 
-  for (long i = 0; i < npts; i++) {
+  for (long i = 0; i < header[NPTS]; i++) {
     printf("%ld\n", glo_num[i]);
   }
 
