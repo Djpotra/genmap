@@ -4,10 +4,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 //------------------------------------------------------------------------------
-long file_open(char* name, int mode)
+long file_open(char *header, char *data, char* name, int mode)
 {
 #ifdef MPI
-  MPI_Status status;
   MPI_File fh;
   MPI_Offset offset;
 
@@ -22,21 +21,6 @@ long file_open(char* name, int mode)
 #else
   printf("Serial !!!!\n");
 #endif
-  return 1;
-}
-//------------------------------------------------------------------------------
-long file_read(long fh)
-{
-  return 1;
-}
-//------------------------------------------------------------------------------
-long file_write(long fh)
-{
-  return 1;
-}
-//------------------------------------------------------------------------------
-long file_close(long fh)
-{
   return 1;
 }
 //------------------------------------------------------------------------------

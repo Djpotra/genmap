@@ -2,13 +2,7 @@
 #define _IO_H_
 
 //------------------------------------------------------------------------------
-long file_open(char *name, int mode);
-
-long file_read(long fh);
-
-long file_write(long fh);
-
-long file_close(long fh);
+long file_open(char *header, char *data, char *name, int mode);
 
 void readmap_mpi(int nid, long *npts, long *nelt, long **glo_num, char* name);
 
