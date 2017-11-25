@@ -14,20 +14,14 @@ int main(int argc, char **argv) {
 
   Vector u, v;
 
-  readmap_serial(&header, &glo_num, "nbrhd/nbrhd.map.bin");
+  struct comm c;
+  init_genmap(&c, argc, argv);
+  int np, rank;
+  np = c.np; rank = c.id;
+
+  readmap_serial(&c, &header, &glo_num, "nbrhd/nbrhd.map.bin");
   npts = header[NPTS];
   nelt = header[NEL];
-
-  int np, rank;
-#ifdef MPI
-  MPI_Init(&argc, &argv);
-  MPI_Comm_size(MPI_COMM_WORLD, &np  );
-  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-#else
-  np = 1;
-  rank = 0;
-  int MPI_COMM_WORLD = 0;
-#endif
 
   nc = npts/nelt;
   lelt = nelt/np;
@@ -37,8 +31,6 @@ int main(int argc, char **argv) {
   }
   lpts = lelt*nc;
 
-  struct comm c;
-  comm_init(&c, MPI_COMM_WORLD);
   struct gs_data *gsh;
 
   ax_setup(&gsh, &weights, &c, lpts, lelt, &glo_num[lstart*nc]);
@@ -73,15 +65,9 @@ int main(int argc, char **argv) {
     printf("v: %lf\n", v.vv[i]);
   }
 
-  comm_free(&c);
+  finalize_genmap(&c);
   gs_free(gsh);
-
-#ifdef MPI
-  MPI_Finalize();
-#endif
-
   delete_vector(&v); delete_vector(&u);
-
   free(glo_num); free(weights);
 
   return 0;

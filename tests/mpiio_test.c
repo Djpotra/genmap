@@ -3,28 +3,24 @@
 #include "mpiwrapper.h"
 
 //------------------------------------------------------------------------------
-int test_1()
+int test_1(struct comm *c)
 {
   char *name = "nbrhd/nbrhd.map.bin";
   long *header, *glo_num;
 
-  readmap(&header, &glo_num, name);
+  readmap(c, &header, &glo_num, name);
 
   return 1;
 }
 //------------------------------------------------------------------------------
 int main(int argc, char **argv)
 {
-#ifdef MPI
-  MPI_Init(&argc, &argv);
 
-  int np, rank;
-  MPI_Comm_size(MPI_COMM_WORLD, &np  );
-  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+  struct comm c;
+  init_genmap(&c, argc, argv);
 
-  run_test(&test_1, "fopen_1");
+  run_test_mpi(&test_1, &c, "fopen_1");
 
-  MPI_Finalize();
-#endif
+  finalize_genmap(&c);
 }
 //------------------------------------------------------------------------------

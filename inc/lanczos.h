@@ -2,9 +2,9 @@
 #define _LANCZOS_H_
 
 #include "csr.h"
-#include "gswrapper.h"
 #include "laplacian.h"
 #include "linalg.h"
+#include "mpiwrapper.h"
 
 //------------------------------------------------------------------------------
 // Lanczos iteration

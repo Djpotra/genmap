@@ -1,12 +1,11 @@
 #include "io.h"
 #include "test.h"
-#include "mpiwrapper.h"
 
 //------------------------------------------------------------------------------
-int test_1() {
+int test_1(struct comm *c) {
   long *glo_num, *header;
 
-  readmap(&header, &glo_num, "nbrhd/nbrhd.map.bin");
+  readmap(c, &header, &glo_num, "nbrhd/nbrhd.map.bin");
 
   printf("npts = %ld\n", header[NPTS]);
 
@@ -17,8 +16,13 @@ int test_1() {
   return 1;
 }
 //------------------------------------------------------------------------------
-int main() {
-  run_test(&test_1,"map_1");
+int main(int argc, char **argv) {
+  struct comm c;
+  init_genmap(&c, argc, argv);
+
+  run_test_mpi(&test_1, &c, "map_1");
+
+  finalize_genmap(&c);
 
   return 0;
 }

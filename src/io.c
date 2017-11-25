@@ -3,7 +3,7 @@
 
 //------------------------------------------------------------------------------
 #ifdef MPI
-void readmap_mpi(long **header, long **glo_num, char* name)
+void readmap_mpi(struct comm *c, long **header, long **glo_num, char* name)
 {
   MPI_File fh;
   MPI_Offset offset;
@@ -26,7 +26,7 @@ void readmap_mpi(long **header, long **glo_num, char* name)
 }
 #endif
 //------------------------------------------------------------------------------
-void readmap_serial(long **header, long **glo_num, char* name)
+void readmap_serial(struct comm *c, long **header, long **glo_num, char* name)
 {
   FILE *fp;
   long nc, jnk;
@@ -63,12 +63,12 @@ void readmap_serial(long **header, long **glo_num, char* name)
   fclose(fp);
 }
 //------------------------------------------------------------------------------
-void readmap(long **header, long **glo_num, char* name)
+void readmap(struct comm *c, long **header, long **glo_num, char* name)
 {
 #ifdef MPI
-  readmap_mpi   (header, glo_num, name);
+  readmap_mpi   (c, header, glo_num, name);
 #else
-  readmap_serial(header, glo_num, name);
+  readmap_serial(c, header, glo_num, name);
 #endif
 }
 //------------------------------------------------------------------------------

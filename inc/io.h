@@ -3,6 +3,8 @@
 
 #include <stdio.h>
 
+#include "mpiwrapper.h"
+
 //------------------------------------------------------------------------------
 #define MAP_HEADER_SIZE 7
 
@@ -15,12 +17,12 @@
 #define NOUTFLOW 6
 //------------------------------------------------------------------------------
 #ifdef MPI
-void readmap_mpi   (long **header, long **glo_num, char* name);
+void readmap_mpi   (struct comm *c, long **header, long **glo_num, char* name);
 #endif
 
-void readmap_serial(long **header, long **glo_num, char* name);
+void readmap_serial(struct comm *c, long **header, long **glo_num, char* name);
 
-void readmap(long **header, long **glo_num, char* name);
+void readmap(struct comm *c, long **header, long **glo_num, char* name);
 //------------------------------------------------------------------------------
 
 #endif

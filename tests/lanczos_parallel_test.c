@@ -6,8 +6,6 @@
 
 //------------------------------------------------------------------------------
 int main(int argc, char **argv) {
-
-#ifdef MPI
   // Serial part: TODO: Do in parallel
   long npts, nelt, *glo_num, *header;
   double *weights;
@@ -16,17 +14,17 @@ int main(int argc, char **argv) {
 
   Vector init, alpha, beta;
 
-  MPI_Init(&argc, &argv);
+  struct comm c;
+  init_genmap(&c, argc, argv);
 
   // Read the .map file
-  readmap(&header, &glo_num, "nbrhd/nbrhd.map.bin");
+  readmap(&c, &header, &glo_num, "nbrhd/nbrhd.map.bin");
   npts = header[NPTS];
   nelt = header[NEL];
 
   // Element distribution after reading the .map file
   int np, rank;
-  MPI_Comm_size(MPI_COMM_WORLD, &np  );
-  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+  np = c.np; rank = c.id;
 
   nc = npts/nelt;
   lelt = nelt/np;
@@ -36,9 +34,6 @@ int main(int argc, char **argv) {
   }
   lpts = lelt*nc;
 
-  // Initialize gslib
-  struct comm c;
-  comm_init(&c, MPI_COMM_WORLD);
   struct gs_data *gsh;
   ax_setup(&gsh, &weights, &c, lpts, lelt, &glo_num[lstart*nc]);
 
@@ -74,16 +69,12 @@ int main(int argc, char **argv) {
   }
 
   // Free data structures
-  comm_free(&c);
+  finalize_genmap(&c);
   gs_free(gsh);
-
-  MPI_Finalize();
-
   delete_vector(&alpha); delete_vector(&beta);
   delete_vector(&init);
 
   free(glo_num); free(weights);
-#endif
 
   return 0;
 }

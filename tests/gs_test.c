@@ -35,17 +35,14 @@ int test_3() {
 //------------------------------------------------------------------------------
 #endif
 int main() {
-#ifdef MPI
-  MPI_Init(NULL, NULL);
-#endif
+  struct comm c;
+  init_genmap(&c, NULL, NULL);
 
   run_test(&test_1,"gs_link1");
-#ifdef MPI
   run_test(&test_2,"gs_comm1");
   run_test(&test_3,"gs_comm2");
 
-  MPI_Finalize();
-#endif
+  finalize_genmap(&c);
 
   return 0;
 }
