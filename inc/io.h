@@ -2,7 +2,7 @@
 #define _IO_H_
 
 //------------------------------------------------------------------------------
-long file_open(char *name, char *mode);
+long file_open(char *name, int mode);
 
 long file_read(long fh);
 
