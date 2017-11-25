@@ -1,5 +1,6 @@
 #include "linalg.h"
 #include "csr.h"
+#include "lanczos.h"
 #include "test.h"
 
 #include <stdio.h>

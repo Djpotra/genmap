@@ -1,9 +1,9 @@
 #include "test.h"
-#include "gswrapper.h"
-#include "laplacian.h"
 #include "linalg.h"
-#include "io.h"
+#include "lanczos.h"
 #include "mpiwrapper.h"
+#include "io.h"
+
 //------------------------------------------------------------------------------
 int main(int argc, char **argv) {
 

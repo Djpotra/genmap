@@ -3,6 +3,7 @@
 
 #include "csr.h"
 #include "gswrapper.h"
+#include "laplacian.h"
 #include "linalg.h"
 
 //------------------------------------------------------------------------------

@@ -49,27 +49,27 @@ int main(int argc, char **argv) {
 
   ax(&v, &u, gsh, weights, lpts/lelt);
 
-  for (int i = 0; i < lelt; i++) {
+  for (unsigned int i = 0; i < lelt; i++) {
     printf("v: %lf\n", v.vv[i]);
   }
 
-  for (int i = 0; i < lelt; i++) {
+  for (unsigned int i = 0; i < lelt; i++) {
     printf("rank = %d, weight[%d] = %lf\n", rank, i, weights[i]);
   }
 
   if (rank < np/2) {
-    for (int i = 0; i < lelt; i++) {
+    for (unsigned int i = 0; i < lelt; i++) {
       u.vv[i] = 0;
     }
   } else {
-    for (int i = 0; i < lelt; i++) {
+    for (unsigned int i = 0; i < lelt; i++) {
       u.vv[i] = 1;
     }
   }
 
   ax(&v, &u, gsh, weights, lpts/lelt);
 
-  for (int i = 0; i < lelt; i++) {
+  for (unsigned int i = 0; i < lelt; i++) {
     printf("v: %lf\n", v.vv[i]);
   }
 

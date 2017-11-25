@@ -1,7 +1,6 @@
 #include "io.h"
 #include "mpiwrapper.h"
 
-#include <stdio.h>
 //------------------------------------------------------------------------------
 #ifdef MPI
 void readmap_mpi(long **header, long **glo_num, char* name)
@@ -14,7 +13,7 @@ void readmap_mpi(long **header, long **glo_num, char* name)
 
   MPI_File_seek(fh, 0, MPI_SEEK_SET);
   MPI_File_get_size(fh, &offset);
-  printf("Size of file in parallel: %d\n", offset);
+  printf("Size of file in parallel: %lld\n", offset);
 
   *header = malloc(sizeof(long)*MAP_HEADER_SIZE);
   long *header_val = *header;
@@ -46,7 +45,7 @@ void readmap_serial(long **header, long **glo_num, char* name)
   long *header_val = *header;
 
   // nel, nactive, depth, d2, npts, nrank, noutflow
-  fread(header_val, sizeof(long), MAP_HEADER_SIZE, fp);
+  jnk = fread(header_val, sizeof(long), MAP_HEADER_SIZE, fp);
   printf("Size of file in serial: %d\n", size);
 
   // nc = npts/nel
@@ -56,8 +55,8 @@ void readmap_serial(long **header, long **glo_num, char* name)
 
   long count = 0;
   for (long i = 0; i < header_val[NEL]; i++) {
-    fread(&jnk, sizeof(long), 1, fp);
-    fread(*glo_num + count, sizeof(long), nc, fp);
+    jnk = fread(&jnk, sizeof(long), 1, fp);
+    jnk = fread(*glo_num + count, sizeof(long), nc, fp);
     count += nc;
   }
 

@@ -7,7 +7,7 @@ GSDIR ?= $(SRCROOT)/../gslib/src
 MPI ?= 1
 
 CC=mpicc
-CFLAGS=-std=c99 -O2 -Wall -Wextra -g
+CFLAGS=-std=c99 -O2 -Wall -Wextra -g -Wno-unused-function
 FC=mpif77
 FFLAGS=
 CXX=mpic++
