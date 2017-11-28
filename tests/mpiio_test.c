@@ -3,30 +3,30 @@
 #include "mpiwrapper.h"
 
 //------------------------------------------------------------------------------
-int test_1(struct comm *c)
+int32 test_1(struct comm *c)
 {
   char *name = "nbrhd/nbrhd.map.bin";
-  long *header, *glo_num, *elem_id;
+  int64 *header, *glo_num, *elem_id;
 
   readmap(c, &header, &glo_num, &elem_id, name);
 
   return 1;
 }
 //------------------------------------------------------------------------------
-int test_2(struct comm *c)
+int32 test_2(struct comm *c)
 {
   char *name = "nbrhd/nbrhd.map.bin";
-  long *header, *glo_num, *elem_id;
+  int64 *header, *glo_num, *elem_id;
 
   readmap(c, &header, &glo_num, &elem_id, name);
 
-  for (int i = 0; i < HEADER_SIZE; i++)
+  for (int32 i = 0; i < HEADER_SIZE; i++)
   {
     printf("%ld ", header[i]);
   }
   printf("\n");
 
-  long i = 0;
+  int64 i = 0;
   while (i < header[NC]*header[MYCHUNK])
   {
     printf("%ld ", glo_num[i]);
@@ -37,7 +37,7 @@ int test_2(struct comm *c)
   return 1;
 }
 //------------------------------------------------------------------------------
-int main(int argc, char **argv)
+int32 main(int32 argc, char **argv)
 {
 
   struct comm c;

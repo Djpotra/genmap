@@ -5,12 +5,12 @@
 #include "io.h"
 
 //------------------------------------------------------------------------------
-int main(int argc, char **argv) {
+int32 main(int32 argc, char **argv) {
   // Serial part: TODO: Do in parallel
-  long npts, nelt, *glo_num, *header, *elem_id;
+  int64 npts, nelt, *glo_num, *header, *elem_id;
   double *weights;
-  int nc;
-  int lpts, lelt, lstart;
+  int32 nc;
+  int32 lpts, lelt, lstart;
 
   Vector init, alpha, beta;
 
@@ -23,7 +23,7 @@ int main(int argc, char **argv) {
   nelt = header[NEL];
 
   // Element distribution after reading the .map file
-  int np, rank;
+  int32 np, rank;
   np = c.np; rank = c.id;
 
   nc = npts/nelt;
@@ -38,9 +38,9 @@ int main(int argc, char **argv) {
   ax_setup(&gsh, &weights, &c, lpts, lelt, &glo_num[lstart*nc]);
 
   // Setup variables for lanczos
-  int iter = 8;
+  int32 iter = 8;
   zeros_vector (&init , lelt    );
-  for (int i = 0; i < lelt; i++) {
+  for (int32 i = 0; i < lelt; i++) {
     init.vv[i] = (double)lstart + i;
   }
   zeros_vector(&alpha, iter    );
@@ -50,12 +50,12 @@ int main(int argc, char **argv) {
   lanczos(&alpha, &beta, gsh, weights, nc, &init, iter);
   if (rank == 0) {
     printf("beta = [");
-    for (int i = 0; i < beta.size; i++) {
+    for (int32 i = 0; i < beta.size; i++) {
       printf("%.17g, ", beta.vv[i]);
     }
     printf("]\n");
     printf("alpha= [");
-    for (int i = 0; i < alpha.size; i++) {
+    for (int32 i = 0; i < alpha.size; i++) {
       printf("%.17g, ", alpha.vv[i]);
     }
     printf("]\n");
@@ -63,7 +63,7 @@ int main(int argc, char **argv) {
     Vector d, e;
     zeros_vector(&d, iter); zeros_vector(&e, iter);
     copy_vector(&d, &alpha);
-    for (int i = 0; i < iter - 1; i++) {
+    for (int32 i = 0; i < iter - 1; i++) {
       e.vv[i] = beta.vv[i];
     }
   }

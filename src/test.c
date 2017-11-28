@@ -3,8 +3,8 @@
 #include "test.h"
 
 //------------------------------------------------------------------------------
-void run_test(int (*test_fun)(), char *name) {
-  int passed = test_fun();
+void run_test(int32 (*test_fun)(), char *name) {
+  int32 passed = test_fun();
 
   if (passed) {
     printf("Test %s: Passed.\n", name);
@@ -13,8 +13,8 @@ void run_test(int (*test_fun)(), char *name) {
   }
 }
 
-void run_test_mpi(int (*test_fun)(), struct comm *c, char *name) {
-  int passed = test_fun(c);
+void run_test_mpi(int32 (*test_fun)(), struct comm *c, char *name) {
+  int32 passed = test_fun(c);
 
   if (passed) {
     printf("Test %s: Passed.\n", name);

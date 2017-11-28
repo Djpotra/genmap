@@ -5,18 +5,18 @@
 #include "io.h"
 #include "mpiwrapper.h"
 //------------------------------------------------------------------------------
-int main(int argc, char **argv) {
+int32 main(int32 argc, char **argv) {
   // Serial part: TODO: Do in parallel
-  long npts, nelt, *glo_num, *header, *elem_id;
+  int64 npts, nelt, *glo_num, *header, *elem_id;
   double *weights = NULL;
-  int nc;
-  unsigned int lpts, lelt, lstart;
+  int32 nc;
+  int32 lpts, lelt, lstart;
 
   Vector u, v;
 
   struct comm c;
   init_genmap(&c, argc, argv);
-  int np, rank;
+  int32 np, rank;
   np = c.np; rank = c.id;
 
   readmap_serial(&c, &header, &glo_num, &elem_id, "nbrhd/nbrhd.map.bin");
@@ -41,27 +41,27 @@ int main(int argc, char **argv) {
 
   ax(&v, &u, gsh, weights, lpts/lelt);
 
-  for (unsigned int i = 0; i < lelt; i++) {
+  for (int32 i = 0; i < lelt; i++) {
     printf("v: %lf\n", v.vv[i]);
   }
 
-  for (unsigned int i = 0; i < lelt; i++) {
+  for (int32 i = 0; i < lelt; i++) {
     printf("rank = %d, weight[%d] = %lf\n", rank, i, weights[i]);
   }
 
   if (rank < np/2) {
-    for (unsigned int i = 0; i < lelt; i++) {
+    for (int32 i = 0; i < lelt; i++) {
       u.vv[i] = 0;
     }
   } else {
-    for (unsigned int i = 0; i < lelt; i++) {
+    for (int32 i = 0; i < lelt; i++) {
       u.vv[i] = 1;
     }
   }
 
   ax(&v, &u, gsh, weights, lpts/lelt);
 
-  for (unsigned int i = 0; i < lelt; i++) {
+  for (int32 i = 0; i < lelt; i++) {
     printf("v: %lf\n", v.vv[i]);
   }
 

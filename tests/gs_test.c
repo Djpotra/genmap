@@ -2,7 +2,7 @@
 #include "test.h"
 
 //------------------------------------------------------------------------------
-int test_1() {
+int32 test_1() {
   slong id;
   id = 1;
 
@@ -10,7 +10,7 @@ int test_1() {
 }
 //------------------------------------------------------------------------------
 #ifdef MPI
-int test_2() {
+int32 test_2() {
   struct comm c;
 
   comm_init(&c, MPI_COMM_WORLD);
@@ -20,7 +20,7 @@ int test_2() {
   return 1;
 }
 //------------------------------------------------------------------------------
-int test_3() {
+int32 test_3() {
   slong npts, glo_num;
   struct comm c;
 
@@ -34,7 +34,7 @@ int test_3() {
 }
 //------------------------------------------------------------------------------
 #endif
-int main() {
+int32 main() {
   struct comm c;
   init_genmap(&c, NULL, NULL);
 

@@ -1,17 +1,17 @@
 #include "gswrapper.h"
 
 //------------------------------------------------------------------------------
-int gop_setup = 0;
+int32 gop_setup = 0;
 struct gs_data *gop_handle;
 struct comm gop_comm;
 
 //------------------------------------------------------------------------------
-void init_genmap(struct comm *c, int argc, char **argv)
+void init_genmap(struct comm *c, int32 argc, char **argv)
 {
 #ifdef MPI
   MPI_Init(&argc, &argv);
 #else
-  int MPI_COMM_WORLD = 0;
+  int32 MPI_COMM_WORLD = 0;
 #endif
   comm_init(c, MPI_COMM_WORLD);
 }
@@ -33,7 +33,7 @@ void gop_init() {
   comm_init(&gop_comm, 0);
 #endif
 
-  long gop_id = 1;
+  int64 gop_id = 1;
 
   gop_handle = gs_setup(&gop_id, 1, &gop_comm, 0, gs_auto, 0); 
 }

@@ -5,8 +5,8 @@
 #include "linalg.h"
 #include "mpiwrapper.h"
 //------------------------------------------------------------------------------
-int main(int argc, char **argv) {
-  int np, rank;
+int32 main(int32 argc, char **argv) {
+  int32 np, rank;
 #ifdef MPI
   MPI_Init(&argc, &argv);
   MPI_Comm_size(MPI_COMM_WORLD, &np  );

@@ -4,6 +4,7 @@
 #include <stdio.h>
 
 #include "mpiwrapper.h"
+#include "dtypes.h"
 
 //------------------------------------------------------------------------------
 #define MAP_HEADER_SIZE 7
@@ -20,12 +21,12 @@
 #define MYCHUNK  8
 //------------------------------------------------------------------------------
 #ifdef MPI
-void readmap_mpi   (struct comm *c, long **header, long **glo_num,
+void readmap_mpi   (struct comm *c, int64 **header, int64 **glo_num,
                                         long** element_id, char* name);
 #endif
-void readmap_serial(struct comm *c, long **header, long **glo_num,
+void readmap_serial(struct comm *c, int64 **header, int64 **glo_num,
                                         long** element_id, char* name);
-void readmap(struct comm *c, long **header, long **glo_num,
+void readmap(struct comm *c, int64 **header, int64 **glo_num,
                                         long** element_id, char* name);
 //------------------------------------------------------------------------------
 

@@ -3,7 +3,7 @@
 
 //------------------------------------------------------------------------------
 #ifdef MPI
-void readmap_mpi(struct comm *c, long **header, long **glo_num,
+void readmap_mpi(struct comm *c, int64 **header, int64 **glo_num,
                                         long** element_id, char* name)
 {
   MPI_File fh;
@@ -19,17 +19,17 @@ void readmap_mpi(struct comm *c, long **header, long **glo_num,
   MPI_File_read(fh, *header, MAP_HEADER_SIZE, MPI_LONG, &st);
 
   // nc = npts/nel
-  long nc  = (*header)[NPTS]/(*header)[NEL];
-  long chunk_size =  (*header)[NEL]/ c->np;
-  long start = c->id*chunk_size*(nc + 1);
+  int64 nc  = (*header)[NPTS]/(*header)[NEL];
+  int64 chunk_size =  (*header)[NEL]/ c->np;
+  int64 start = c->id*chunk_size*(nc + 1);
   if (c->id == c->np - 1) chunk_size = (*header)[NEL] - c->id*chunk_size;
 
   *glo_num    = malloc(sizeof(long)*chunk_size*nc);
   *element_id = malloc(sizeof(long)*chunk_size   );
 
-  long jnk;
+  int64 jnk;
   MPI_File_seek(fh, (MAP_HEADER_SIZE + start)*sizeof(long), MPI_SEEK_SET);
-  for (long i = 0; i < chunk_size; i++) {
+  for (int64 i = 0; i < chunk_size; i++) {
     MPI_File_read(fh, *element_id + i,  1, MPI_LONG, &st);
     MPI_File_read(fh, *glo_num + i*nc, nc, MPI_LONG, &st);
   }
@@ -48,11 +48,11 @@ void readmap_mpi(struct comm *c, long **header, long **glo_num,
 }
 #endif
 //------------------------------------------------------------------------------
-void readmap_serial(struct comm *c, long **header, long **glo_num,
+void readmap_serial(struct comm *c, int64 **header, int64 **glo_num,
                                         long** element_id, char* name)
 {
   FILE *fp;
-  long nc, jnk;
+  int64 nc, jnk;
 
   fp = fopen(name, "rb");
   if (fp == NULL) {
@@ -61,7 +61,7 @@ void readmap_serial(struct comm *c, long **header, long **glo_num,
   }
 
   fseek(fp, 0, SEEK_END);
-  int size = ftell(fp);
+  int32 size = ftell(fp);
   fseek(fp, 0, SEEK_SET);
 
   *header = malloc(sizeof(long)*MAP_HEADER_SIZE);
@@ -75,8 +75,8 @@ void readmap_serial(struct comm *c, long **header, long **glo_num,
   *glo_num = malloc(sizeof(long)*(*header)[NPTS]);
   *element_id = malloc(sizeof(long)*(*header)[NEL]);
 
-  long count = 0;
-  for (long i = 0; i < (*header)[NEL]; i++) {
+  int64 count = 0;
+  for (int64 i = 0; i < (*header)[NEL]; i++) {
     jnk = fread(*element_id + i , sizeof(long),  1, fp);
     jnk = fread(*glo_num + count, sizeof(long), nc, fp);
     count += nc;
@@ -88,7 +88,7 @@ void readmap_serial(struct comm *c, long **header, long **glo_num,
 #endif
 }
 //------------------------------------------------------------------------------
-void readmap(struct comm *c, long **header, long **glo_num,
+void readmap(struct comm *c, int64 **header, int64 **glo_num,
                                         long** element_id, char* name)
 {
 #ifdef MPI

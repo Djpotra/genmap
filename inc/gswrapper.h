@@ -5,6 +5,8 @@
 #include <stddef.h>
 #include <string.h>
 
+#include "dtypes.h"
+
 #include "c99.h"
 #include "types.h"
 #include "name.h"
@@ -15,12 +17,12 @@
 #include "gs.h"
 
 //------------------------------------------------------------------------------
-extern int gop_setup;
+extern int32 gop_setup;
 extern struct gs_data *gop_handle;
 extern struct comm gop_comm;
 
 //------------------------------------------------------------------------------
-void init_genmap(struct comm *c, int argc, char **argv);
+void init_genmap(struct comm *c, int32 argc, char **argv);
 
 void finalize_genmap(struct comm *c);
 

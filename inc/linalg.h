@@ -1,27 +1,29 @@
 #ifndef _LINALG_H_
 #define _LINALG_H_
 
+#include "dtypes.h"
+
 //------------------------------------------------------------------------------
 struct genmap_vector {
-  int size;
+  int32 size;
   double *vv;
 };
 typedef struct genmap_vector Vector;
 
-void   create_vector(Vector *x, int size);
+void   create_vector(Vector *x, int32 size);
 
 void   delete_vector(Vector *x);
 
-int    vectors_equal(Vector *x, Vector *y, double tol);
+int32    vectors_equal(Vector *x, Vector *y, double tol);
 
-void   random_vector(Vector *x, int size);
-void   parallel_random_vector(Vector *x, int size, int seed);
+void   random_vector(Vector *x, int32 size);
+void   parallel_random_vector(Vector *x, int32 size, int seed);
 
-void   ones_vector(Vector *x, int size);
+void   ones_vector(Vector *x, int32 size);
 
-void   zeros_vector(Vector *x, int size);
+void   zeros_vector(Vector *x, int32 size);
 
-double norm_vector(Vector *x, int p);
+double norm_vector(Vector *x, int32 p);
 
 void   z_axpby_vector(Vector *z, Vector *x, double alpha, \
                                              Vector *y, double beta);

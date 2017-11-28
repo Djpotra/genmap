@@ -6,12 +6,12 @@
 #include <float.h>
 //------------------------------------------------------------------------------
 void lanczos(Vector *alpha, Vector *beta, struct gs_data *gsh,
-            double *weights, int nc, Vector *init, int iter)
+            double *weights, int32 nc, Vector *init, int32 iter)
 {
   assert(alpha->size == iter);
   assert(alpha->size == beta->size + 1);
 
-  int n = init->size;
+  int32 n = init->size;
   double norm_q1, b = 0.;
   Vector q0, q1, u;
 
@@ -25,13 +25,13 @@ void lanczos(Vector *alpha, Vector *beta, struct gs_data *gsh,
   create_vector(&q1,     n);
 
   double sum = 0.;
-  int nglobal= n;
-  for (int i = 0; i < n; i++) {
+  int32 nglobal= n;
+  for (int32 i = 0; i < n; i++) {
     sum += init->vv[i];
   }
   gop(&sum, gs_double, gs_add, 0);
   gop(&nglobal, gs_int, gs_add, 0);
-  for (int i = 0; i < n; i++) {
+  for (int32 i = 0; i < n; i++) {
     init->vv[i] -= sum/nglobal;
   }
 
@@ -42,7 +42,7 @@ void lanczos(Vector *alpha, Vector *beta, struct gs_data *gsh,
 
   scale_vector(&q1, &q1, 1./norm_q1);
 
-  for (int k = 0; k < iter; k++) {
+  for (int32 k = 0; k < iter; k++) {
     // Multiplication by the laplacian
     ax(&u, &q1, gsh, weights, nc);
 
@@ -81,7 +81,7 @@ void lanczos_serial(Vector *alpha, Vector *beta, CSRMatrix *A, Vector *init) {
   assert(A->nrows == init->size);
   assert(A->nrows == beta->size + 1);
 
-  int n = A->nrows;
+  int32 n = A->nrows;
   double norm_q1, b = 0.;
   Vector q0, q1, u;
 
@@ -98,7 +98,7 @@ void lanczos_serial(Vector *alpha, Vector *beta, CSRMatrix *A, Vector *init) {
   norm_q1 = norm_vector(&q1, 2);
   mult_scalar_add_vector(&q1, 0., &q1, 1./norm_q1);
 
-  for (int k = 0; k < n; k++) {
+  for (int32 k = 0; k < n; k++) {
     csr_matrix_vector_multiply(&u, A, &q1);
 
     alpha->vv[k] = dot_vector(&q1, &u);
@@ -130,7 +130,7 @@ void lanczos_serial2(Vector *alpha, Vector *beta, CSRMatrix *A, Vector *init) {
   assert(A->nrows == beta->size + 1);
   assert(A->nrows == init->size);
 
-  int i = 0, n = A->nrows;
+  int32 i = 0, n = A->nrows;
   double b1 = 1.;
   Vector v, r, v1, p;
 

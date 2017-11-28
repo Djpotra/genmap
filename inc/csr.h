@@ -2,13 +2,14 @@
 #define _CSR_H_
 
 #include "linalg.h"
+#include "dtypes.h"
 
 //------------------------------------------------------------------------------
 // CSRMatrix structure
 struct genmap_csr {
-  int nrows;
-  int *ia;
-  int *ja;
+  int32 nrows;
+  int32 *ia;
+  int32 *ja;
   double *va;
 };
 typedef struct genmap_csr CSRMatrix;

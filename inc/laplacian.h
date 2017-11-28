@@ -3,12 +3,13 @@
 
 #include "linalg.h"
 #include "gswrapper.h"
+#include "dtypes.h"
 
-extern int rsb_setup;
+extern int32 rsb_setup;
 
 void ax_setup(struct gs_data **gsh, double **weights, struct comm *c, \
-                 unsigned int npts, unsigned int nelt, long *glo_num);
+                 int32 npts, int32 nelt, int64 *glo_num);
 
-void ax(Vector *v, Vector *u, struct gs_data *gsh, double *weights, long nc);
+void ax(Vector *v, Vector *u, struct gs_data *gsh, double *weights, int64 nc);
 
 #endif

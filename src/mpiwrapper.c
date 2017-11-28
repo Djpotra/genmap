@@ -1,5 +1,5 @@
 #include "mpiwrapper.h"
 //------------------------------------------------------------------------------
-void initComm(int argc, char *argv)
+void initComm(int32 argc, char *argv)
 {
 }
