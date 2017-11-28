@@ -12,33 +12,28 @@ void readmap_mpi(struct comm *c, long **header, long **glo_num, char* name)
   MPI_File_open(MPI_COMM_WORLD, name, MPI_MODE_RDONLY, MPI_INFO_NULL, &fh);
 
   MPI_File_seek(fh, 0, MPI_SEEK_SET);
-#ifdef DEBUG
-  printf("MPI_SEEK_CUR: %lld\n", MPI_SEEK_CUR);
-#endif
   MPI_File_get_size(fh, &offset);
 #ifdef DEBUG
-  printf("Size of file in parallel: %lld\n", offset);
+  printf("MPI_SEEK_CUR: %ld\n", MPI_SEEK_CUR);
+  printf("Size of file in parallel: %ld\n", offset);
 #endif
 
   *header = malloc(sizeof(long)*(MAP_HEADER_SIZE + 1));
   MPI_File_read(fh, *header, MAP_HEADER_SIZE, MPI_LONG, &st);
 
   long numbers = offset / sizeof(long); numbers -= MAP_HEADER_SIZE;
-#ifdef DEBUG
-  printf("Total number to be read: %lld\n", numbers);
-#endif
-
   long chunk_size = numbers / c->np;
   long start = c->id*chunk_size;
   if (c->id == c->np - 1) chunk_size = numbers - start;
 #ifdef DEBUG
-  printf("My chunk_size: %lld\n", chunk_size);
+  printf("Total number to be read: %ld\n", numbers);
+  printf("My chunk_size: %ld\n", chunk_size);
   printf("My start: %lld\n", start);
 #endif
 
   *glo_num = malloc(sizeof(long)*chunk_size);
 #ifdef DEBUG
-  printf("MPI_SEEK_CUR: %lld\n", MPI_SEEK_CUR);
+  printf("MPI_SEEK_CUR: %ld\n", MPI_SEEK_CUR);
 #endif
   MPI_File_seek(fh, (MAP_HEADER_SIZE + start)*sizeof(long), MPI_SEEK_SET);
   MPI_File_read(fh, *glo_num, chunk_size, MPI_LONG, &st);
@@ -69,7 +64,9 @@ void readmap_serial(struct comm *c, long **header, long **glo_num, char* name)
 
   // nel, nactive, depth, d2, npts, nrank, noutflow
   jnk = fread(header_val, sizeof(long), MAP_HEADER_SIZE, fp);
+#ifdef DEBUG
   printf("Size of file in serial: %d\n", size);
+#endif
 
   // nc = npts/nel
   nc  = header_val[NPTS]/header_val[NEL];

@@ -10,7 +10,7 @@ int test_1(struct comm *c) {
   printf("npts = %ld\n", header[NPTS]);
   printf("mychunk = %ld\n", header[MYCHUNK]);
 
-  for (long i = 0; i < header[MYCHUNK]; i++) {
+  for (long i = 0; i < MAP_HEADER_SIZE; i++) {
     printf("%ld\n", glo_num[i]);
   }
 

@@ -39,8 +39,10 @@ int main() {
   init_genmap(&c, NULL, NULL);
 
   run_test(&test_1,"gs_link1");
+#ifdef MPI
   run_test(&test_2,"gs_comm1");
   run_test(&test_3,"gs_comm2");
+#endif
 
   finalize_genmap(&c);
 
