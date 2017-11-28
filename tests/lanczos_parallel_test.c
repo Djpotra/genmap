@@ -7,7 +7,7 @@
 //------------------------------------------------------------------------------
 int main(int argc, char **argv) {
   // Serial part: TODO: Do in parallel
-  long npts, nelt, *glo_num, *header;
+  long npts, nelt, *glo_num, *header, *elem_id;
   double *weights;
   int nc;
   int lpts, lelt, lstart;
@@ -18,7 +18,7 @@ int main(int argc, char **argv) {
   init_genmap(&c, argc, argv);
 
   // Read the .map file
-  readmap(&c, &header, &glo_num, "nbrhd/nbrhd.map.bin");
+  readmap(&c, &header, &glo_num, &elem_id, "nbrhd/nbrhd.map.bin");
   npts = header[NPTS];
   nelt = header[NEL];
 

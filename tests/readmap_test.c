@@ -3,9 +3,9 @@
 
 //------------------------------------------------------------------------------
 int test_1(struct comm *c) {
-  long *glo_num, *header;
+  long *glo_num, *header, *elem_id;
 
-  readmap(c, &header, &glo_num, "nbrhd/nbrhd.map.bin");
+  readmap(c, &header, &glo_num, &elem_id, "nbrhd/nbrhd.map.bin");
 
   printf("npts = %ld\n", header[NPTS]);
   printf("mychunk = %ld\n", header[MYCHUNK]);

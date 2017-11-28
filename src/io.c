@@ -3,7 +3,8 @@
 
 //------------------------------------------------------------------------------
 #ifdef MPI
-void readmap_mpi(struct comm *c, long **header, long **glo_num, char* name)
+void readmap_mpi(struct comm *c, long **header, long **glo_num,
+                                        long** element_id, char* name)
 {
   MPI_File fh;
   MPI_Offset offset;
@@ -13,38 +14,42 @@ void readmap_mpi(struct comm *c, long **header, long **glo_num, char* name)
 
   MPI_File_seek(fh, 0, MPI_SEEK_SET);
   MPI_File_get_size(fh, &offset);
+
+  *header = malloc(sizeof(long)*(MAP_HEADER_SIZE + 2));
+  MPI_File_read(fh, *header, MAP_HEADER_SIZE, MPI_LONG, &st);
+
+  // nc = npts/nel
+  long nc  = (*header)[NPTS]/(*header)[NEL];
+  long chunk_size =  (*header)[NEL]/ c->np;
+  long start = c->id*chunk_size*(nc + 1);
+  if (c->id == c->np - 1) chunk_size = (*header)[NEL] - c->id*chunk_size;
+
+  *glo_num    = malloc(sizeof(long)*chunk_size*nc);
+  *element_id = malloc(sizeof(long)*chunk_size   );
+
+  long jnk;
+  MPI_File_seek(fh, (MAP_HEADER_SIZE + start)*sizeof(long), MPI_SEEK_SET);
+  for (long i = 0; i < chunk_size; i++) {
+    MPI_File_read(fh, *element_id + i,  1, MPI_LONG, &st);
+    MPI_File_read(fh, *glo_num + i*nc, nc, MPI_LONG, &st);
+  }
+  (*header)[MYCHUNK] = chunk_size;
+  (*header)[NC] = nc;
+
+  MPI_File_close(&fh);
 #ifdef DEBUG
   printf("MPI_SEEK_CUR: %ld\n", MPI_SEEK_CUR);
   printf("Size of file in parallel: %ld\n", offset);
-#endif
-
-  *header = malloc(sizeof(long)*(MAP_HEADER_SIZE + 1));
-  MPI_File_read(fh, *header, MAP_HEADER_SIZE, MPI_LONG, &st);
-
-  long numbers = offset / sizeof(long); numbers -= MAP_HEADER_SIZE;
-  long chunk_size = numbers / c->np;
-  long start = c->id*chunk_size;
-  if (c->id == c->np - 1) chunk_size = numbers - start;
-#ifdef DEBUG
   printf("Total number to be read: %ld\n", numbers);
   printf("My chunk_size: %ld\n", chunk_size);
-  printf("My start: %lld\n", start);
-#endif
-
-  *glo_num = malloc(sizeof(long)*chunk_size);
-#ifdef DEBUG
+  printf("My start: %ld\n", start);
   printf("MPI_SEEK_CUR: %ld\n", MPI_SEEK_CUR);
 #endif
-  MPI_File_seek(fh, (MAP_HEADER_SIZE + start)*sizeof(long), MPI_SEEK_SET);
-  MPI_File_read(fh, *glo_num, chunk_size, MPI_LONG, &st);
-
-  (*header)[MYCHUNK] = chunk_size;
-
-  MPI_File_close(&fh);
 }
 #endif
 //------------------------------------------------------------------------------
-void readmap_serial(struct comm *c, long **header, long **glo_num, char* name)
+void readmap_serial(struct comm *c, long **header, long **glo_num,
+                                        long** element_id, char* name)
 {
   FILE *fp;
   long nc, jnk;
@@ -60,35 +65,36 @@ void readmap_serial(struct comm *c, long **header, long **glo_num, char* name)
   fseek(fp, 0, SEEK_SET);
 
   *header = malloc(sizeof(long)*MAP_HEADER_SIZE);
-  long *header_val = *header;
 
   // nel, nactive, depth, d2, npts, nrank, noutflow
-  jnk = fread(header_val, sizeof(long), MAP_HEADER_SIZE, fp);
-#ifdef DEBUG
-  printf("Size of file in serial: %d\n", size);
-#endif
+  jnk = fread(*header, sizeof(long), MAP_HEADER_SIZE, fp);
 
   // nc = npts/nel
-  nc  = header_val[NPTS]/header_val[NEL];
+  nc  = (*header)[NPTS]/(*header)[NEL];
 
-  *glo_num = malloc(sizeof(long)*header_val[NPTS]);
+  *glo_num = malloc(sizeof(long)*(*header)[NPTS]);
+  *element_id = malloc(sizeof(long)*(*header)[NEL]);
 
   long count = 0;
-  for (long i = 0; i < header_val[NEL]; i++) {
-    jnk = fread(&jnk, sizeof(long), 1, fp);
+  for (long i = 0; i < (*header)[NEL]; i++) {
+    jnk = fread(*element_id + i , sizeof(long),  1, fp);
     jnk = fread(*glo_num + count, sizeof(long), nc, fp);
     count += nc;
   }
 
   fclose(fp);
+#ifdef DEBUG
+  printf("Size of file in serial: %d\n", size);
+#endif
 }
 //------------------------------------------------------------------------------
-void readmap(struct comm *c, long **header, long **glo_num, char* name)
+void readmap(struct comm *c, long **header, long **glo_num,
+                                        long** element_id, char* name)
 {
 #ifdef MPI
-  readmap_mpi   (c, header, glo_num, name);
+  readmap_mpi   (c, header, glo_num, element_id, name);
 #else
-  readmap_serial(c, header, glo_num, name);
+  readmap_serial(c, header, glo_num, element_id, name);
 #endif
 }
 //------------------------------------------------------------------------------

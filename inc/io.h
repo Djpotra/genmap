@@ -7,6 +7,7 @@
 
 //------------------------------------------------------------------------------
 #define MAP_HEADER_SIZE 7
+#define HEADER_SIZE (MAP_HEADER_SIZE + 2)
 
 #define NEL      0
 #define NACTIVE  1
@@ -15,15 +16,17 @@
 #define NPTS     4
 #define NRANK    5
 #define NOUTFLOW 6
-#define MYCHUNK  7
+#define NC       7
+#define MYCHUNK  8
 //------------------------------------------------------------------------------
 #ifdef MPI
-void readmap_mpi   (struct comm *c, long **header, long **glo_num, char* name);
+void readmap_mpi   (struct comm *c, long **header, long **glo_num,
+                                        long** element_id, char* name);
 #endif
-
-void readmap_serial(struct comm *c, long **header, long **glo_num, char* name);
-
-void readmap(struct comm *c, long **header, long **glo_num, char* name);
+void readmap_serial(struct comm *c, long **header, long **glo_num,
+                                        long** element_id, char* name);
+void readmap(struct comm *c, long **header, long **glo_num,
+                                        long** element_id, char* name);
 //------------------------------------------------------------------------------
 
 #endif
