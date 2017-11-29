@@ -22,12 +22,12 @@
 //------------------------------------------------------------------------------
 #ifdef MPI
 void readmap_mpi   (struct comm *c, int64 **header, int64 **glo_num,
-                                        long** element_id, char* name);
+                                        int64** element_id, char* name);
 #endif
-void readmap_serial(struct comm *c, int64 **header, int64 **glo_num,
-                                        long** element_id, char* name);
+void readmap_serial(int64 **header, int64 **glo_num,
+                                        int64** element_id, char* name);
 void readmap(struct comm *c, int64 **header, int64 **glo_num,
-                                        long** element_id, char* name);
+                                        int64** element_id, char* name);
 //------------------------------------------------------------------------------
 
 #endif

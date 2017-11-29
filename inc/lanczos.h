@@ -11,7 +11,7 @@
 // Lanczos iteration
 
 void lanczos(Vector *alpha, Vector *beta, struct gs_data *gsh,
-            double *weights, int32 nc, Vector *init, int iter);
+            double *weights, int32 nc, Vector *init, int32 iter);
 
 void lanczos_serial (Vector *alpha, Vector *beta, CSRMatrix *A, Vector *init);
 

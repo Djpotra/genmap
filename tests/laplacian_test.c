@@ -19,7 +19,7 @@ int32 main(int32 argc, char **argv) {
   int32 np, rank;
   np = c.np; rank = c.id;
 
-  readmap_serial(&c, &header, &glo_num, &elem_id, "nbrhd/nbrhd.map.bin");
+  readmap_serial(&header, &glo_num, &elem_id, "nbrhd/nbrhd.map.bin");
   npts = header[NPTS];
   nelt = header[NEL];
 
@@ -65,11 +65,11 @@ int32 main(int32 argc, char **argv) {
     printf("v: %lf\n", v.vv[i]);
   }
 
-  finalize_genmap(&c);
   gs_free(gsh);
   delete_vector(&v); delete_vector(&u);
   free(glo_num); free(weights);
 
+  finalize_genmap(&c);
   return 0;
 }
 //------------------------------------------------------------------------------
