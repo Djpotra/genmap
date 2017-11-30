@@ -9,6 +9,8 @@
 
 int32 genmap_srand_initialized = 0;
 //------------------------------------------------------------------------------
+// Vector operations
+
 void create_vector(Vector *x, int32 size) {
   /* Asserts:
        - size > 0
@@ -190,4 +192,12 @@ void print_vector(Vector *x) {
     printf(")");
   }
 }
+
+//------------------------------------------------------------------------------
+// Linear solves
+
+void symtridiag_solve(Vector *x, Vector *b, Vector *alpha, Vector *beta)
+{
+}
+
 //------------------------------------------------------------------------------

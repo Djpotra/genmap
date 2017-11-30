@@ -4,6 +4,8 @@
 #include "dtypes.h"
 
 //------------------------------------------------------------------------------
+// Vector operations
+
 struct genmap_vector {
   int32 size;
   double *vv;
@@ -38,6 +40,10 @@ void   print_vector(Vector *x);
 //TODO: get rid of this !!
 void   mult_scalar_add_vector(Vector *y, double alpha, Vector *x, \
                                                         double beta);
+//------------------------------------------------------------------------------
+// Linear solve
+
+void symtridiag_solve(Vector *x, Vector *b, Vector *alpha, Vector *beta);
 //------------------------------------------------------------------------------
 
 #endif
