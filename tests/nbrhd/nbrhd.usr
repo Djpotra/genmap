@@ -186,7 +186,7 @@ c-----------------------------------------------------------------------
          call gs_op(gsh_rsb,u8,1,1,0)  ! +
          do e=1,nelt
             weights(e) = vlsum(u8(1,e),lc)
-!            write(6, *) 'nid =',nid,' weights[',e,'] = ',weights(e) !! Thilina
+            write(6, *) 'nid =',nid,' weights[',e,'] = ',weights(e) !! Thilina
          enddo
 
       endif
