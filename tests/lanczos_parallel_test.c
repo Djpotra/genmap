@@ -1,29 +1,30 @@
 #include "test.h"
-#include "gswrapper.h"
-#include "laplacian.h"
 #include "linalg.h"
+#include "lanczos.h"
+#include "mpiwrapper.h"
 #include "io.h"
 
-#include <mpi.h>
 //------------------------------------------------------------------------------
-int main(int argc, char **argv) {
+int32 main(int32 argc, char **argv) {
   // Serial part: TODO: Do in parallel
-  long npts, nelt, *glo_num;
+  int64 npts, nelt, *glo_num, *header, *elem_id;
   double *weights;
-  int nc;
-  int lpts, lelt, lstart;
+  int32 nc;
+  int32 lpts, lelt, lstart;
 
   Vector init, alpha, beta;
 
-  MPI_Init(&argc, &argv);
+  struct comm c;
+  init_genmap(&c, argc, argv);
 
   // Read the .map file
-  readmap(&npts, &nelt, &glo_num, "nbrhd/nbrhd.map");
+  readmap(&c, &header, &glo_num, &elem_id, "nbrhd/nbrhd.map.bin");
+  npts = header[NPTS];
+  nelt = header[NEL];
 
   // Element distribution after reading the .map file
-  int np, rank;
-  MPI_Comm_size(MPI_COMM_WORLD, &np  );
-  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+  int32 np, rank;
+  np = c.np; rank = c.id;
 
   nc = npts/nelt;
   lelt = nelt/np;
@@ -33,16 +34,13 @@ int main(int argc, char **argv) {
   }
   lpts = lelt*nc;
 
-  // Initialize gslib
-  struct comm c;
-  comm_init(&c, MPI_COMM_WORLD);
   struct gs_data *gsh;
   ax_setup(&gsh, &weights, &c, lpts, lelt, &glo_num[lstart*nc]);
 
   // Setup variables for lanczos
-  int iter = 8;
+  int32 iter = 8;
   zeros_vector (&init , lelt    );
-  for (int i = 0; i < lelt; i++) {
+  for (int32 i = 0; i < lelt; i++) {
     init.vv[i] = (double)lstart + i;
   }
   zeros_vector(&alpha, iter    );
@@ -52,12 +50,12 @@ int main(int argc, char **argv) {
   lanczos(&alpha, &beta, gsh, weights, nc, &init, iter);
   if (rank == 0) {
     printf("beta = [");
-    for (int i = 0; i < beta.size; i++) {
+    for (int32 i = 0; i < beta.size; i++) {
       printf("%.17g, ", beta.vv[i]);
     }
     printf("]\n");
     printf("alpha= [");
-    for (int i = 0; i < alpha.size; i++) {
+    for (int32 i = 0; i < alpha.size; i++) {
       printf("%.17g, ", alpha.vv[i]);
     }
     printf("]\n");
@@ -65,17 +63,14 @@ int main(int argc, char **argv) {
     Vector d, e;
     zeros_vector(&d, iter); zeros_vector(&e, iter);
     copy_vector(&d, &alpha);
-    for (int i = 0; i < iter - 1; i++) {
+    for (int32 i = 0; i < iter - 1; i++) {
       e.vv[i] = beta.vv[i];
     }
   }
 
   // Free data structures
-  comm_free(&c);
+  finalize_genmap(&c);
   gs_free(gsh);
-
-  MPI_Finalize();
-
   delete_vector(&alpha); delete_vector(&beta);
   delete_vector(&init);
 

@@ -5,10 +5,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
+#include <assert.h>
 
-int genmap_srand_initialized = 0;
+int32 genmap_srand_initialized = 0;
 //------------------------------------------------------------------------------
-void create_vector(Vector *x, int size) {
+void create_vector(Vector *x, int32 size) {
   /* Asserts:
        - size > 0
   */
@@ -33,16 +34,16 @@ void delete_vector(Vector *x) {
   }
 }
 //------------------------------------------------------------------------------
-int vectors_equal(Vector *x, Vector *y, double tol) {
+int32 vectors_equal(Vector *x, Vector *y, double tol) {
   /* Asserts:
        - size of y == size of x
   */
   assert(x->size == y->size);
 
-  int  equal = 1;
+  int32  equal = 1;
 
-  int      n = x->size;
-  for (int i = 0; i < n; i++) {
+  int32      n = x->size;
+  for (int32 i = 0; i < n; i++) {
     if (fabs(x->vv[i] - y->vv[i]) > tol) {
       equal = 0;
       break;
@@ -52,7 +53,7 @@ int vectors_equal(Vector *x, Vector *y, double tol) {
   return equal;
 }
 //------------------------------------------------------------------------------
-void random_vector(Vector *x, int size) {
+void random_vector(Vector *x, int32 size) {
   create_vector(x, size);
 
   if (!genmap_srand_initialized) {
@@ -60,12 +61,12 @@ void random_vector(Vector *x, int size) {
     genmap_srand_initialized = 1;
   }
 
-  for (int i = 0; i < size; i++) {
+  for (int32 i = 0; i < size; i++) {
     x->vv[i] = (double) rand()/RAND_MAX*2. - 1.;
   }
 }
 //------------------------------------------------------------------------------
-void parallel_random_vector(Vector *x, int size, int seed) {
+void parallel_random_vector(Vector *x, int32 size, int32 seed) {
   create_vector(x, size);
 
   if (!genmap_srand_initialized) {
@@ -73,37 +74,37 @@ void parallel_random_vector(Vector *x, int size, int seed) {
     genmap_srand_initialized = 1;
   }
 
-  for (int i = 0; i < size; i++) {
+  for (int32 i = 0; i < size; i++) {
     x->vv[i] = (double) rand()/RAND_MAX*2. - 1.;
   }
 }
 //------------------------------------------------------------------------------
-void ones_vector(Vector *x, int size) {
+void ones_vector(Vector *x, int32 size) {
   create_vector(x, size);
 
-  for (int i = 0; i < size; i++) {
+  for (int32 i = 0; i < size; i++) {
     x->vv[i] = 1.;
   }
 }
 //------------------------------------------------------------------------------
-void zeros_vector(Vector *x, int size) {
+void zeros_vector(Vector *x, int32 size) {
   create_vector(x, size);
 
-  for (int i = 0; i < size; i++) {
+  for (int32 i = 0; i < size; i++) {
     x->vv[i] = 0.;
   }
 }
 //------------------------------------------------------------------------------
-double norm_vector(Vector *x, int p) {
+double norm_vector(Vector *x, int32 p) {
   double sum = 0.;
 
-  int n = x->size;
+  int32 n = x->size;
   if (p == 1) {
-    for (int i = 0; i < n; i++) {
+    for (int32 i = 0; i < n; i++) {
       sum += fabs(x->vv[i]);
     }
   } else if (p == 2) {
-    for (int i = 0; i < n; i++) {
+    for (int32 i = 0; i < n; i++) {
       sum += x->vv[i]*x->vv[i];
     }
     sum = sqrt(sum);
@@ -119,8 +120,8 @@ void mult_scalar_add_vector(Vector *y, double alpha, Vector *x, \
   */
   assert(y->size == x->size);
 
-  int n = x->size;
-  for (int i = 0; i < n; i++) {
+  int32 n = x->size;
+  for (int32 i = 0; i < n; i++) {
     y->vv[i] = alpha*y->vv[i] + beta*x->vv[i];
   }
 }
@@ -133,8 +134,8 @@ void z_axpby_vector(Vector *z, Vector *x, double alpha, \
   assert(z->size == x->size);
   assert(z->size == y->size);
 
-  int n = x->size;
-  for (int i = 0; i < n; i++) {
+  int32 n = x->size;
+  for (int32 i = 0; i < n; i++) {
     z->vv[i] = alpha*x->vv[i] + beta*y->vv[i];
   }
 }
@@ -145,8 +146,8 @@ void scale_vector(Vector *y, Vector *x,  double alpha) {
   */
   assert(x->size == y->size);
 
-  int n = x->size;
-  for (int i = 0; i < n; i++) {
+  int32 n = x->size;
+  for (int32 i = 0; i < n; i++) {
     y->vv[i] = alpha*(x->vv[i]);
   }
 }
@@ -159,8 +160,8 @@ double dot_vector(Vector *x, Vector *y) {
 
   double dot = 0.;
 
-  int n = x->size;
-  for (int i = 0; i < n; i++) {
+  int32 n = x->size;
+  for (int32 i = 0; i < n; i++) {
     dot += y->vv[i]*x->vv[i];
   }
 
@@ -173,8 +174,8 @@ void copy_vector(Vector *x, Vector *y) {
   */
   assert(y->size == x->size);
 
-  int n = x->size;
-  for (int i = 0; i < n; i++) {
+  int32 n = x->size;
+  for (int32 i = 0; i < n; i++) {
     x->vv[i] = y->vv[i];
   }
 }
@@ -184,7 +185,7 @@ void print_vector(Vector *x) {
        - size y > 0
   */
   printf("(%f", x->vv[0]);
-  for (int i = 1; i < x->size - 1; i++) {
+  for (int32 i = 1; i < x->size - 1; i++) {
     printf(", %f", x->vv[i]);
   }
 

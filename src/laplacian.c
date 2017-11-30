@@ -1,14 +1,14 @@
 #include <stdio.h>
-#include <mpi.h>
+#include <stdlib.h>
 
-#include "gswrapper.h"
 #include "laplacian.h"
 #include "linalg.h"
+#include "mpiwrapper.h"
 
-int rsb_setup = 0;
+int32 rsb_setup = 0;
 //------------------------------------------------------------------------------
 void ax_setup(struct gs_data **gsh, double **weights, struct comm *c, \
-                 unsigned int npts, unsigned int nelt, long *glo_num)
+                 int32 npts, int32 nelt, int64 *glo_num)
 {
   *gsh = gs_setup(glo_num, npts, c, 0, gs_auto, 0);
 
@@ -17,10 +17,10 @@ void ax_setup(struct gs_data **gsh, double **weights, struct comm *c, \
   if (u == NULL) {
     printf("malloc failed in %s:%d", __FILE__, __LINE__);
   }
-  int nc = npts/nelt;
+  int32 nc = npts/nelt;
 
-  for (unsigned int i = 0; i < nelt; i++) {
-    for (int j = 0; j < nc; j++) {
+  for (int32 i = 0; i < nelt; i++) {
+    for (int32 j = 0; j < nc; j++) {
       u[nc*i + j] = 1.;
     }
   }
@@ -28,9 +28,9 @@ void ax_setup(struct gs_data **gsh, double **weights, struct comm *c, \
   gs(u, gs_double, gs_add, 1, *gsh, NULL);
 
   *weights = malloc(sizeof(double)*nelt);
-  for (long i = 0; i < nelt; i++) {
+  for (int64 i = 0; i < nelt; i++) {
     *(*weights + i) = 0;
-    for (long j = 0; j < nc; j++) {
+    for (int64 j = 0; j < nc; j++) {
       *(*weights + i) += u[nc*i + j];
     }
   }
@@ -40,7 +40,7 @@ void ax_setup(struct gs_data **gsh, double **weights, struct comm *c, \
   rsb_setup = 1;
 }
 //------------------------------------------------------------------------------
-void ax(Vector *v, Vector *u, struct gs_data *gsh, double *weights, long nc) {
+void ax(Vector *v, Vector *u, struct gs_data *gsh, double *weights, int64 nc) {
   if (rsb_setup == 0) {
     fprintf(stderr, "Need to call ax_setup before this routine.");
     return;
@@ -50,7 +50,7 @@ void ax(Vector *v, Vector *u, struct gs_data *gsh, double *weights, long nc) {
   */
   double *vv = v->vv;
   double *uv = u->vv;
-  int size = v->size;
+  int32 size = v->size;
 
   double *ucv = NULL;
   ucv = malloc(sizeof(double)*nc*size);
@@ -58,17 +58,17 @@ void ax(Vector *v, Vector *u, struct gs_data *gsh, double *weights, long nc) {
     printf("malloc failed in %s:%d", __FILE__, __LINE__);
   }
 
-  for (int i = 0; i < size; i++) {
-    for (int j = 0; j < nc; j++) {
+  for (int32 i = 0; i < size; i++) {
+    for (int32 j = 0; j < nc; j++) {
       ucv[nc*i + j] = uv[i];
     }
   }
 
   gs(ucv, gs_double, gs_add, 0, gsh, NULL);
 
-  for (int i = 0; i < size; i++) {
+  for (int32 i = 0; i < size; i++) {
     vv[i] = weights[i]*uv[i];
-    for (int j = 0; j < nc; j++) {
+    for (int32 j = 0; j < nc; j++) {
       vv[i] -= ucv[nc*i + j];
     }
   }

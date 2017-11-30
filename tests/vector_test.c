@@ -3,7 +3,7 @@
 
 #include <math.h>
 //------------------------------------------------------------------------------
-int test_1() {
+int32 test_1() {
   Vector y;
 
   create_vector(&y, 10);
@@ -11,7 +11,7 @@ int test_1() {
   return (y.size == 10);
 }
 //------------------------------------------------------------------------------
-int test_2() {
+int32 test_2() {
   double vx[5] = {0., 0., 0., 0., 0.};
   Vector x = { .size = 5, .vv = vx };
   Vector y = { .size = 5, .vv = vx };
@@ -23,7 +23,7 @@ int test_2() {
                            !vectors_equal(&y, &z, 1e-12);
 }
 //------------------------------------------------------------------------------
-int test_3() {
+int32 test_3() {
   Vector y;
 
   zeros_vector(&y, 5);
@@ -34,7 +34,7 @@ int test_3() {
   return (y.size == 5 && vectors_equal(&y, &answer, 1e-12));
 }
 //------------------------------------------------------------------------------
-int test_4() {
+int32 test_4() {
   Vector y;
 
   ones_vector(&y, 6);
@@ -45,7 +45,7 @@ int test_4() {
   return (y.size == 6 && vectors_equal(&y, &answer, 1e-12));
 }
 //------------------------------------------------------------------------------
-int test_5() {
+int32 test_5() {
   Vector y;
 
   random_vector(&y, 6);
@@ -54,7 +54,7 @@ int test_5() {
   return (y.size == 6);
 }
 //------------------------------------------------------------------------------
-int test_6() {
+int32 test_6() {
   double vx[6] = {1., -1., 1., 1., 1., -1.};
   Vector x = { .size = 6, .vv = vx };
 
@@ -67,7 +67,7 @@ int test_6() {
           norm_vector(&y, 2) == sqrt(7.0) );
 }
 //------------------------------------------------------------------------------
-int test_7() {
+int32 test_7() {
   double vx[6] = {1., -1., 1., 1., 1., -1.};
   Vector x = { .size = 6, .vv = vx };
 
@@ -89,7 +89,7 @@ int test_7() {
                         vectors_equal(&answer2, &z, 1e-12);
 }
 //------------------------------------------------------------------------------
-int test_8() {
+int32 test_8() {
   double vx[6] = {1., -1., 1., 1., 1., -1.};
   Vector x = { .size = 6, .vv = vx };
 
@@ -99,7 +99,7 @@ int test_8() {
   return (dot_vector(&x, &y) == 5.);
 }
 //------------------------------------------------------------------------------
-int main() {
+int32 main() {
   run_test(&test_1,"vector_1");
   run_test(&test_2,"vector_2");
   run_test(&test_3,"vector_3");

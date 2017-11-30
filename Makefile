@@ -1,10 +1,14 @@
-TARGET=libgenmap.a
+TARGET=genmap
+LIB=lib$(TARGET).a
 TESTS=tests
+
 GSLIB=gslib
 GSDIR ?= $(SRCROOT)/../gslib/src
+MPI ?= 1
+DEBUG ?= 0
 
 CC=mpicc
-CFLAGS=-std=c99 -O2 -Wall -Wextra -g
+CFLAGS=-std=c99 -O2 -Wall -Wextra -g -Wno-unused-function
 FC=mpif77
 FFLAGS=
 CXX=mpic++
@@ -17,7 +21,7 @@ INCFLAGS=-I$(INCDIR) -I$(GSDIR)
 TESTDIR =$(SRCROOT)/tests
 
 CSRCS:=$(SRCDIR)/io.c $(SRCDIR)/lanczos.c $(SRCDIR)/linalg.c \
-    $(SRCDIR)/csr.c $(TESTDIR)/test.c $(SRCDIR)/laplacian.c  \
+    $(SRCDIR)/csr.c $(SRCDIR)/test.c $(SRCDIR)/laplacian.c  \
     $(SRCDIR)/gswrapper.c
 
 COBJS:=$(CSRCS:.c=.o)
@@ -28,7 +32,9 @@ LDFLAGS:=-lm -L$(GSDIR) -lgs
 TESTCSRC:=$(TESTDIR)/readmap_test.c $(TESTDIR)/csr_test.c \
     $(TESTDIR)/vector_test.c $(TESTDIR)/lanczos_serial_test.c   \
     $(TESTDIR)/gs_test.c $(TESTDIR)/laplacian_test.c     \
-    $(TESTDIR)/gop_test.c $(TESTDIR)/lanczos_parallel_test.c
+    $(TESTDIR)/gop_test.c $(TESTDIR)/lanczos_parallel_test.c \
+    $(TESTDIR)/mpiio_test.c
+
 TESTCOBJ:=$(TESTCSRC:.c=.o)
 TESTFSRC:=
 TESTFOBJ:=$(TESTFSRC:.f=.o)
@@ -36,6 +42,13 @@ TESTLDFLAGS:=-L. -lgenmap -Wl,-rpath=. -L$(GSDIR) -lgs -lm
 
 SRCOBJS :=$(COBJS) $(FOBJS)
 TESTOBJS:=$(TESTCOBJ) $(TESTFOBJ)
+
+ifeq ($(MPI),1)
+	CFLAGS+= -DMPI
+endif
+ifeq ($(DEBUG),1)
+	CFLAGS+= -DDEBUG
+endif
 
 .PHONY: all
 all: $(TARGET) $(TESTS)
@@ -48,8 +61,8 @@ all: $(TARGET) $(TESTS)
 
 .PHONY: $(TARGET)
 $(TARGET): $(COBJS) $(FOBJS)
-	@$(AR) cr $(TARGET) $(SRCOBJS)
-	@ranlib $(TARGET)
+	@$(AR) cr $(LIB) $(SRCOBJS)
+	@ranlib $(LIB)
 
 $(COBJS): %.o: %.c
 	$(CC) $(CFLAGS) $(INCFLAGS) -c $< -o $@

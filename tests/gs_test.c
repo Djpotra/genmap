@@ -1,14 +1,9 @@
-#include "gswrapper.h"
+#include "mpiwrapper.h"
+#include "test.h"
 
 //------------------------------------------------------------------------------
-int test_1() {
-  slong id;
-  id = 1;
-
-  return id;
-}
-//------------------------------------------------------------------------------
-int test_2() {
+#ifdef MPI
+int32 test_1() {
   struct comm c;
 
   comm_init(&c, MPI_COMM_WORLD);
@@ -18,13 +13,12 @@ int test_2() {
   return 1;
 }
 //------------------------------------------------------------------------------
-int test_3() {
-  slong npts, glo_num;
+int32 test_2() {
+  int64 npts, glo_num;
+  npts = 16;
+
   struct comm c;
-
   comm_init(&c, MPI_COMM_WORLD);
-
-  readmap(&npts, &glo_num, "nbrhd.map");
 
   gs_setup(&glo_num, npts, &c, 0, gs_crystal_router, 1);
 
@@ -33,14 +27,16 @@ int test_3() {
   return 1;
 }
 //------------------------------------------------------------------------------
-int main() {
-  MPI_Init(NULL, NULL);
+int32 main(int32 argc, char** argv) {
+  struct comm c;
+  init_genmap(&c, argc, argv);
 
-  run_test(&test_1,"gs_link1");
-  run_test(&test_2,"gs_comm1");
-  run_test(&test_3,"gs_comm2");
+  run_test(&test_1,"gs_comm1");
+  run_test(&test_2,"gs_comm2");
 
-  MPI_Finalize();
+  finalize_genmap(&c);
+
   return 0;
 }
+#endif
 //------------------------------------------------------------------------------
