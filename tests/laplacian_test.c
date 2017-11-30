@@ -62,7 +62,7 @@ int32 main(int32 argc, char **argv) {
   ax(&v, &u, gsh, weights, lpts/lelt);
 
   for (int32 i = 0; i < lelt; i++) {
-    printf("v: %lf\n", v.vv[i]);
+    printf("v[%d]: %lf\n", i, v.vv[i]);
   }
 
   gs_free(gsh);
