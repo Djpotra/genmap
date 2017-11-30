@@ -114,7 +114,7 @@ double norm_vector(Vector *x, int32 p) {
     norm = fabs(x->vv[0]);
 
     for (int32 i = 1; i < n; i++) {
-      if (fabs(x->vv[i]) > norm) norm = x->vv[i];
+      if (fabs(x->vv[i]) > norm) norm = fabs(x->vv[i]);
     }
   }
 
