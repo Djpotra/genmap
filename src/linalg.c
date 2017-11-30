@@ -96,21 +96,29 @@ void zeros_vector(Vector *x, int32 size) {
 }
 //------------------------------------------------------------------------------
 double norm_vector(Vector *x, int32 p) {
-  double sum = 0.;
+  assert(x->size > 0);
 
   int32 n = x->size;
+  double norm = 0.;
+
   if (p == 1) {
     for (int32 i = 0; i < n; i++) {
-      sum += fabs(x->vv[i]);
+      norm += fabs(x->vv[i]);
     }
   } else if (p == 2) {
     for (int32 i = 0; i < n; i++) {
-      sum += x->vv[i]*x->vv[i];
+      norm += x->vv[i]*x->vv[i];
     }
-    sum = sqrt(sum);
+    norm = sqrt(norm);
+  } else if (p == -1) {
+    norm = fabs(x->vv[0]);
+
+    for (int32 i = 1; i < n; i++) {
+      if (fabs(x->vv[i]) > norm) norm = x->vv[i];
+    }
   }
 
-  return sum;
+  return norm;
 }
 //------------------------------------------------------------------------------
 void mult_scalar_add_vector(Vector *y, double alpha, Vector *x, \

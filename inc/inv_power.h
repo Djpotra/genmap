@@ -5,12 +5,10 @@
 #include "gswrapper.h"
 #include "dtypes.h"
 
-#include <assert.h>
 //------------------------------------------------------------------------------
 void inv_power(Vector *eVector, Vector *alpha, Vector *beta, Vector *init,
-            int32 nc, int32 iter)
-{
-}
+                                                        int32 nc, int32 iter);
+
 //------------------------------------------------------------------------------
 
 #endif

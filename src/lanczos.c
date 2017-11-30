@@ -4,6 +4,7 @@
 #include <math.h>
 #include <assert.h>
 #include <float.h>
+
 //------------------------------------------------------------------------------
 void lanczos(Vector *alpha, Vector *beta, struct gs_data *gsh,
             double *weights, int32 nc, Vector *init, int32 iter)
@@ -162,4 +163,5 @@ void lanczos_serial2(Vector *alpha, Vector *beta, CSRMatrix *A, Vector *init) {
   csr_matrix_vector_multiply(&p, A, &v);
   alpha->vv[i] = dot_vector(&p, &v);
 }
+
 //------------------------------------------------------------------------------
