@@ -9,6 +9,8 @@
 void power(Vector *eVector, Vector *alpha, Vector *beta, Vector *init,
                                                                    int32 iter);
 
+void invpower(Vector *eVector, Vector *alpha, Vector *beta, Vector *init,
+                                                                   int32 iter);
 //------------------------------------------------------------------------------
 
 #endif
