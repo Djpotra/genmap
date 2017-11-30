@@ -16,8 +16,7 @@ void   delete_vector(Vector *x);
 
 int32    vectors_equal(Vector *x, Vector *y, double tol);
 
-void   random_vector(Vector *x, int32 size);
-void   parallel_random_vector(Vector *x, int32 size, int32 seed);
+void   random_vector(Vector *x, int32 size, int32 seed);
 
 void   ones_vector(Vector *x, int32 size);
 

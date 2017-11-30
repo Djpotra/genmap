@@ -53,20 +53,7 @@ int32 vectors_equal(Vector *x, Vector *y, double tol) {
   return equal;
 }
 //------------------------------------------------------------------------------
-void random_vector(Vector *x, int32 size) {
-  create_vector(x, size);
-
-  if (!genmap_srand_initialized) {
-    srand(time(NULL));
-    genmap_srand_initialized = 1;
-  }
-
-  for (int32 i = 0; i < size; i++) {
-    x->vv[i] = (double) rand()/RAND_MAX*2. - 1.;
-  }
-}
-//------------------------------------------------------------------------------
-void parallel_random_vector(Vector *x, int32 size, int32 seed) {
+void random_vector(Vector *x, int32 size, int32 seed) {
   create_vector(x, size);
 
   if (!genmap_srand_initialized) {

@@ -35,7 +35,7 @@ int32 main(int32 argc, char **argv) {
 
   ax_setup(&gsh, &weights, &c, lpts, lelt, &glo_num[lstart*nc]);
 
-  parallel_random_vector(&v, lelt, rank);
+  random_vector(&v, lelt, rank);
 
   ones_vector(&u, lelt);
 

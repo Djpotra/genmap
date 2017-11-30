@@ -48,7 +48,7 @@ int32 test_4() {
 int32 test_5() {
   Vector y;
 
-  random_vector(&y, 6);
+  random_vector(&y, 6, 0);
 
   // TODO: add a test to check if inf_norm(y) <= 1.
   return (y.size == 6);
