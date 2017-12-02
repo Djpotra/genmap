@@ -198,19 +198,25 @@ void print_vector(Vector *x) {
 
 void symtridiag_solve(Vector *x, Vector *b, Vector *alpha, Vector *beta)
 {
-  assert(b->size == alpha->size == beta->size + 1);
+  assert(b->size == alpha->size);
+  assert(alpha->size == beta->size + 1);
   assert(b->size > 0);
 
   int32 n = b->size;
 
   Vector diag;
-  create_vector(&diag, n); copy_vector(&diag   , &alpha);
-  create_vector(x, n); copy_vector(&x, b);
+  create_vector(&diag, n); copy_vector(&diag   , alpha);
+  create_vector(x, n); copy_vector(x, b);
 
   for (int32 i = 0; i < n - 1; i++) {
     double m = (beta->vv[i]/diag.vv[i]);
     x->vv[i+1] = x->vv[i+1] - m*x->vv[i];
     diag.vv[i+1] = diag.vv[i+1] - m*beta->vv[i];
+  }
+
+  x->vv[n - 1] = x->vv[n - 1]/diag.vv[n - 1];
+  for (int32 i = n - 2; i >= 0; i--) {
+    x->vv[i] =  (x->vv[i] - beta->vv[i]*x->vv[i + 1])/diag.vv[i];
   }
 
   return;
