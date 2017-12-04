@@ -24,3 +24,49 @@ void run_test_mpi(int32 (*test_fun)(), struct comm *c, char *name) {
 }
 
 //------------------------------------------------------------------------------
+// Debug utilities
+void debugi(int32 nparams, ...)
+{
+  va_list valist;
+
+  va_start(valist, nparams);
+
+  for (int32 i = 0; i < nparams; i++) {
+    printf("param %d: %d\n", i, va_arg(valist, int));
+  }
+}
+
+void debugl(int32 nparams, ...)
+{
+  va_list valist;
+
+  va_start(valist, nparams);
+
+  for (int32 i = 0; i < nparams; i++) {
+    printf("param %d: %ld\n", i, va_arg(valist, long));
+  }
+}
+
+void debugf(int32 nparams, ...)
+{
+  va_list valist;
+
+  va_start(valist, nparams);
+
+  for (int32 i = 0; i < nparams; i++) {
+    printf("param %d: %f\n", i, va_arg(valist, float));
+  }
+}
+
+void debugd(int32 nparams, ...)
+{
+  va_list valist;
+
+  va_start(valist, nparams);
+
+  for (int32 i = 0; i < nparams; i++) {
+    printf("param %d: %lf\n", i, va_arg(valist, double));
+  }
+}
+
+//------------------------------------------------------------------------------

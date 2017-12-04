@@ -58,9 +58,9 @@ void invpower(Vector *eVector, Vector *alpha, Vector *beta, Vector *init,
   } else {
     for (int32 j = 0; j < iter; j++) {
       // Ay = x
-      symtridiag_solve(&y, &x, &alpha, &beta);
+      symtridiag_solve(&y, &x, alpha, beta);
 
-      // calculate 2-norm(y)
+      // calculate 2-norm(y) and scale y by that amount
       scale_vector(&y, &y, 1.0/norm_vector(&y, 2));
 
       copy_vector (&x, &y);
