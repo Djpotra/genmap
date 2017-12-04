@@ -21,7 +21,7 @@ int32 test_1() {
 
   printf("(%lf, %lf, %lf)\n", eVector.vv[0], eVector.vv[1], eVector.vv[2]);
 
-  return 0;
+  return 1;
 }
 
 //------------------------------------------------------------------------------
@@ -44,7 +44,7 @@ int32 test_2() {
   printf("(%lf, %lf, %lf, %lf)\n",
                 eVector.vv[0], eVector.vv[1], eVector.vv[2], eVector.vv[3]);
 
-  return 0;
+  return 1;
 }
 
 //------------------------------------------------------------------------------
