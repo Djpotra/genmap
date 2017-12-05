@@ -9,6 +9,8 @@
 
 int32 genmap_srand_initialized = 0;
 //------------------------------------------------------------------------------
+// Vector operations
+
 void create_vector(Vector *x, int32 size) {
   /* Asserts:
        - size > 0
@@ -53,20 +55,7 @@ int32 vectors_equal(Vector *x, Vector *y, double tol) {
   return equal;
 }
 //------------------------------------------------------------------------------
-void random_vector(Vector *x, int32 size) {
-  create_vector(x, size);
-
-  if (!genmap_srand_initialized) {
-    srand(time(NULL));
-    genmap_srand_initialized = 1;
-  }
-
-  for (int32 i = 0; i < size; i++) {
-    x->vv[i] = (double) rand()/RAND_MAX*2. - 1.;
-  }
-}
-//------------------------------------------------------------------------------
-void parallel_random_vector(Vector *x, int32 size, int32 seed) {
+void random_vector(Vector *x, int32 size, int32 seed) {
   create_vector(x, size);
 
   if (!genmap_srand_initialized) {
@@ -96,21 +85,29 @@ void zeros_vector(Vector *x, int32 size) {
 }
 //------------------------------------------------------------------------------
 double norm_vector(Vector *x, int32 p) {
-  double sum = 0.;
+  assert(x->size > 0);
 
   int32 n = x->size;
+  double norm = 0.;
+
   if (p == 1) {
     for (int32 i = 0; i < n; i++) {
-      sum += fabs(x->vv[i]);
+      norm += fabs(x->vv[i]);
     }
   } else if (p == 2) {
     for (int32 i = 0; i < n; i++) {
-      sum += x->vv[i]*x->vv[i];
+      norm += x->vv[i]*x->vv[i];
     }
-    sum = sqrt(sum);
+    norm = sqrt(norm);
+  } else if (p == -1) {
+    norm = fabs(x->vv[0]);
+
+    for (int32 i = 1; i < n; i++) {
+      if (fabs(x->vv[i]) > norm) norm = fabs(x->vv[i]);
+    }
   }
 
-  return sum;
+  return norm;
 }
 //------------------------------------------------------------------------------
 void mult_scalar_add_vector(Vector *y, double alpha, Vector *x, \
@@ -195,4 +192,34 @@ void print_vector(Vector *x) {
     printf(")");
   }
 }
+
+//------------------------------------------------------------------------------
+// Linear solves
+
+void symtridiag_solve(Vector *x, Vector *b, Vector *alpha, Vector *beta)
+{
+  assert(b->size == alpha->size);
+  assert(alpha->size == beta->size + 1);
+  assert(b->size > 0);
+
+  int32 n = b->size;
+
+  Vector diag;
+  create_vector(&diag, n); copy_vector(&diag   , alpha);
+  create_vector(x, n); copy_vector(x, b);
+
+  for (int32 i = 0; i < n - 1; i++) {
+    double m = (beta->vv[i]/diag.vv[i]);
+    x->vv[i+1] = x->vv[i+1] - m*x->vv[i];
+    diag.vv[i+1] = diag.vv[i+1] - m*beta->vv[i];
+  }
+
+  x->vv[n - 1] = x->vv[n - 1]/diag.vv[n - 1];
+  for (int32 i = n - 2; i >= 0; i--) {
+    x->vv[i] =  (x->vv[i] - beta->vv[i]*x->vv[i + 1])/diag.vv[i];
+  }
+
+  return;
+}
+
 //------------------------------------------------------------------------------

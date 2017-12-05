@@ -22,7 +22,7 @@ TESTDIR =$(SRCROOT)/tests
 
 CSRCS:=$(SRCDIR)/io.c $(SRCDIR)/lanczos.c $(SRCDIR)/linalg.c \
     $(SRCDIR)/csr.c $(SRCDIR)/test.c $(SRCDIR)/laplacian.c  \
-    $(SRCDIR)/gswrapper.c
+    $(SRCDIR)/gswrapper.c $(SRCDIR)/power.c
 
 COBJS:=$(CSRCS:.c=.o)
 FSRCS:=
@@ -33,7 +33,8 @@ TESTCSRC:=$(TESTDIR)/readmap_test.c $(TESTDIR)/csr_test.c \
     $(TESTDIR)/vector_test.c $(TESTDIR)/lanczos_serial_test.c   \
     $(TESTDIR)/gs_test.c $(TESTDIR)/laplacian_test.c     \
     $(TESTDIR)/gop_test.c $(TESTDIR)/lanczos_parallel_test.c \
-    $(TESTDIR)/mpiio_test.c
+    $(TESTDIR)/mpiio_test.c $(TESTDIR)/power_test.c \
+    $(TESTDIR)/symtridiag_solve_test.c
 
 TESTCOBJ:=$(TESTCSRC:.c=.o)
 TESTFSRC:=
