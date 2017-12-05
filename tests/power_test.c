@@ -84,8 +84,8 @@ int32 test_4() {
 int32 main() {
   run_test(&test_1, "power_iteration_1");
   run_test(&test_2, "power_iteration_2");
-  run_test(&test_3, "invpower_iteration_3");
-  run_test(&test_4, "invpower_iteration_4");
+  run_test(&test_3, "invpower_iteration_1");
+  run_test(&test_4, "invpower_iteration_2");
 
   return 0;
 }
