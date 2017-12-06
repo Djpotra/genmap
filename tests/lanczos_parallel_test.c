@@ -6,39 +6,35 @@
 
 //------------------------------------------------------------------------------
 int32 main(int32 argc, char **argv) {
-  // Serial part: TODO: Do in parallel
-  int64 npts, nelt, *glo_num, *header, *elem_id;
+  int64 *glo_num, *header, *elem_id;
+  int32 nc, lpts, lelt, lstart;
+
   double *weights;
-  int32 nc;
-  int32 lpts, lelt, lstart;
 
   Vector init, alpha, beta;
 
   struct comm c;
+
+  // Initialize genmap
   init_genmap(&c, argc, argv);
 
   // Read the .map file
   readmap(&c, &header, &glo_num, &elem_id, "nbrhd/nbrhd.map.bin");
-  npts = header[NPTS];
-  nelt = header[NEL];
 
   // Element distribution after reading the .map file
   int32 np, rank;
   np = c.np; rank = c.id;
 
-  nc = npts/nelt;
-  lelt = nelt/np;
-  lstart = rank*lelt;
-  if (rank == np - 1) {
-    lelt = nelt - lstart;
-  }
+  nc = header[NC];
+  lelt = header[MYCHUNK];
   lpts = lelt*nc;
 
   struct gs_data *gsh;
-  ax_setup(&gsh, &weights, &c, lpts, lelt, &glo_num[lstart*nc]);
+  ax_setup(&gsh, &weights, &c, lpts, lelt, glo_num);
 
   // Setup variables for lanczos
   int32 iter = 8;
+  lstart = np;
   zeros_vector (&init , lelt    );
   for (int32 i = 0; i < lelt; i++) {
     init.vv[i] = (double)lstart + i;
@@ -69,13 +65,13 @@ int32 main(int32 argc, char **argv) {
   }
 
   // Free data structures
-  finalize_genmap(&c);
   gs_free(gsh);
   delete_vector(&alpha); delete_vector(&beta);
   delete_vector(&init);
 
   free(glo_num); free(weights);
 
+  finalize_genmap(&c);
   return 0;
 }
 //------------------------------------------------------------------------------

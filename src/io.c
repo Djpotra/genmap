@@ -1,7 +1,7 @@
 #include "io.h"
 #include "mpiwrapper.h"
-
 //------------------------------------------------------------------------------
+
 #ifdef MPI
 void readmap_mpi(struct comm *c, int64 **header, int64 **glo_num,
                                         int64** element_id, char* name)
@@ -47,6 +47,7 @@ void readmap_mpi(struct comm *c, int64 **header, int64 **glo_num,
 }
 #endif
 //------------------------------------------------------------------------------
+
 void readmap_serial(int64 **header, int64 **glo_num, int64** element_id,
                                                                     char* name)
 {
@@ -85,6 +86,7 @@ void readmap_serial(int64 **header, int64 **glo_num, int64** element_id,
 #endif
 }
 //------------------------------------------------------------------------------
+
 void readmap(struct comm *c, int64 **header, int64 **glo_num,
                                         int64** element_id, char* name)
 {
