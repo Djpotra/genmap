@@ -4,7 +4,7 @@
 //------------------------------------------------------------------------------
 int32 main(int32 argc, char** argv)
 {
-  struct comm global;
+  struct comm global, partition;
 
   init_genmap(&global, argc, argv);
 
@@ -12,6 +12,18 @@ int32 main(int32 argc, char** argv)
   int32 *header, *glo_num, *elem_id;
 
   readmap(&global, &header, &glo_num, &elem_id, name);
+
+#ifdef MPI
+  int32 partitions = 2;
+  int32 id = global.id;
+  int32 partitionId = id/partitions;
+
+  MPI_Comm MPI_COMM_PARTITION;
+  MPI_Comm_split(MPI_COMM_WORLD, partitionId, id, &MPI_COMM_PARTITION);
+
+  comm_init(&partition, MPI_COMM_PARTITION);
+  struct gs_data *gsh;
+#endif
 
 #ifdef DEBUG
   for (int32 i = 0; i < HEADER_SIZE; i++)
@@ -30,6 +42,7 @@ int32 main(int32 argc, char** argv)
 #endif
 
   finalize_genmap(&global);
-   
+
+
   return 0;
 }
