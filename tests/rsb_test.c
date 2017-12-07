@@ -1,6 +1,7 @@
 #include "mpiwrapper.h"
 #include "io.h"
 #include "laplacian.h"
+#include "lanczos.h"
 
 //------------------------------------------------------------------------------
 int32 main(int32 argc, char** argv)
@@ -36,7 +37,9 @@ int32 main(int32 argc, char** argv)
 
   int32 iter = 10;
   zeros_vector(&alpha, iter);
-  zeros_vector(&beta, iter );
+  zeros_vector(&beta, iter - 1 );
+
+//  lanczos(&alpha, &beta, gsh, weights, nc, &init, iter);
 
 #endif
 

@@ -1,9 +1,10 @@
+#include <stdio.h>
+
 #include "gswrapper.h"
 
 //------------------------------------------------------------------------------
 int32 gop_setup = 0;
 struct gs_data *gop_handle;
-struct comm gop_comm;
 
 //------------------------------------------------------------------------------
 void init_genmap(struct comm *c, int32 argc, char **argv)
@@ -26,32 +27,26 @@ void finalize_genmap(struct comm *c)
 }
 
 //------------------------------------------------------------------------------
-void gop_init() {
-#ifdef MPI
-  comm_init(&gop_comm, MPI_COMM_WORLD);
-#else
-  comm_init(&gop_comm, 0);
-#endif
+void gop_init(struct comm *c) {
+  const int32 gop_id = 1;
 
-  int32 gop_id = 1;
+  gop_handle = gs_setup(&gop_id, 1, c, 0, gs_auto, 0);
 
-  gop_handle = gs_setup(&gop_id, 1, &gop_comm, 0, gs_auto, 0); 
+  gop_setup = 1;
 }
 
 //------------------------------------------------------------------------------
 void gop(void *u, gs_dom dom, gs_op op, unsigned transpose) {
   if (gop_setup == 0) {
-    gop_init();
-    gop_setup = 1;
-  } 
+    printf("gop_init must be called before gop\n");
+    return;
+  }
 
-  gs(u, dom, op, transpose, gop_handle, NULL); 
+  gs(u, dom, op, transpose, gop_handle, NULL);
 }
 
 //------------------------------------------------------------------------------
 void gop_finalize() {
-  comm_free(&gop_comm);
-
   gs_free(gop_handle);
 }
 //------------------------------------------------------------------------------

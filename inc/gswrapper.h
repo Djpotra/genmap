@@ -17,17 +17,12 @@
 #include "gs.h"
 
 //------------------------------------------------------------------------------
-extern int32 gop_setup;
-extern struct gs_data *gop_handle;
-extern struct comm gop_comm;
-
-//------------------------------------------------------------------------------
 void init_genmap(struct comm *c, int32 argc, char **argv);
 
 void finalize_genmap(struct comm *c);
 
 //------------------------------------------------------------------------------
-void gop_init();
+void gop_init(struct comm *h);
 
 void gop(void *u, gs_dom dom, gs_op op, unsigned transpose);
 
