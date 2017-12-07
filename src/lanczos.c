@@ -6,7 +6,7 @@
 #include "lanczos.h"
 
 //------------------------------------------------------------------------------
-void lanczos(Vector *alpha, Vector *beta, struct comm *c, int32* glo_num,
+void lanczos(Vector *alpha, Vector *beta, Vector **q, struct comm *c, int32 *glo_num,
             Vector *init, int32 nc, int32 lelt, int32 iter)
 {
   assert(alpha->size == iter);
@@ -20,17 +20,14 @@ void lanczos(Vector *alpha, Vector *beta, struct comm *c, int32* glo_num,
   zeros_vector(&q0, n);
   beta->vv[0] = 0.;
 
-  // Create vector u
+  *q = malloc(sizeof(q0)*iter);
+
+  // Create vector u and q1
   create_vector(&u, n);
-  // Set q1 to normalized initial vector
-  create_vector(&q1,     n);
-
-  double sum = 0.;
-  struct gs_data *goph; gop_init(&goph, c);
-  gop(&sum, goph, gs_double, gs_add, 0);
-
+  create_vector(&q1, n);
   copy_vector(&q1, init);
 
+  struct gs_data *goph; gop_init(&goph, c);
   norm_q1 = dot_vector(&q1, &q1);
   gop(&norm_q1, goph, gs_double, gs_add, 0); norm_q1 = sqrt(norm_q1);
   scale_vector(&q1, &q1, 1./norm_q1);
@@ -39,6 +36,10 @@ void lanczos(Vector *alpha, Vector *beta, struct comm *c, int32* glo_num,
   ax_init(&axh, &weights, c, nc*lelt, lelt, glo_num);
 
   for (int32 k = 0; k < iter; k++) {
+    // Store q1
+    create_vector(*q + k, n);
+    copy_vector(*q + k, &q1);
+
     // Multiplication by the laplacian
     ax(&u, &q1, axh, weights, nc);
 
@@ -48,7 +49,6 @@ void lanczos(Vector *alpha, Vector *beta, struct comm *c, int32* glo_num,
     z_axpby_vector(&u, &u, 1., &q0, -b           );
     z_axpby_vector(&u, &u, 1., &q1, -alpha->vv[k]);
 
-    // This should be a global operation
     b = dot_vector(&u, &u);
     gop(&b, goph, gs_double, gs_add, 0);
     b = sqrt(b);
@@ -58,11 +58,11 @@ void lanczos(Vector *alpha, Vector *beta, struct comm *c, int32* glo_num,
 
     copy_vector(&q0, &q1);
 
-    if (beta->vv[k] < DBL_EPSILON) {
-      beta->size = k;
-      alpha->size = k + 1;
-      return;
-    }
+//    if (abs(beta->vv[k]) < DBL_EPSILON) {
+//      beta->size = k;
+//      alpha->size = k + 1;
+//      return;
+//    }
 
     scale_vector(&q1, &u, 1./beta->vv[k]);
   }

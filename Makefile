@@ -5,7 +5,7 @@ TESTS=tests
 GSLIB=gslib
 GSDIR ?= $(SRCROOT)/../gslib/src
 MPI ?= 1
-DEBUG ?= 1
+DEBUG ?= 0
 
 CC=mpicc
 CFLAGS=-std=c99 -O2 -Wall -Wextra -g -Wno-unused-function -Wno-unused-parameter
