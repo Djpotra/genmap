@@ -1,5 +1,6 @@
 #include "mpiwrapper.h"
 #include "io.h"
+#include "laplacian.h"
 
 //------------------------------------------------------------------------------
 int32 main(int32 argc, char** argv)
@@ -10,7 +11,6 @@ int32 main(int32 argc, char** argv)
 
   char *name = "nbrhd/nbrhd.map.bin";
   int32 *header, *glo_num, *elem_id;
-  double *weights = NULL;
 
   readmap(&global, &header, &glo_num, &elem_id, name);
 
@@ -21,10 +21,22 @@ int32 main(int32 argc, char** argv)
 
   MPI_Comm MPI_COMM_PARTITION;
   MPI_Comm_split(MPI_COMM_WORLD, partitionId, id, &MPI_COMM_PARTITION);
-
   comm_init(&partition, MPI_COMM_PARTITION);
+
   struct gs_data *gsh;
-//  ax_setup(&gsh, &weights, &partition, lpts, lelt, glo_num);
+  double *weights = NULL;
+  int32 nc = header[NC];
+  int32 lelt = header[MYCHUNK];
+  int32 lpts = nc*lelt;
+
+  ax_setup(&gsh, &weights, &partition, lpts, lelt, glo_num);
+
+  Vector init, alpha, beta;
+  random_vector(&init, lelt, id);
+
+  int32 iter = 10;
+  zeros_vector(&alpha, iter);
+  zeros_vector(&beta, iter );
 
 #endif
 
