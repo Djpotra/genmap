@@ -15,8 +15,8 @@ void readmap_mpi(struct comm *c, int32 **header, int32 **glo_num,
   MPI_File_seek(fh, 0, MPI_SEEK_SET);
   MPI_File_get_size(fh, &offset);
 
-  *header = malloc(sizeof(int32)*(MAP_HEADER_SIZE + 2));
-  MPI_File_read(fh, *header, MAP_HEADER_SIZE, MPI_LONG, &st);
+  *header = malloc(sizeof(int32)*HEADER_SIZE);
+  MPI_File_read(fh, *header, MAP_HEADER_SIZE, MPI_INT, &st);
 
   // nc = npts/nel
   int32 nc  = (*header)[NPTS]/(*header)[NEL];
@@ -27,24 +27,15 @@ void readmap_mpi(struct comm *c, int32 **header, int32 **glo_num,
   *glo_num    = malloc(sizeof(int32)*chunk_size*nc);
   *element_id = malloc(sizeof(int32)*chunk_size   );
 
-  MPI_File_seek(fh, (MAP_HEADER_SIZE + start)*sizeof(uint32), MPI_SEEK_SET);
+  MPI_File_seek(fh, (MAP_HEADER_SIZE + start)*sizeof(int32), MPI_SEEK_SET);
   for (int32 i = 0; i < chunk_size; i++) {
-    MPI_File_read(fh, *element_id + i,  1, MPI_LONG, &st);
-    MPI_File_read(fh, *glo_num + i*nc, nc, MPI_LONG, &st);
+    MPI_File_read(fh, *element_id + i,  1, MPI_INT, &st);
+    MPI_File_read(fh, *glo_num + i*nc, nc, MPI_INT, &st);
   }
   (*header)[MYCHUNK] = chunk_size;
   (*header)[NC] = nc;
 
   MPI_File_close(&fh);
-
-#ifdef DEBUG
-  printf("MPI_SEEK_CUR: %ld\n", MPI_SEEK_CUR);
-  printf("Size of file in parallel: %ld\n", offset);
-  printf("Total number to be read: %ld\n", numbers);
-  printf("My chunk_size: %ld\n", chunk_size);
-  printf("My start: %ld\n", start);
-  printf("MPI_SEEK_CUR: %ld\n", MPI_SEEK_CUR);
-#endif
 }
 #endif
 //------------------------------------------------------------------------------
@@ -81,13 +72,6 @@ void readmap_serial(int32 **header, int32 **glo_num, int32** element_id,
   }
 
   fclose(fp);
-
-#ifdef DEBUG
-  printf("Size of file in serial: %d\n", size);
-  fseek(fp, 0, SEEK_END);
-  int32 size = ftell(fp);
-  fseek(fp, 0, SEEK_SET);
-#endif
 }
 //------------------------------------------------------------------------------
 
