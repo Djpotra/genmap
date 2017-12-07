@@ -6,7 +6,7 @@
 
 //------------------------------------------------------------------------------
 int32 main(int32 argc, char **argv) {
-  int64 *glo_num, *header, *elem_id;
+  int32 *glo_num, *header, *elem_id;
   int32 nc, lpts, lelt, lstart;
 
   double *weights;

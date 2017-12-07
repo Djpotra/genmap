@@ -47,17 +47,6 @@ void debugl(int32 nparams, ...)
   }
 }
 
-void debugf(int32 nparams, ...)
-{
-  va_list valist;
-
-  va_start(valist, nparams);
-
-  for (int32 i = 0; i < nparams; i++) {
-    printf("param %d: %f\n", i, va_arg(valist, float));
-  }
-}
-
 void debugd(int32 nparams, ...)
 {
   va_list valist;

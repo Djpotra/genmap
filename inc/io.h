@@ -21,13 +21,13 @@
 #define MYCHUNK  8
 //------------------------------------------------------------------------------
 #ifdef MPI
-void readmap_mpi   (struct comm *c, int64 **header, int64 **glo_num,
-                                        int64** element_id, char* name);
+void readmap_mpi   (struct comm *c, int32 **header, int32 **glo_num,
+                                        int32 **element_id, char* name);
 #endif
-void readmap_serial(int64 **header, int64 **glo_num,
-                                        int64** element_id, char* name);
-void readmap(struct comm *c, int64 **header, int64 **glo_num,
-                                        int64** element_id, char* name);
+void readmap_serial(int32 **header, int32 **glo_num,
+                                        int32 **element_id, char* name);
+void readmap(struct comm *c, int32 **header, int32 **glo_num,
+                                        int32 **element_id, char* name);
 //------------------------------------------------------------------------------
 
 #endif

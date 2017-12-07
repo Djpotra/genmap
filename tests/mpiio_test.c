@@ -6,7 +6,7 @@
 int32 test_1(struct comm *c)
 {
   char *name = "nbrhd/nbrhd.map.bin";
-  int64 *header, *glo_num, *elem_id;
+  int32 *header, *glo_num, *elem_id;
 
   readmap(c, &header, &glo_num, &elem_id, name);
 
@@ -16,20 +16,20 @@ int32 test_1(struct comm *c)
 int32 test_2(struct comm *c)
 {
   char *name = "nbrhd/nbrhd.map.bin";
-  int64 *header, *glo_num, *elem_id;
+  int32 *header, *glo_num, *elem_id;
 
   readmap(c, &header, &glo_num, &elem_id, name);
 
   for (int32 i = 0; i < HEADER_SIZE; i++)
   {
-    printf("%ld ", header[i]);
+    printf("%d ", header[i]);
   }
   printf("\n");
 
-  int64 i = 0;
+  int32 i = 0;
   while (i < header[NC]*header[MYCHUNK])
   {
-    printf("%ld ", glo_num[i]);
+    printf("%d ", glo_num[i]);
     i++;
     if (i%header[NC] == 0) printf("\n");
   }

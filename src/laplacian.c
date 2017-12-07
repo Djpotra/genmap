@@ -8,7 +8,7 @@
 int32 rsb_setup = 0;
 //------------------------------------------------------------------------------
 void ax_setup(struct gs_data **gsh, double **weights, struct comm *c, \
-                 int32 npts, int32 nelt, int64 *glo_num)
+                 int32 npts, int32 nelt, int32 *glo_num)
 {
   *gsh = gs_setup(glo_num, npts, c, 0, gs_auto, 0);
 

@@ -14,7 +14,7 @@ int32 test_1() {
 }
 //------------------------------------------------------------------------------
 int32 test_2() {
-  int64 npts, glo_num;
+  int32 npts, glo_num;
   npts = 16;
 
   struct comm c;

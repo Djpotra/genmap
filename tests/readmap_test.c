@@ -3,15 +3,15 @@
 
 //------------------------------------------------------------------------------
 int32 test_1(struct comm *c) {
-  int64 *glo_num, *header, *elem_id;
+  int32 *glo_num, *header, *elem_id;
 
   readmap(c, &header, &glo_num, &elem_id, "nbrhd/nbrhd.map.bin");
 
-  printf("npts = %ld\n", header[NPTS]);
-  printf("mychunk = %ld\n", header[MYCHUNK]);
+  printf("npts = %d\n", header[NPTS]);
+  printf("mychunk = %d\n", header[MYCHUNK]);
 
-  for (int64 i = 0; i < MAP_HEADER_SIZE; i++) {
-    printf("%ld\n", glo_num[i]);
+  for (int32 i = 0; i < MAP_HEADER_SIZE; i++) {
+    printf("%d\n", glo_num[i]);
   }
 
   return 1;

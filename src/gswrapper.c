@@ -33,7 +33,7 @@ void gop_init() {
   comm_init(&gop_comm, 0);
 #endif
 
-  int64 gop_id = 1;
+  int32 gop_id = 1;
 
   gop_handle = gs_setup(&gop_id, 1, &gop_comm, 0, gs_auto, 0); 
 }
