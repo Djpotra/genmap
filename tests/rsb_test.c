@@ -30,7 +30,7 @@ int32 main(int32 argc, char** argv)
   int32 lelt = header[MYCHUNK];
   int32 lpts = nc*lelt;
 
-  ax_setup(&gsh, &weights, &partition, lpts, lelt, glo_num);
+  ax_init(&gsh, &weights, &partition, lpts, lelt, glo_num);
 
   Vector init, alpha, beta;
   random_vector(&init, lelt, id);
@@ -39,8 +39,7 @@ int32 main(int32 argc, char** argv)
   zeros_vector(&alpha, iter);
   zeros_vector(&beta, iter - 1 );
 
-//  lanczos(&alpha, &beta, gsh, weights, nc, &init, iter);
-
+  struct gs_data *goph; gop_init(&goph, &partition);
 #endif
 
 #ifdef DEBUG

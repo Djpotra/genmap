@@ -35,7 +35,7 @@ int32 main(int32 argc, char **argv) {
 
   struct gs_data *gsh;
 
-  ax_setup(&gsh, &weights, &c, lpts, lelt, &glo_num[lstart*nc]);
+  ax_init(&gsh, &weights, &c, lpts, lelt, &glo_num[lstart*nc]);
 
   random_vector(&v, lelt, rank);
 

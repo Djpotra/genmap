@@ -7,12 +7,8 @@
 //------------------------------------------------------------------------------
 int32 main(int32 argc, char **argv) {
   int32 *glo_num, *header, *elem_id;
-  int32 nc, lpts, lelt, lstart;
-
-  double *weights;
-
+  int32 nc, lelt, lstart;
   Vector init, alpha, beta;
-
   struct comm c;
 
   // Initialize genmap
@@ -27,10 +23,6 @@ int32 main(int32 argc, char **argv) {
 
   nc = header[NC];
   lelt = header[MYCHUNK];
-  lpts = lelt*nc;
-
-  struct gs_data *gsh;
-  ax_setup(&gsh, &weights, &c, lpts, lelt, glo_num);
 
   // Setup variables for lanczos
   int32 iter = 8;
@@ -43,7 +35,7 @@ int32 main(int32 argc, char **argv) {
   zeros_vector(&beta , iter - 1);
 
   // Do lanczos
-  lanczos(&alpha, &beta, gsh, weights, nc, &init, iter);
+  lanczos(&alpha, &beta, &c, glo_num, &init, nc, lelt, iter);
   if (rank == 0) {
     printf("beta = [");
     for (int32 i = 0; i < beta.size; i++) {
@@ -65,11 +57,8 @@ int32 main(int32 argc, char **argv) {
   }
 
   // Free data structures
-  gs_free(gsh);
-  delete_vector(&alpha); delete_vector(&beta);
-  delete_vector(&init);
-
-  free(glo_num); free(weights);
+  delete_vector(&alpha); delete_vector(&beta); delete_vector(&init);
+  free(glo_num); free(elem_id); free(header);
 
   finalize_genmap(&c);
   return 0;

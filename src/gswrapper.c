@@ -4,7 +4,6 @@
 
 //------------------------------------------------------------------------------
 int32 gop_setup = 0;
-struct gs_data *gop_handle;
 
 //------------------------------------------------------------------------------
 void init_genmap(struct comm *c, int32 argc, char **argv)
@@ -27,26 +26,22 @@ void finalize_genmap(struct comm *c)
 }
 
 //------------------------------------------------------------------------------
-void gop_init(struct comm *c) {
+void gop_init(struct gs_data **gsh, struct comm *c) {
   const int32 gop_id = 1;
 
-  gop_handle = gs_setup(&gop_id, 1, c, 0, gs_auto, 0);
+  *gsh = gs_setup(&gop_id, 1, c, 0, gs_auto, 0);
 
   gop_setup = 1;
 }
 
 //------------------------------------------------------------------------------
-void gop(void *u, gs_dom dom, gs_op op, unsigned transpose) {
+void gop(void *u, struct gs_data *goph, gs_dom dom, gs_op op, unsigned transpose) {
   if (gop_setup == 0) {
     printf("gop_init must be called before gop\n");
     return;
   }
 
-  gs(u, dom, op, transpose, gop_handle, NULL);
+  gs(u, dom, op, transpose, goph, NULL);
 }
 
-//------------------------------------------------------------------------------
-void gop_finalize() {
-  gs_free(gop_handle);
-}
 //------------------------------------------------------------------------------

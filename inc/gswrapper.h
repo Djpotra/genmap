@@ -22,11 +22,9 @@ void init_genmap(struct comm *c, int32 argc, char **argv);
 void finalize_genmap(struct comm *c);
 
 //------------------------------------------------------------------------------
-void gop_init(struct comm *h);
+void gop_init(struct gs_data **gsh, struct comm *c);
 
-void gop(void *u, gs_dom dom, gs_op op, unsigned transpose);
-
-void gop_finalize();
+void gop(void *u, struct gs_data *goph, gs_dom dom, gs_op op, unsigned transpose);
 
 //------------------------------------------------------------------------------
 #endif
