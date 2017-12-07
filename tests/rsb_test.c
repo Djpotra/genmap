@@ -10,6 +10,7 @@ int32 main(int32 argc, char** argv)
 
   char *name = "nbrhd/nbrhd.map.bin";
   int32 *header, *glo_num, *elem_id;
+  double *weights = NULL;
 
   readmap(&global, &header, &glo_num, &elem_id, name);
 
@@ -23,6 +24,8 @@ int32 main(int32 argc, char** argv)
 
   comm_init(&partition, MPI_COMM_PARTITION);
   struct gs_data *gsh;
+//  ax_setup(&gsh, &weights, &partition, lpts, lelt, glo_num);
+
 #endif
 
 #ifdef DEBUG
