@@ -26,24 +26,13 @@ void lanczos(Vector *alpha, Vector *beta, struct comm *c, int32* glo_num,
   create_vector(&q1,     n);
 
   double sum = 0.;
-  int32 nglobal= n;
-  for (int32 i = 0; i < n; i++) {
-    sum += init->vv[i];
-  }
-
   struct gs_data *goph; gop_init(&goph, c);
   gop(&sum, goph, gs_double, gs_add, 0);
-  gop(&nglobal, goph, gs_int, gs_add, 0);
-
-  for (int32 i = 0; i < n; i++) {
-    init->vv[i] -= sum/nglobal;
-  }
 
   copy_vector(&q1, init);
-  norm_q1 = dot_vector(&q1, &q1);
-  gop(&norm_q1, goph, gs_double, gs_add, 0);
-  norm_q1 = sqrt(norm_q1);
 
+  norm_q1 = dot_vector(&q1, &q1);
+  gop(&norm_q1, goph, gs_double, gs_add, 0); norm_q1 = sqrt(norm_q1);
   scale_vector(&q1, &q1, 1./norm_q1);
 
   struct gs_data *axh; double *weights = NULL;

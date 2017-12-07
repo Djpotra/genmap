@@ -7,7 +7,7 @@
 //------------------------------------------------------------------------------
 int32 main(int32 argc, char **argv) {
   int32 *glo_num, *header, *elem_id;
-  int32 nc, lelt, lstart;
+  int32 nc, lelt;
   Vector init, alpha, beta;
   struct comm c;
 
@@ -18,19 +18,14 @@ int32 main(int32 argc, char **argv) {
   readmap(&c, &header, &glo_num, &elem_id, "nbrhd/nbrhd.map.bin");
 
   // Element distribution after reading the .map file
-  int32 np, rank;
-  np = c.np; rank = c.id;
+  int32 rank = c.id;
 
   nc = header[NC];
   lelt = header[MYCHUNK];
 
   // Setup variables for lanczos
   int32 iter = 8;
-  lstart = np;
-  zeros_vector (&init , lelt    );
-  for (int32 i = 0; i < lelt; i++) {
-    init.vv[i] = (double)lstart + i;
-  }
+  ones_vector (&init , lelt    );
   zeros_vector(&alpha, iter    );
   zeros_vector(&beta , iter - 1);
 
