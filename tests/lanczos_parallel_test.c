@@ -6,48 +6,37 @@
 
 //------------------------------------------------------------------------------
 int32 main(int32 argc, char **argv) {
-  // Serial part: TODO: Do in parallel
-  int64 npts, nelt, *glo_num, *header, *elem_id;
-  double *weights;
-  int32 nc;
-  int32 lpts, lelt, lstart;
-
-  Vector init, alpha, beta;
-
+  int32 *glo_num, *header, *elem_id;
+  int32 nc, lelt;
+  Vector init, alpha, beta, *q;
   struct comm c;
+
+  // Initialize genmap
   init_genmap(&c, argc, argv);
 
   // Read the .map file
   readmap(&c, &header, &glo_num, &elem_id, "nbrhd/nbrhd.map.bin");
-  npts = header[NPTS];
-  nelt = header[NEL];
 
   // Element distribution after reading the .map file
-  int32 np, rank;
-  np = c.np; rank = c.id;
+  int32 rank = c.id;
 
-  nc = npts/nelt;
-  lelt = nelt/np;
-  lstart = rank*lelt;
-  if (rank == np - 1) {
-    lelt = nelt - lstart;
-  }
-  lpts = lelt*nc;
-
-  struct gs_data *gsh;
-  ax_setup(&gsh, &weights, &c, lpts, lelt, &glo_num[lstart*nc]);
+  nc = header[NC];
+  lelt = header[MYCHUNK];
 
   // Setup variables for lanczos
-  int32 iter = 8;
-  zeros_vector (&init , lelt    );
+  int32 iter = 100;
+  create_vector (&init, lelt);
   for (int32 i = 0; i < lelt; i++) {
-    init.vv[i] = (double)lstart + i;
+    init.vv[i] = i;
   }
-  zeros_vector(&alpha, iter    );
-  zeros_vector(&beta , iter - 1);
+
+  zeros_vector(&alpha, iter);
+  zeros_vector(&beta, iter - 1);
 
   // Do lanczos
-  lanczos(&alpha, &beta, gsh, weights, nc, &init, iter);
+  lanczos(&alpha, &beta, &q, &c, glo_num, &init, nc, lelt, iter);
+
+  // Print alpha and beta
   if (rank == 0) {
     printf("beta = [");
     for (int32 i = 0; i < beta.size; i++) {
@@ -59,23 +48,13 @@ int32 main(int32 argc, char **argv) {
       printf("%.17g, ", alpha.vv[i]);
     }
     printf("]\n");
-
-    Vector d, e;
-    zeros_vector(&d, iter); zeros_vector(&e, iter);
-    copy_vector(&d, &alpha);
-    for (int32 i = 0; i < iter - 1; i++) {
-      e.vv[i] = beta.vv[i];
-    }
   }
 
   // Free data structures
+  delete_vector(&alpha); delete_vector(&beta); delete_vector(&init);
+  free(glo_num); free(elem_id); free(header);
+
   finalize_genmap(&c);
-  gs_free(gsh);
-  delete_vector(&alpha); delete_vector(&beta);
-  delete_vector(&init);
-
-  free(glo_num); free(weights);
-
   return 0;
 }
 //------------------------------------------------------------------------------

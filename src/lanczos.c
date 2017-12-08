@@ -1,13 +1,13 @@
-#include "laplacian.h"
-#include "lanczos.h"
-
 #include <math.h>
 #include <assert.h>
 #include <float.h>
 
+#include "laplacian.h"
+#include "lanczos.h"
+
 //------------------------------------------------------------------------------
-void lanczos(Vector *alpha, Vector *beta, struct gs_data *gsh,
-            double *weights, int32 nc, Vector *init, int32 iter)
+void lanczos(Vector *alpha, Vector *beta, Vector **q, struct comm *c, int32 *glo_num,
+            Vector *init, int32 nc, int32 lelt, int32 iter)
 {
   assert(alpha->size == iter);
   assert(alpha->size == beta->size + 1);
@@ -20,42 +20,37 @@ void lanczos(Vector *alpha, Vector *beta, struct gs_data *gsh,
   zeros_vector(&q0, n);
   beta->vv[0] = 0.;
 
-  // Create vector u
+  *q = malloc(sizeof(q0)*iter);
+
+  // Create vector u and q1
   create_vector(&u, n);
-  // Set q1 to normalized initial vector
-  create_vector(&q1,     n);
-
-  double sum = 0.;
-  int32 nglobal= n;
-  for (int32 i = 0; i < n; i++) {
-    sum += init->vv[i];
-  }
-  gop(&sum, gs_double, gs_add, 0);
-  gop(&nglobal, gs_int, gs_add, 0);
-  for (int32 i = 0; i < n; i++) {
-    init->vv[i] -= sum/nglobal;
-  }
-
+  create_vector(&q1, n);
   copy_vector(&q1, init);
-  norm_q1 = dot_vector(&q1, &q1);
-  gop(&norm_q1, gs_double, gs_add, 0);
-  norm_q1 = sqrt(norm_q1);
 
+  struct gs_data *goph; gop_init(&goph, c);
+  norm_q1 = dot_vector(&q1, &q1);
+  gop(&norm_q1, goph, gs_double, gs_add, 0); norm_q1 = sqrt(norm_q1);
   scale_vector(&q1, &q1, 1./norm_q1);
 
+  struct gs_data *axh; double *weights = NULL;
+  ax_init(&axh, &weights, c, nc*lelt, lelt, glo_num);
+
   for (int32 k = 0; k < iter; k++) {
+    // Store q1
+    create_vector(*q + k, n);
+    copy_vector(*q + k, &q1);
+
     // Multiplication by the laplacian
-    ax(&u, &q1, gsh, weights, nc);
+    ax(&u, &q1, axh, weights, nc);
 
     alpha->vv[k] = dot_vector(&q1, &u);
-    gop(&alpha->vv[k], gs_double, gs_add, 0);
+    gop(&alpha->vv[k], goph, gs_double, gs_add, 0);
 
     z_axpby_vector(&u, &u, 1., &q0, -b           );
     z_axpby_vector(&u, &u, 1., &q1, -alpha->vv[k]);
 
-    // This should be a global operation
     b = dot_vector(&u, &u);
-    gop(&b, gs_double, gs_add, 0);
+    gop(&b, goph, gs_double, gs_add, 0);
     b = sqrt(b);
     if (k < iter - 1) {
       beta->vv[k] = b;
@@ -63,11 +58,11 @@ void lanczos(Vector *alpha, Vector *beta, struct gs_data *gsh,
 
     copy_vector(&q0, &q1);
 
-    if (beta->vv[k] < DBL_EPSILON) {
-      beta->size = k;
-      alpha->size = k + 1;
-      return;
-    }
+//    if (abs(beta->vv[k]) < DBL_EPSILON) {
+//      beta->size = k;
+//      alpha->size = k + 1;
+//      return;
+//    }
 
     scale_vector(&q1, &u, 1./beta->vv[k]);
   }

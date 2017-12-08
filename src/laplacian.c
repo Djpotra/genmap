@@ -7,8 +7,8 @@
 
 int32 rsb_setup = 0;
 //------------------------------------------------------------------------------
-void ax_setup(struct gs_data **gsh, double **weights, struct comm *c, \
-                 int32 npts, int32 nelt, int64 *glo_num)
+void ax_init(struct gs_data **gsh, double **weights, struct comm *c, \
+                 int32 npts, int32 nelt, int32 *glo_num)
 {
   *gsh = gs_setup(glo_num, npts, c, 0, gs_auto, 0);
 
@@ -40,9 +40,9 @@ void ax_setup(struct gs_data **gsh, double **weights, struct comm *c, \
   rsb_setup = 1;
 }
 //------------------------------------------------------------------------------
-void ax(Vector *v, Vector *u, struct gs_data *gsh, double *weights, int64 nc) {
+void ax(Vector *v, Vector *u, struct gs_data *gsh, double *weights, int32 nc) {
   if (rsb_setup == 0) {
-    fprintf(stderr, "Need to call ax_setup before this routine.");
+    fprintf(stderr, "Need to call ax_init before this routine.");
     return;
   }
 

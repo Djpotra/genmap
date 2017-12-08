@@ -7,16 +7,18 @@
 //------------------------------------------------------------------------------
 int32 main(int32 argc, char **argv) {
   // Serial part: TODO: Do in parallel
-  int64 npts, nelt, *glo_num, *header, *elem_id;
-  double *weights = NULL;
+  int32 npts, nelt, *glo_num, *header, *elem_id;
   int32 nc;
   int32 lpts, lelt, lstart;
+  int32 np, rank;
+
+  double *weights = NULL;
 
   Vector u, v;
 
   struct comm c;
+
   init_genmap(&c, argc, argv);
-  int32 np, rank;
   np = c.np; rank = c.id;
 
   readmap_serial(&header, &glo_num, &elem_id, "nbrhd/nbrhd.map.bin");
@@ -33,7 +35,7 @@ int32 main(int32 argc, char **argv) {
 
   struct gs_data *gsh;
 
-  ax_setup(&gsh, &weights, &c, lpts, lelt, &glo_num[lstart*nc]);
+  ax_init(&gsh, &weights, &c, lpts, lelt, &glo_num[lstart*nc]);
 
   random_vector(&v, lelt, rank);
 

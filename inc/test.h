@@ -14,7 +14,6 @@ void run_test_mpi(int32 (*test_fun)(), struct comm *c, char *name);
 // Debug utilities
 void debugi(int32 nparams, ...);
 void debugl(int32 nparams, ...);
-void debugf(int32 nparams, ...);
 void debugd(int32 nparams, ...);
 
 #endif

@@ -12,7 +12,7 @@ with open(fname, "r") as f:
         print(line)
         data = data + line.split()
 
-data = np.array(data, dtype=np.int64)
+data = np.array(data, dtype=np.int32)
 
 f = open(fname + ".bin", "wb")
 f.write(data.tobytes())
