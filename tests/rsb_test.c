@@ -9,7 +9,10 @@
 //------------------------------------------------------------------------------
 int32 main(int32 argc, char** argv)
 {
-  struct comm global, partn;
+  // Global communicator
+  struct comm global;
+  // Communicator local to the partition
+  struct comm partn;
 
   init_genmap(&global, argc, argv);
 
@@ -19,64 +22,61 @@ int32 main(int32 argc, char** argv)
   readmap(&global, &header, &glo_num, &elem_id, name);
 
 #ifdef MPI
+  // Set number of partitions
   int32 partitions = 2;
-  int32 id = global.id;
-  int32 partitionId = id/partitions;
 
-  MPI_Comm MPI_COMM_PARTITION;
-  MPI_Comm_split(MPI_COMM_WORLD, partitionId, id, &MPI_COMM_PARTITION);
-  comm_init(&partn, MPI_COMM_PARTITION);
-  struct gs_data *parth; gop_init(&parth, &partn);
+  // Set global rank
+  int32 global_rank = global.id;
 
+  // Find the partition id
+  int32 partn_id = global_rank/partitions;
+
+  // Create a new communicator for each partition
+  MPI_Comm mpi_partn; struct gs_data *partn_h;
+  MPI_Comm_split(MPI_COMM_WORLD, partn_id, global_rank, &mpi_partn);
+  comm_init(&partn, mpi_partn); gop_init(&partn_h, &partn);
+
+  // read NC value and number of elements local to the processor
   int32 nc = header[NC];
   int32 lelt = header[MYCHUNK];
 
+  // Vectors required to do Lanczos
   Vector init, ones, alpha, beta, *q;
 
   // Remove components of 1-vetor from random vector
-  random_vector(&init, lelt, id);
+  random_vector(&init, lelt,global_rank);
   ones_vector(&ones, lelt);
 
-  double lsum = dot_vector(&init, &ones);
-  gop(&lsum, parth, gs_double, gs_add, 0);
-  lsum /= header[NEL];
+  double partn_sum = dot_vector(&init, &ones);
+  gop(&partn_sum, partn_h, gs_double, gs_add, 0);
+  int32 partn_nel; gop(&partn_nel, partn_h, gs_int, gs_add, 0);
+  partn_sum /= partn_nel;
 
-  z_axpby_vector(&init, &init, 1.0, &ones, -lsum);
+  z_axpby_vector(&init, &init, 1.0, &ones, -partn_sum);
 
+  // Run lanczos in the partition
   int32 iter = 10;
   zeros_vector(&alpha, iter);
   zeros_vector(&beta, iter - 1);
 
   lanczos(&alpha, &beta, &q, &partn, glo_num, &init, nc, lelt, iter);
 
+  // Run inverse power iteration in each processor in the partition
   Vector eVector, init1;
   int32 n = alpha.size;
 
-  random_vector(&init1, n, partitionId);
+  random_vector(&init1, n, partn_id);
   create_vector(&eVector, n);
   invpower(&eVector, &alpha, &beta, &init1, iter);
 
-#ifdef DEBUG
-  printf("eVector = [");
-  for (int32 i = 0; i < eVector.size; i++) {
-    printf("%lf, ", eVector.vv[i]);
-  }
-  printf("]\n");
-#endif
-
-  Vector lnczs; create_vector(&lnczs, lelt);
+  // find the local fiedler vector
+  Vector fiedler; create_vector(&fiedler, lelt);
   for (int32 i = 0; i < lelt; i++) {
-    lnczs.vv[i] = 0.0;
+    fiedler.vv[i] = 0.0;
     for (int32 j = 0; j < n; j++) {
-      lnczs.vv[i] += q[j].vv[i]*eVector.vv[i];
+      fiedler.vv[i] += q[j].vv[i]*eVector.vv[i];
     }
   }
-
-  printf("lnczs, %d = [", global.id);
-  for (int32 i = 0; i < lnczs.size; i++) {
-    printf("%lf, ", lnczs.vv[i]);
-  }
-  printf("], %d\n", global.id);
 
 #endif
 
@@ -94,10 +94,16 @@ int32 main(int32 argc, char** argv)
     i++;
     if (i%header[NC] == 0) printf("\n");
   }
+
+  printf("fiedler, %d = [", global.id);
+  for (int32 i = 0; i < fiedler.size; i++) {
+    printf("%lf, ", fiedler.vv[i]);
+  }
+  printf("], %d\n", global.id);
+
 #endif
 
   finalize_genmap(&global);
-
 
   return 0;
 }
