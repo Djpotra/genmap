@@ -107,10 +107,10 @@ int32 main(int32 argc, char** argv)
   // find the median of the global fiedler vector in parallel
   struct element *elements = malloc(sizeof(struct element)*lelt);
   for (int32 i = 0; i < lelt; i++) {
-    elements[i].fiedler = fiedler.vv[i];
+    elements[i].fiedler = fabs(fiedler.vv[i]);
     elements[i].globalId = glo_num[i];
   }
-  qsort(&elements, lelt, sizeof(struct element), comp_element);
+  qsort(elements, lelt, sizeof(struct element), comp_element);
 
 #endif
 
@@ -129,9 +129,15 @@ int32 main(int32 argc, char** argv)
     if (i%header[NC] == 0) printf("\n");
   }
 
-  printf("fiedler, %d = [", global.id);
-  for (int32 i = 0; i < fiedler.size; i++) {
+  printf("fiedler: %d = [", global.id);
+  for (int32 i = 0; i < lelt; i++) {
     printf("%lf, ", fiedler.vv[i]);
+  }
+  printf("], %d\n", global.id);
+
+  printf("sorted_fiedler: %d = [", global.id);
+  for (int32 i = 0; i < lelt; i++) {
+    printf("(%lf, %d), ", elements[i].fiedler, elements[i].globalId);
   }
   printf("], %d\n", global.id);
 
