@@ -7,6 +7,32 @@
 #include "eig.h"
 
 //------------------------------------------------------------------------------
+int comp_double(const void *a, const void *b)
+{
+  double  aa = *((double*) a);
+  double  bb = *((double*) b);
+
+  return aa > bb ? 1 : ((aa < bb) ? -1 : 0);
+}
+
+//------------------------------------------------------------------------------
+struct element {
+  double fiedler;
+  int32 globalId;
+};
+
+int comp_element(const void *a, const void *b)
+{
+  struct element  aae = *((struct element*) a);
+  struct element  bbe = *((struct element*) b);
+
+  double aa = aae.fiedler;
+  double bb = bbe.fiedler;
+
+  return aa > bb ? 1 : ((aa < bb) ? -1 : 0);
+}
+
+//------------------------------------------------------------------------------
 int32 main(int32 argc, char** argv)
 {
   // Global communicator
@@ -44,7 +70,7 @@ int32 main(int32 argc, char** argv)
   Vector init, ones, alpha, beta, *q;
 
   // Remove components of 1-vetor from random vector
-  random_vector(&init, lelt,global_rank);
+  random_vector(&init, lelt, global_rank);
   ones_vector(&ones, lelt);
 
   double partn_sum = dot_vector(&init, &ones);
@@ -77,6 +103,14 @@ int32 main(int32 argc, char** argv)
       fiedler.vv[i] += q[j].vv[i]*eVector.vv[i];
     }
   }
+
+  // find the median of the global fiedler vector in parallel
+  struct element *elements = malloc(sizeof(struct element)*lelt);
+  for (int32 i = 0; i < lelt; i++) {
+    elements[i].fiedler = fiedler.vv[i];
+    elements[i].globalId = glo_num[i];
+  }
+  qsort(&elements, lelt, sizeof(struct element), comp_element);
 
 #endif
 
