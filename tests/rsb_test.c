@@ -63,6 +63,79 @@ void scatter_by_max(struct element *elements, int32 lelt, struct comm *c) {
 }
 
 //------------------------------------------------------------------------------
+void parallel_sort(struct element *local, int32 lelt, struct comm *c)
+{
+  int32 id, np; np = c->np; id = c->id;
+  int32 partner, left, right;
+  int32 llelt, rlelt, recvlelt;
+
+  left = id - 1;
+  right = id + 1;
+  if (id % 2 == 0) {
+    if (left >= 0)
+      comm_send(c, &lelt, sizeof(int32), left, 0);
+    if (right < np)
+      comm_send(c, &lelt, sizeof(int32), right, 0);
+    if (left >= 0)
+      comm_recv(c, &llelt, sizeof(int32), left, 0);
+    if (right < np)
+      comm_recv(c, &rlelt, sizeof(int32), right, 0);
+  } else {
+    if (right < np)
+      comm_recv(c, &rlelt, sizeof(int32), right, 0);
+    if (left >= 0)
+      comm_recv(c, &llelt, sizeof(int32), left, 0);
+    if (right < np)
+      comm_send(c, &lelt, sizeof(int32), right, 0);
+    if (left >= 0)
+      comm_send(c, &lelt, sizeof(int32), left, 0);
+  }
+
+  int32 maxlelt = llelt > rlelt ? llelt : rlelt;
+  struct element *other = malloc(sizeof(struct element)*maxlelt);
+
+  for (int32 i = 0; i < np; i++) {
+    qsort(local, lelt, sizeof(struct element), comp_element);
+
+    // Even phase
+    if (i % 2 == 0) {
+      if (id % 2 == 0) {
+        partner = id + 1;
+        recvlelt = rlelt;
+      } else {
+        partner = id - 1;
+        recvlelt = llelt;
+      }
+    } else {
+      if (id % 2 == 0) {
+        partner = id - 1;
+        recvlelt = llelt;
+      } else {
+        partner = id + 1;
+        recvlelt = rlelt;
+      }
+    }
+
+    // Move on if partner is not valid
+    if (partner < 0 || partner > np - 1) {
+      continue;
+    }
+
+    if (id % 2 == 0) {
+      comm_send(c, local, sizeof(struct element)*lelt, partner, 1);
+      comm_recv(c, other, sizeof(struct element)*recvlelt, partner, 2);
+    } else {
+      comm_recv(c, other, sizeof(struct element)*recvlelt, partner, 1);
+      comm_send(c, local, sizeof(struct element)*lelt, partner, 2);
+    }
+
+    if (id < partner) { // keep smaller part
+    } else { // keep larger part
+    }
+  }
+}
+
+//------------------------------------------------------------------------------
 int32 main(int32 argc, char** argv)
 {
   // Global communicator
@@ -149,9 +222,8 @@ int32 main(int32 argc, char** argv)
     elements[i].fiedler = fiedler.vv[i];
     elements[i].globalId = glo_num[i];
   }
-  qsort(elements, lelt, sizeof(struct element), comp_element);
 
-  scatter_by_max(elements, lelt, &global);
+  parallel_sort(elements, lelt, &global);
 #endif
 
 #ifdef DEBUG
