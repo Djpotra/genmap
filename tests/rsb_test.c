@@ -33,6 +33,36 @@ int comp_element(const void *a, const void *b)
 }
 
 //------------------------------------------------------------------------------
+void scatter_by_max(struct element *elements, int32 lelt, struct comm *c) {
+
+  int32 id, np; np = c->np; id = c->id;
+  MPI_Comm global = c->c;
+
+  MPI_Datatype ElementType;
+  int32 blocklen[2] = {1, 1};
+  MPI_Aint offset[2], extent;
+  offset[0] = 0; MPI_Type_extent(MPI_DOUBLE, &extent); offset[1] = extent;
+  MPI_Datatype types[2] = {MPI_DOUBLE, MPI_INT};
+  MPI_Type_create_struct(2, blocklen, offset, types, &ElementType);
+  MPI_Type_commit(&ElementType);
+
+  struct element *recv_data = NULL;
+  struct element e = {elements[lelt-1].fiedler, lelt};
+  if (id == 0) {
+    recv_data = malloc(sizeof(struct element)*np);
+  }
+
+  MPI_Gather(&e, 1, ElementType, recv_data, 1, ElementType, 0, global);
+
+  if (id == 0) {
+    for (int32 i = 0; i < np; i++) {
+      printf("(%lf, %d) ", recv_data[i].fiedler, recv_data[i].globalId);
+    }
+    printf("\n");
+  }
+}
+
+//------------------------------------------------------------------------------
 int32 main(int32 argc, char** argv)
 {
   // Global communicator
@@ -97,21 +127,31 @@ int32 main(int32 argc, char** argv)
 
   // find the local fiedler vector
   Vector fiedler; create_vector(&fiedler, lelt);
+  double partn_max = 0.0;
   for (int32 i = 0; i < lelt; i++) {
     fiedler.vv[i] = 0.0;
     for (int32 j = 0; j < n; j++) {
       fiedler.vv[i] += q[j].vv[i]*eVector.vv[i];
     }
+    fiedler.vv[i] = fabs(fiedler.vv[i]);
+    if (partn_max < fiedler.vv[i]) {
+      partn_max = fiedler.vv[i];
+    }
+  }
+  gop(&partn_max, partn_h, gs_double, gs_max, 0);
+  for (int32 i = 0; i < lelt; i++) {
+    fiedler.vv[i] = fiedler.vv[i]/partn_max;
   }
 
   // find the median of the global fiedler vector in parallel
   struct element *elements = malloc(sizeof(struct element)*lelt);
   for (int32 i = 0; i < lelt; i++) {
-    elements[i].fiedler = fabs(fiedler.vv[i]);
+    elements[i].fiedler = fiedler.vv[i];
     elements[i].globalId = glo_num[i];
   }
   qsort(elements, lelt, sizeof(struct element), comp_element);
 
+  scatter_by_max(elements, lelt, &global);
 #endif
 
 #ifdef DEBUG
