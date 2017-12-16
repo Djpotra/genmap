@@ -224,12 +224,17 @@ int32 main(int32 argc, char** argv)
     ones_vector(&ones, lelt);
 
     double partn_sum = dot_vector(&init, &ones);
-    int32  partn_nel = lelt;
     gop(&partn_sum, partn_h, gs_double, gs_add, 0);
+    int32  partn_nel = lelt;
     gop(&partn_nel, partn_h, gs_int   , gs_add, 0);
-    partn_sum /= sqrt(partn_nel);
 
+    partn_sum /= sqrt(partn_nel);
     z_axpby_vector(&init, &init, 1.0, &ones, -partn_sum);
+#ifdef DEBUG
+    for (int32 i = 0; i < lelt; i++) {
+      printf("%lf\n", init.vv[i]);
+    }
+#endif
 
     // Run lanczos in the partition
     int32 iter = 10;
@@ -237,6 +242,13 @@ int32 main(int32 argc, char** argv)
     zeros_vector(&beta , iter - 1);
 
     lanczos(&alpha, &beta, &q, &partn, glo_num, &init, nc, partn_nel, lelt, iter);
+#ifdef DEBUG
+    printf("alpha = [");
+    for (int32 i = 0; i < iter; i++) {
+      printf("%lf, ", alpha.vv[i]);
+    }
+    printf("]\n");
+#endif
 
     // Run inverse power iteration in each processor in the partition
     Vector eVector, init1;
@@ -254,6 +266,7 @@ int32 main(int32 argc, char** argv)
         fiedler.vv[i] += q[j].vv[i]*eVector.vv[j];
       }
       fiedler.vv[i] = fabs(fiedler.vv[i]);
+//      printf("%lf\n", fiedler.vv[i]);
       if (partn_max < fiedler.vv[i]) {
         partn_max = fiedler.vv[i];
       }
