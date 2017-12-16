@@ -69,8 +69,8 @@ void parallel_sort(struct element *local, int32 lelt, struct comm *c)
   int32 partner, left, right;
   int32 llelt, rlelt, recvlelt;
 
-  left = id - 1;
-  right = id + 1;
+  left = id - 1; llelt = 0;
+  right = id + 1; rlelt = 0;
   if (id % 2 == 0) {
     if (left >= 0)
       comm_send(c, &lelt, sizeof(int32), left, 0);
@@ -92,6 +92,7 @@ void parallel_sort(struct element *local, int32 lelt, struct comm *c)
   }
 
   int32 maxlelt = llelt > rlelt ? llelt : rlelt;
+
   struct element *other = malloc(sizeof(struct element)*maxlelt);
 
   for (int32 i = 0; i < np; i++) {
@@ -129,8 +130,36 @@ void parallel_sort(struct element *local, int32 lelt, struct comm *c)
       comm_send(c, local, sizeof(struct element)*lelt, partner, 2);
     }
 
+    struct element tmp;
+
     if (id < partner) { // keep smaller part
+      int32 locali = lelt - 1;
+      int32 otheri = 0;
+
+      while (locali > -1 && otheri < recvlelt) {
+        if (local[locali].fiedler < other[otheri].fiedler)
+          break;
+        else {
+          tmp = local[locali];
+          local[locali] = other[otheri];
+          other[otheri] = tmp;
+          locali--; otheri++;
+        }
+      }
     } else { // keep larger part
+      int32 locali = 0;
+      int32 otheri = recvlelt - 1;
+
+      while (locali < lelt  && otheri > -1) {
+        if (local[locali].fiedler > other[otheri].fiedler)
+          break;
+        else {
+          tmp = local[locali];
+          local[locali] = other[otheri];
+          other[otheri] = tmp;
+          locali++; otheri--;
+        }
+      }
     }
   }
 }
@@ -227,19 +256,19 @@ int32 main(int32 argc, char** argv)
 #endif
 
 #ifdef DEBUG
-  for (int32 i = 0; i < HEADER_SIZE; i++)
-  {
-    printf("%d ", header[i]);
-  }
-  printf("\n");
-
-  int32 i = 0;
-  while (i < header[NC]*header[MYCHUNK])
-  {
-    printf("%d ", glo_num[i]);
-    i++;
-    if (i%header[NC] == 0) printf("\n");
-  }
+//  for (int32 i = 0; i < HEADER_SIZE; i++)
+//  {
+//    printf("%d ", header[i]);
+//  }
+//  printf("\n");
+//
+//  int32 i = 0;
+//  while (i < header[NC]*header[MYCHUNK])
+//  {
+//    printf("%d ", glo_num[i]);
+//    i++;
+//    if (i%header[NC] == 0) printf("\n");
+//  }
 
   printf("fiedler: %d = [", global.id);
   for (int32 i = 0; i < lelt; i++) {
