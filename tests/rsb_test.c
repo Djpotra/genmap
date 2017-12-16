@@ -197,6 +197,7 @@ int32 main(int32 argc, char** argv)
   // read NC value and number of elements local to the processor
   int32 nc = header[NC];
   int32 lelt = header[LELT];
+  int32 nel = header[NEL];
 
   // Data structures needed to find Fiedler vector
   Vector fiedler; create_vector(&fiedler, lelt);
@@ -223,10 +224,10 @@ int32 main(int32 argc, char** argv)
     ones_vector(&ones, lelt);
 
     double partn_sum = dot_vector(&init, &ones);
-    int32  partn_nel = header[NEL];
+    int32  partn_nel = lelt;
     gop(&partn_sum, partn_h, gs_double, gs_add, 0);
     gop(&partn_nel, partn_h, gs_int   , gs_add, 0);
-    partn_sum /= partn_nel;
+    partn_sum /= sqrt(partn_nel);
 
     z_axpby_vector(&init, &init, 1.0, &ones, -partn_sum);
 
@@ -235,7 +236,7 @@ int32 main(int32 argc, char** argv)
     zeros_vector(&alpha, iter    );
     zeros_vector(&beta , iter - 1);
 
-    lanczos(&alpha, &beta, &q, &partn, glo_num, &init, nc, lelt, iter);
+    lanczos(&alpha, &beta, &q, &partn, glo_num, &init, nc, partn_nel, lelt, iter);
 
     // Run inverse power iteration in each processor in the partition
     Vector eVector, init1;

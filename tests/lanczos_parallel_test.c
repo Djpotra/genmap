@@ -7,7 +7,7 @@
 //------------------------------------------------------------------------------
 int32 main(int32 argc, char **argv) {
   int32 *glo_num, *header, *elem_id;
-  int32 nc, lelt;
+  int32 nc, lelt, nel;
   Vector init, alpha, beta, *q;
   struct comm c;
 
@@ -22,6 +22,7 @@ int32 main(int32 argc, char **argv) {
 
   nc = header[NC];
   lelt = header[LELT];
+  nel = header[NEL];
 
   // Setup variables for lanczos
   int32 iter = 100;
@@ -34,7 +35,7 @@ int32 main(int32 argc, char **argv) {
   zeros_vector(&beta, iter - 1);
 
   // Do lanczos
-  lanczos(&alpha, &beta, &q, &c, glo_num, &init, nc, lelt, iter);
+  lanczos(&alpha, &beta, &q, &c, glo_num, &init, nc, nel, lelt, iter);
 
   // Print alpha and beta
   if (rank == 0) {

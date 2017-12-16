@@ -7,12 +7,26 @@
 
 //------------------------------------------------------------------------------
 void lanczos(Vector *alpha, Vector *beta, Vector **q, struct comm *c, int32 *glo_num,
-            Vector *init, int32 nc, int32 lelt, int32 iter)
+            Vector *init, int32 nc, int32 nel, int32 lelt, int32 iter)
 {
   assert(alpha->size == iter);
   assert(alpha->size == beta->size + 1);
 
   int32 n = init->size;
+
+  struct gs_data *goph; gop_init(&goph, c);
+
+  // Remove components of (1, 1, ... 1)
+//  double sum = 0.0;
+//  for (int32 i = 0; i < n; i++) {
+//    sum += init->vv[i];
+//  }
+//  gop(&sum, goph, gs_double, gs_add, 0);
+//  sum /= sqrt(nel);
+//  for (int32 i = 0; i < n; i++) {
+//    init->vv[i] -= sum;
+//  }
+
   double norm_q1, b = 0.;
   Vector q0, q1, u;
 
@@ -27,7 +41,6 @@ void lanczos(Vector *alpha, Vector *beta, Vector **q, struct comm *c, int32 *glo
   create_vector(&q1, n);
   copy_vector(&q1, init);
 
-  struct gs_data *goph; gop_init(&goph, c);
   norm_q1 = dot_vector(&q1, &q1);
   gop(&norm_q1, goph, gs_double, gs_add, 0); norm_q1 = sqrt(norm_q1);
   scale_vector(&q1, &q1, 1./norm_q1);
