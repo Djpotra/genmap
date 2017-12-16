@@ -19,6 +19,8 @@ int comp_double(const void *a, const void *b)
 struct element {
   double fiedler;
   int32 globalId;
+  int32 nc;
+  int32 vertices[8];
 };
 
 int comp_element(const void *a, const void *b)
@@ -38,16 +40,19 @@ void scatter_by_max(struct element *elements, int32 lelt, struct comm *c) {
   int32 id, np; np = c->np; id = c->id;
   MPI_Comm global = c->c;
 
+  // ElementType
   MPI_Datatype ElementType;
-  int32 blocklen[2] = {1, 1};
+
+  int32 blocklen[2] = {1, 10};
   MPI_Aint offset[2], extent;
   offset[0] = 0; MPI_Type_extent(MPI_DOUBLE, &extent); offset[1] = extent;
   MPI_Datatype types[2] = {MPI_DOUBLE, MPI_INT};
+
   MPI_Type_create_struct(2, blocklen, offset, types, &ElementType);
   MPI_Type_commit(&ElementType);
 
   struct element *recv_data = NULL;
-  struct element e = {elements[lelt-1].fiedler, lelt};
+  struct element e = {elements[lelt-1].fiedler, lelt, 4, {0}};
   if (id == 0) {
     recv_data = malloc(sizeof(struct element)*np);
   }
@@ -249,7 +254,11 @@ int32 main(int32 argc, char** argv)
   struct element *elements = malloc(sizeof(struct element)*lelt);
   for (int32 i = 0; i < lelt; i++) {
     elements[i].fiedler = fiedler.vv[i];
-    elements[i].globalId = glo_num[i];
+    elements[i].globalId = elem_id[i];
+    elements[i].nc = header[NC];
+    for (int32 j = 0; j < nc; j++) {
+      elements[i].vertices[j] = glo_num[i*nc + j];
+    }
   }
 
   parallel_sort(elements, lelt, &global);
