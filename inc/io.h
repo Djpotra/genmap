@@ -18,7 +18,7 @@
 #define NRANK    5
 #define NOUTFLOW 6
 #define NC       7
-#define MYCHUNK  8
+#define LELT  8
 //------------------------------------------------------------------------------
 #ifdef MPI
 void readmap_mpi   (struct comm *c, int32 **header, int32 **glo_num,

@@ -32,7 +32,7 @@ void readmap_mpi(struct comm *c, int32 **header, int32 **glo_num,
     MPI_File_read(fh, *element_id + i,  1, MPI_INT, &st);
     MPI_File_read(fh, *glo_num + i*nc, nc, MPI_INT, &st);
   }
-  (*header)[MYCHUNK] = chunk_size;
+  (*header)[LELT] = chunk_size;
   (*header)[NC] = nc;
 
   MPI_File_close(&fh);

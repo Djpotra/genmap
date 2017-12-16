@@ -8,7 +8,7 @@ int32 test_1(struct comm *c) {
   readmap(c, &header, &glo_num, &elem_id, "nbrhd/nbrhd.map.bin");
 
   printf("npts = %d\n", header[NPTS]);
-  printf("mychunk = %d\n", header[MYCHUNK]);
+  printf("lelt = %d\n", header[LELT]);
 
   for (int32 i = 0; i < MAP_HEADER_SIZE; i++) {
     printf("%d\n", glo_num[i]);

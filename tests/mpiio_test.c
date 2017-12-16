@@ -27,7 +27,7 @@ int32 test_2(struct comm *c)
   printf("\n");
 
   int32 i = 0;
-  while (i < header[NC]*header[MYCHUNK])
+  while (i < header[NC]*header[LELT])
   {
     printf("%d ", glo_num[i]);
     i++;

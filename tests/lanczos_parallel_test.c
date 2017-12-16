@@ -21,7 +21,7 @@ int32 main(int32 argc, char **argv) {
   int32 rank = c.id;
 
   nc = header[NC];
-  lelt = header[MYCHUNK];
+  lelt = header[LELT];
 
   // Setup variables for lanczos
   int32 iter = 100;
