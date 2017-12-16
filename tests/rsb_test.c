@@ -181,90 +181,103 @@ int32 main(int32 argc, char** argv)
 
   char *name = "nbrhd/nbrhd.map.bin";
   int32 *header, *glo_num, *elem_id;
-
   readmap(&global, &header, &glo_num, &elem_id, name);
 
-#ifdef MPI
   // Set number of partitions
   int32 partitions = 2;
-
-  // Set global rank
-  int32 global_rank = global.id;
-
+  // Set global id
+  int32 global_id = global.id;
   // Find the partition id
-  int32 partn_id = global_rank/partitions;
+  int32 partn_id = global_id/partitions;
 
-  // Create a new communicator for each partition
-  MPI_Comm mpi_partn; struct gs_data *partn_h;
-  MPI_Comm_split(MPI_COMM_WORLD, partn_id, global_rank, &mpi_partn);
-  comm_init(&partn, mpi_partn); gop_init(&partn_h, &partn);
-
-  // read NC value and number of elements local to the processor
-  int32 nc = header[NC];
-  int32 lelt = header[MYCHUNK];
-
-  // Vectors required to do Lanczos
-  Vector init, ones, alpha, beta, *q;
-
-  // Remove components of 1-vetor from random vector
-  random_vector(&init, lelt, global_rank);
-  ones_vector(&ones, lelt);
-
-  double partn_sum = dot_vector(&init, &ones);
-  gop(&partn_sum, partn_h, gs_double, gs_add, 0);
-  int32 partn_nel; gop(&partn_nel, partn_h, gs_int, gs_add, 0);
-  partn_sum /= partn_nel;
-
-  z_axpby_vector(&init, &init, 1.0, &ones, -partn_sum);
-
-  // Run lanczos in the partition
-  int32 iter = 10;
-  zeros_vector(&alpha, iter);
-  zeros_vector(&beta, iter - 1);
-
-  lanczos(&alpha, &beta, &q, &partn, glo_num, &init, nc, lelt, iter);
-
-  // Run inverse power iteration in each processor in the partition
-  Vector eVector, init1;
-  int32 n = alpha.size;
-
-  random_vector(&init1, n, partn_id);
-  create_vector(&eVector, n);
-  invpower(&eVector, &alpha, &beta, &init1, iter);
-
-  // find the local fiedler vector
-  Vector fiedler; create_vector(&fiedler, lelt);
-  double partn_max = 0.0;
-  for (int32 i = 0; i < lelt; i++) {
-    fiedler.vv[i] = 0.0;
-    for (int32 j = 0; j < n; j++) {
-      fiedler.vv[i] += q[j].vv[i]*eVector.vv[i];
-    }
-    fiedler.vv[i] = fabs(fiedler.vv[i]);
-    if (partn_max < fiedler.vv[i]) {
-      partn_max = fiedler.vv[i];
-    }
-  }
-  gop(&partn_max, partn_h, gs_double, gs_max, 0);
-  for (int32 i = 0; i < lelt; i++) {
-    fiedler.vv[i] = fiedler.vv[i]/partn_max;
-  }
-
-  // find the median of the global fiedler vector in parallel
-  struct element *elements = malloc(sizeof(struct element)*lelt);
-  for (int32 i = 0; i < lelt; i++) {
-    elements[i].fiedler = fiedler.vv[i];
-    elements[i].globalId = elem_id[i];
-    elements[i].nc = header[NC];
-    for (int32 j = 0; j < nc; j++) {
-      elements[i].vertices[j] = glo_num[i*nc + j];
-    }
-  }
-
-  parallel_sort(elements, lelt, &global);
+#ifdef MPI
+  MPI_Comm mpi_partn, mpi_global;
+  MPI_Comm_dup(MPI_COMM_WORLD, &mpi_global);
+  struct gs_data *partn_h, *global_h;
 #endif
 
+  // Create a new communicator for each partition
+  for (int32 i = 0; i < 5; i++)
+  {
+    MPI_Comm_split(mpi_global, partn_id, global_id, &mpi_partn);
+    comm_init(&partn, mpi_partn); gop_init(&partn_h, &partn);
+
+    // read NC value and number of elements local to the processor
+    int32 nc = header[NC];
+    int32 lelt = header[MYCHUNK];
+
+    // Vectors required to do Lanczos
+    Vector init, ones, alpha, beta, *q;
+
+    // Remove components of 1-vetor from random vector
+    random_vector(&init, lelt, global_id);
+    ones_vector(&ones, lelt);
+
+    double partn_sum = dot_vector(&init, &ones);
+    gop(&partn_sum, partn_h, gs_double, gs_add, 0);
+    int32 partn_nel; gop(&partn_nel, partn_h, gs_int, gs_add, 0);
+    partn_sum /= partn_nel;
+
+    z_axpby_vector(&init, &init, 1.0, &ones, -partn_sum);
+
+    // Run lanczos in the partition
+    int32 iter = 10;
+    zeros_vector(&alpha, iter);
+    zeros_vector(&beta, iter - 1);
+
+    lanczos(&alpha, &beta, &q, &partn, glo_num, &init, nc, lelt, iter);
+
+    // Run inverse power iteration in each processor in the partition
+    Vector eVector, init1;
+    int32 n = alpha.size;
+
+    random_vector(&init1, n, partn_id);
+    create_vector(&eVector, n);
+    invpower(&eVector, &alpha, &beta, &init1, iter);
+
+    // find the local fiedler vector
+    Vector fiedler; create_vector(&fiedler, lelt);
+    double partn_max = 0.0;
+    for (int32 i = 0; i < lelt; i++) {
+      fiedler.vv[i] = 0.0;
+      for (int32 j = 0; j < n; j++) {
+        fiedler.vv[i] += q[j].vv[i]*eVector.vv[i];
+      }
+      fiedler.vv[i] = fabs(fiedler.vv[i]);
+      if (partn_max < fiedler.vv[i]) {
+        partn_max = fiedler.vv[i];
+      }
+    }
+    gop(&partn_max, partn_h, gs_double, gs_max, 0);
+    for (int32 i = 0; i < lelt; i++) {
+      fiedler.vv[i] = fiedler.vv[i]/partn_max;
+    }
+
+    // find the median of the global fiedler vector in parallel
+    struct element *elements = malloc(sizeof(struct element)*lelt);
+    for (int32 i = 0; i < lelt; i++) {
+      elements[i].fiedler = fiedler.vv[i];
+      elements[i].globalId = elem_id[i];
+      elements[i].nc = header[NC];
+      for (int32 j = 0; j < nc; j++) {
+        elements[i].vertices[j] = glo_num[i*nc + j];
+      }
+    }
+
+    parallel_sort(elements, lelt, &global);
+
+    int32 exsum, buf;
+    comm_scan(&exsum, &partn, gs_int, gs_add, &lelt, 1, &buf);
+
+    int32 medianPos = (header[NELT] + 1)/2
+    if (exsum + lelt < medianPos) {
+      partition_id = 1;
+    }
+  }
+
 #ifdef DEBUG
+//  printf("%d: %d\n", id, exsum);
+
 //  for (int32 i = 0; i < HEADER_SIZE; i++)
 //  {
 //    printf("%d ", header[i]);
@@ -279,17 +292,17 @@ int32 main(int32 argc, char** argv)
 //    if (i%header[NC] == 0) printf("\n");
 //  }
 
-  printf("fiedler: %d = [", global.id);
-  for (int32 i = 0; i < lelt; i++) {
-    printf("%lf, ", fiedler.vv[i]);
-  }
-  printf("], %d\n", global.id);
-
-  printf("sorted_fiedler: %d = [", global.id);
-  for (int32 i = 0; i < lelt; i++) {
-    printf("(%lf, %d), ", elements[i].fiedler, elements[i].globalId);
-  }
-  printf("], %d\n", global.id);
+//  printf("fiedler: %d = [", global.id);
+//  for (int32 i = 0; i < lelt; i++) {
+//    printf("%lf, ", fiedler.vv[i]);
+//  }
+//  printf("], %d\n", global.id);
+//
+//  printf("sorted_fiedler: %d = [", global.id);
+//  for (int32 i = 0; i < lelt; i++) {
+//    printf("(%lf, %d), ", elements[i].fiedler, elements[i].globalId);
+//  }
+//  printf("], %d\n", global.id);
 
 #endif
 
