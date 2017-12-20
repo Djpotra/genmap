@@ -184,6 +184,8 @@ int32 main(int32 argc, char** argv)
   // Data structures needed to find Fiedler vector
   Vector fiedler; create_vector(&fiedler, lelt);
 
+  int32 exsum, buf;
+
   // Create a new communicator for each partition
   for (int32 i = 0; i < 1; i++)
   {
@@ -204,11 +206,6 @@ int32 main(int32 argc, char** argv)
 
     partn_sum /= sqrt(partn_nel);
     z_axpby_vector(&init, &init, 1.0, &ones, -partn_sum);
-#ifdef DEBUG
-    for (int32 i = 0; i < lelt; i++) {
-      printf("%lf\n", init.vv[i]);
-    }
-#endif
 
     // Run lanczos in the partition
     int32 iter = 10;
@@ -240,7 +237,6 @@ int32 main(int32 argc, char** argv)
         fiedler.vv[i] += q[j].vv[i]*eVector.vv[j];
       }
       fiedler.vv[i] = fabs(fiedler.vv[i]);
-//      printf("%lf\n", fiedler.vv[i]);
       if (partn_max < fiedler.vv[i]) {
         partn_max = fiedler.vv[i];
       }
@@ -257,7 +253,6 @@ int32 main(int32 argc, char** argv)
 
     parallel_sort(elements, lelt, &global);
 
-    int32 exsum, buf;
     comm_scan(&exsum, &partn, gs_int, gs_add, &lelt, 1, &buf);
 
     int32 medianPos = (partn_nel + 1)/2;
@@ -271,21 +266,28 @@ int32 main(int32 argc, char** argv)
   }
 
 #ifdef DEBUG
-//  printf("%d: %d\n", id, exsum);
+  printf("%d: %d\n", global_id, exsum);
 
-//  for (int32 i = 0; i < HEADER_SIZE; i++)
-//  {
-//    printf("%d ", mapheader[i]);
-//  }
-//  printf("\n");
-//
-//  int32 i = 0;
-//  while (i < mapheader[NC]*mapheader[LELT])
-//  {
-//    printf("%d ", glo_num[i]);
-//    i++;
-//    if (i%mapheader[NC] == 0) printf("\n");
-//  }
+  for (int32 i = 0; i < 1; i++)
+  {
+    printf("%d ", mapheader.nel);
+    printf("%d ", mapheader.nactive);
+    printf("%d ", mapheader.depth);
+    printf("%d ", mapheader.d2);
+    printf("%d ", mapheader.npts);
+    printf("%d ", mapheader.nrank);
+    printf("%d ", mapheader.noutflow);
+    printf("%d ", mapheader.nc);
+    printf("%d\n", mapheader.lelt);
+  }
+  printf("\n");
+
+  int32 i = 0;
+  while (i < mapheader.lelt)
+  {
+    printf("%d ", elements[i].globalId);
+    i++;
+  }
 
   printf("fiedler: %d = [", global.id);
   for (int32 i = 0; i < lelt; i++) {

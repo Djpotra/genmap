@@ -40,9 +40,11 @@ void readmap_mpi(struct comm *c, struct element **elements,
   int32 vertices[nc];
 
   MPI_File_seek(fh, (MAP_HEADER_SIZE + start)*sizeof(int32), MPI_SEEK_SET);
+  int32 gid;
   for (int32 i = 0; i < lelt; i++) {
-    struct element *elementi = elements[i];
-    MPI_File_read(fh, &elementi->globalId,  1, MPI_INT, &st);
+    struct element *elementi = *elements + i;
+    MPI_File_read(fh, &gid,  1, MPI_INT, &st);
+    elementi->globalId = gid;
 
     MPI_File_read(fh, vertices, nc, MPI_INT, &st);
     for (int32 j = 0; j < nc; j++) {
@@ -58,18 +60,14 @@ void readmap_mpi(struct comm *c, struct element **elements,
 void readmap_serial(struct element **elements, struct header *mapheader,
                                                                      char* name)
 {
-  int32 result;
-
-  FILE *fp;
-
-  fp = fopen(name, "rb");
+  FILE *fp = fopen(name, "rb");
   if (fp == NULL) {
     printf("Unable to open the file.\n");
     exit(1);
   }
 
   int32 *headerArray = malloc(sizeof(int32)*MAP_HEADER_SIZE);
-  result = fread(headerArray, sizeof(int32), MAP_HEADER_SIZE, fp);
+  int32 result = fread(headerArray, sizeof(int32), MAP_HEADER_SIZE, fp);
 
   // nel, nactive, depth, d2, npts, nrank, noutflow
   mapheader->nel      = headerArray[NEL];

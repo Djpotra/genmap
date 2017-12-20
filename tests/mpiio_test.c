@@ -18,7 +18,7 @@ int32 test_2(struct comm *c)
   struct element *elements; struct header mapheader;
   readmap(c, &elements, &mapheader, name);
 
-  for (int32 i = 0; i < HEADER_SIZE; i++)
+  for (int32 i = 0; i < 1; i++)
   {
     printf("%d ", mapheader.nel);
     printf("%d ", mapheader.nactive);
