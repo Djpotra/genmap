@@ -39,6 +39,7 @@ void ax_init(struct gs_data **gsh, double **weights, struct comm *c, \
 
   rsb_setup = 1;
 }
+
 //------------------------------------------------------------------------------
 void ax(Vector *v, Vector *u, struct gs_data *gsh, double *weights, int32 nc) {
   if (rsb_setup == 0) {
@@ -75,4 +76,5 @@ void ax(Vector *v, Vector *u, struct gs_data *gsh, double *weights, int32 nc) {
 
   free(ucv);
 }
+
 //------------------------------------------------------------------------------

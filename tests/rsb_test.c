@@ -7,22 +7,6 @@
 #include "eig.h"
 
 //------------------------------------------------------------------------------
-int comp_double(const void *a, const void *b)
-{
-  double  aa = *((double*) a);
-  double  bb = *((double*) b);
-
-  return aa > bb ? 1 : ((aa < bb) ? -1 : 0);
-}
-
-//------------------------------------------------------------------------------
-struct element {
-  double fiedler;
-  int32 globalId;
-  int32 nc;
-  int32 vertices[8];
-};
-
 int comp_element(const void *a, const void *b)
 {
   struct element  aae = *((struct element*) a);
@@ -179,8 +163,8 @@ int32 main(int32 argc, char** argv)
   init_genmap(&global, argc, argv); gop_init(&global_h, &global);
 
   char *name = "nbrhd/nbrhd.map.bin";
-  int32 *header, *glo_num, *elem_id;
-  readmap(&global, &header, &glo_num, &elem_id, name);
+  struct element *elements; struct header mapheader;
+  readmap(&global, &elements, &mapheader, name);
 
   // Set number of partitions
   int32 partitions = 2;
@@ -195,20 +179,10 @@ int32 main(int32 argc, char** argv)
 #endif
 
   // read NC value and number of elements local to the processor
-  int32 nc = header[NC];
-  int32 lelt = header[LELT];
-  int32 nel = header[NEL];
+  int32 lelt = mapheader.lelt;
 
   // Data structures needed to find Fiedler vector
   Vector fiedler; create_vector(&fiedler, lelt);
-  struct element *elements = malloc(sizeof(struct element)*lelt);
-  for (int32 i = 0; i < lelt; i++) {
-    elements[i].globalId = elem_id[i];
-    elements[i].nc = header[NC];
-    for (int32 j = 0; j < nc; j++) {
-      elements[i].vertices[j] = glo_num[i*nc + j];
-    }
-  }
 
   // Create a new communicator for each partition
   for (int32 i = 0; i < 1; i++)
@@ -241,7 +215,7 @@ int32 main(int32 argc, char** argv)
     zeros_vector(&alpha, iter    );
     zeros_vector(&beta , iter - 1);
 
-    lanczos(&alpha, &beta, &q, &partn, glo_num, &init, nc, partn_nel, lelt, iter);
+    lanczos(&alpha, &beta, &q, &partn, &mapheader, elements, &init, iter);
 #ifdef DEBUG
     printf("alpha = [");
     for (int32 i = 0; i < iter; i++) {
@@ -251,11 +225,11 @@ int32 main(int32 argc, char** argv)
 #endif
 
     // Run inverse power iteration in each processor in the partition
-    Vector eVector, init1;
     int32 n = alpha.size;
-
+    Vector eVector, init1;
     random_vector(&init1, n, global_id);
     create_vector(&eVector, n);
+
     invpower(&eVector, &alpha, &beta, &init1, iter);
 
     // find the local fiedler vector
@@ -301,16 +275,16 @@ int32 main(int32 argc, char** argv)
 
 //  for (int32 i = 0; i < HEADER_SIZE; i++)
 //  {
-//    printf("%d ", header[i]);
+//    printf("%d ", mapheader[i]);
 //  }
 //  printf("\n");
 //
 //  int32 i = 0;
-//  while (i < header[NC]*header[LELT])
+//  while (i < mapheader[NC]*mapheader[LELT])
 //  {
 //    printf("%d ", glo_num[i]);
 //    i++;
-//    if (i%header[NC] == 0) printf("\n");
+//    if (i%mapheader[NC] == 0) printf("\n");
 //  }
 
   printf("fiedler: %d = [", global.id);

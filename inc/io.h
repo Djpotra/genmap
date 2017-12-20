@@ -18,16 +18,41 @@
 #define NRANK    5
 #define NOUTFLOW 6
 #define NC       7
-#define LELT  8
+#define LELT     8
+
+//------------------------------------------------------------------------------
+// Structures used to store the .map files
+struct header {
+  int32 nel;
+  int32 nactive;
+  int32 depth;
+  int32 d2;
+  int32 npts;
+  int32 nrank;
+  int32 noutflow;
+  int32 nc;
+  int32 lelt;
+};
+
+//------------------------------------------------------------------------------
+struct element {
+  double fiedler;
+  int32 globalId;
+  int32 nc;
+  int32 vertices[8];
+};
+
 //------------------------------------------------------------------------------
 #ifdef MPI
-void readmap_mpi   (struct comm *c, int32 **header, int32 **glo_num,
-                                        int32 **element_id, char* name);
+void readmap_mpi(struct comm *c, struct element **elements,
+                                          struct header *mapheader, char* name);
 #endif
-void readmap_serial(int32 **header, int32 **glo_num,
-                                        int32 **element_id, char* name);
-void readmap(struct comm *c, int32 **header, int32 **glo_num,
-                                        int32 **element_id, char* name);
+
+void readmap_serial(struct element **elements, struct header *mapheader,
+                                                                    char* name);
+
+void readmap(struct comm *c, struct element **elements,
+                                          struct header *mapheader, char* name);
 //------------------------------------------------------------------------------
 
 #endif

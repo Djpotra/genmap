@@ -6,9 +6,8 @@
 int32 test_1(struct comm *c)
 {
   char *name = "nbrhd/nbrhd.map.bin";
-  int32 *header, *glo_num, *elem_id;
-
-  readmap(c, &header, &glo_num, &elem_id, name);
+  struct element *elements; struct header mapheader;
+  readmap(c, &elements, &mapheader, name);
 
   return 1;
 }
@@ -16,22 +15,29 @@ int32 test_1(struct comm *c)
 int32 test_2(struct comm *c)
 {
   char *name = "nbrhd/nbrhd.map.bin";
-  int32 *header, *glo_num, *elem_id;
-
-  readmap(c, &header, &glo_num, &elem_id, name);
+  struct element *elements; struct header mapheader;
+  readmap(c, &elements, &mapheader, name);
 
   for (int32 i = 0; i < HEADER_SIZE; i++)
   {
-    printf("%d ", header[i]);
+    printf("%d ", mapheader.nel);
+    printf("%d ", mapheader.nactive);
+    printf("%d ", mapheader.depth);
+    printf("%d ", mapheader.d2);
+    printf("%d ", mapheader.npts);
+    printf("%d ", mapheader.nrank);
+    printf("%d ", mapheader.noutflow);
+    printf("%d ", mapheader.nc);
+    printf("%d\n", mapheader.lelt);
   }
   printf("\n");
 
   int32 i = 0;
-  while (i < header[NC]*header[LELT])
+  while (i < mapheader.nc*mapheader.lelt)
   {
-    printf("%d ", glo_num[i]);
+    printf("%d ", elements[i].globalId);
     i++;
-    if (i%header[NC] == 0) printf("\n");
+    if (i%mapheader.nc == 0) printf("\n");
   }
 
   return 1;
