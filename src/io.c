@@ -1,10 +1,10 @@
 #include "io.h"
 #include "mpiwrapper.h"
-//------------------------------------------------------------------------------
 
+//------------------------------------------------------------------------------
 #ifdef MPI
-void readmap_mpi(struct comm *c, int32 **header, int32 **glo_num,
-                                        int32** element_id, char* name)
+void readmap_mpi(struct comm *c, struct element **elements,
+                                           struct header *mapheader, char* name)
 {
   MPI_File fh;
   MPI_Offset offset;
@@ -15,73 +15,99 @@ void readmap_mpi(struct comm *c, int32 **header, int32 **glo_num,
   MPI_File_seek(fh, 0, MPI_SEEK_SET);
   MPI_File_get_size(fh, &offset);
 
-  *header = malloc(sizeof(int32)*HEADER_SIZE);
-  MPI_File_read(fh, *header, MAP_HEADER_SIZE, MPI_INT, &st);
+  int32 *headerArray = malloc(sizeof(int32)*MAP_HEADER_SIZE);
+  MPI_File_read(fh, headerArray, MAP_HEADER_SIZE, MPI_INT, &st);
+  // nel, nactive, depth, d2, npts, nrank, noutflow
+  mapheader->nel      = headerArray[NEL];
+  mapheader->nactive  = headerArray[NACTIVE];
+  mapheader->depth    = headerArray[DEPTH];
+  mapheader->d2       = headerArray[D2];
+  mapheader->npts     = headerArray[NPTS];
+  mapheader->nrank    = headerArray[NRANK];
+  mapheader->noutflow = headerArray[NOUTFLOW];
 
-  // nc = npts/nel
-  int32 nc  = (*header)[NPTS]/(*header)[NEL];
-  int32 chunk_size =  (*header)[NEL]/ c->np;
-  int32 start = c->id*chunk_size*(nc + 1);
-  if (c->id == c->np - 1) chunk_size = (*header)[NEL] - c->id*chunk_size;
+  int32 nel = headerArray[NEL];
+  int32 nc  = headerArray[NPTS]/nel;
+  int32 lelt =  nel/c->np;
 
-  *glo_num    = malloc(sizeof(int32)*chunk_size*nc);
-  *element_id = malloc(sizeof(int32)*chunk_size   );
+  int32 start = c->id*lelt*(nc + 1);
+  if (c->id == c->np - 1) lelt = nel - c->id*lelt;
+
+  mapheader->nc       = nc;
+  mapheader->lelt     = lelt;
+
+  *elements = malloc(sizeof(struct element)*lelt);
+  int32 vertices[nc];
 
   MPI_File_seek(fh, (MAP_HEADER_SIZE + start)*sizeof(int32), MPI_SEEK_SET);
-  for (int32 i = 0; i < chunk_size; i++) {
-    MPI_File_read(fh, *element_id + i,  1, MPI_INT, &st);
-    MPI_File_read(fh, *glo_num + i*nc, nc, MPI_INT, &st);
+  int32 gid;
+  for (int32 i = 0; i < lelt; i++) {
+    struct element *elementi = *elements + i;
+    MPI_File_read(fh, &gid,  1, MPI_INT, &st);
+    elementi->globalId = gid;
+
+    MPI_File_read(fh, vertices, nc, MPI_INT, &st);
+    for (int32 j = 0; j < nc; j++) {
+      elementi->vertices[j] = vertices[j];
+    }
   }
-  (*header)[MYCHUNK] = chunk_size;
-  (*header)[NC] = nc;
 
   MPI_File_close(&fh);
 }
 #endif
+
 //------------------------------------------------------------------------------
-
-void readmap_serial(int32 **header, int32 **glo_num, int32** element_id,
-                                                                    char* name)
+void readmap_serial(struct element **elements, struct header *mapheader,
+                                                                     char* name)
 {
-  int32 result;
-
-  FILE *fp;
-
-  fp = fopen(name, "rb");
+  FILE *fp = fopen(name, "rb");
   if (fp == NULL) {
     printf("Unable to open the file.\n");
     exit(1);
   }
 
-  *header = malloc(sizeof(int32)*MAP_HEADER_SIZE);
+  int32 *headerArray = malloc(sizeof(int32)*MAP_HEADER_SIZE);
+  int32 result = fread(headerArray, sizeof(int32), MAP_HEADER_SIZE, fp);
 
   // nel, nactive, depth, d2, npts, nrank, noutflow
-  result = fread(*header, sizeof(int32), MAP_HEADER_SIZE, fp);
+  mapheader->nel      = headerArray[NEL];
+  mapheader->nactive  = headerArray[NACTIVE];
+  mapheader->depth    = headerArray[DEPTH];
+  mapheader->d2       = headerArray[D2];
+  mapheader->npts     = headerArray[NPTS];
+  mapheader->nrank    = headerArray[NRANK];
+  mapheader->noutflow = headerArray[NOUTFLOW];
 
-  // nc = npts/nel
-  int32 nc  = (*header)[NPTS]/(*header)[NEL];
+  int32 nc  = headerArray[NPTS]/headerArray[NEL];
+  int32 nel = headerArray[NEL];
 
-  *glo_num = malloc(sizeof(int32)*(*header)[NPTS]);
-  *element_id = malloc(sizeof(int32)*(*header)[NEL]);
+  mapheader->nc   = nc;
+  mapheader->lelt = nel;
 
-  int32 count = 0;
-  for (int32 i = 0; i < (*header)[NEL]; i++) {
-    result += fread(*element_id + i , sizeof(int32),  1, fp);
-    result += fread(*glo_num + count, sizeof(int32), nc, fp);
-    count += nc;
+  *elements = malloc(sizeof(struct element)*nel);
+  int32 vertices[nc];
+
+  for (int32 i = 0; i < nel; i++) {
+    struct element *elementi = elements[i];
+    result += fread(&elementi->globalId, sizeof(int32), 1, fp);
+
+    result += fread(vertices, sizeof(int32), nc, fp);
+    for (int32 j = 0; j < nc; j++) {
+      elementi->vertices[j] = vertices[j];
+    }
   }
 
   fclose(fp);
 }
-//------------------------------------------------------------------------------
 
-void readmap(struct comm *c, int32 **header, int32 **glo_num,
-                                        int32** element_id, char* name)
+//------------------------------------------------------------------------------
+void readmap(struct comm *c, struct element **elements,
+                                           struct header *mapheader, char* name)
 {
 #ifdef MPI
-  readmap_mpi   (c, header, glo_num, element_id, name);
+  readmap_mpi   (c, elements, mapheader, name);
 #else
-  readmap_serial(header, glo_num, element_id, name);
+  readmap_serial(elements, mapheader, name);
 #endif
 }
 //------------------------------------------------------------------------------

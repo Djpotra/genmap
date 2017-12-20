@@ -6,40 +6,27 @@
 #include "mpiwrapper.h"
 //------------------------------------------------------------------------------
 int32 main(int32 argc, char **argv) {
-  // Serial part: TODO: Do in parallel
-  int32 npts, nelt, *glo_num, *header, *elem_id;
-  int32 nc;
-  int32 lpts, lelt, lstart;
-  int32 np, rank;
+  struct comm c;
+  init_genmap(&c, argc, argv);
+  int32 np = c.np; int32 rank = c.id;
+
+  struct element *elements; struct header mapheader;
+  readmap(&c, &elements, &mapheader, "nbrhd/nbrhd.map.bin");
+
+  int32 nc = mapheader.nc; 
+  int32 lelt = mapheader.lelt;
+  int32 lpts = nc*lelt;
+  int32 *glo_num; glo_num = malloc(sizeof(int32)*lpts);
+  for (int32 i = 0; i < lpts; i++) {
+    glo_num[i] = elements[i].globalId;
+  }
 
   double *weights = NULL;
+  struct gs_data *gsh;
+  ax_init(&gsh, &weights, &c, lpts, lelt, glo_num);
 
   Vector u, v;
-
-  struct comm c;
-
-  init_genmap(&c, argc, argv);
-  np = c.np; rank = c.id;
-
-  readmap_serial(&header, &glo_num, &elem_id, "nbrhd/nbrhd.map.bin");
-  npts = header[NPTS];
-  nelt = header[NEL];
-
-  nc = npts/nelt;
-  lelt = nelt/np;
-  lstart = rank*lelt;
-  if (rank == np - 1) {
-    lelt = nelt - lstart;
-  }
-  lpts = lelt*nc;
-
-  struct gs_data *gsh;
-
-  ax_init(&gsh, &weights, &c, lpts, lelt, &glo_num[lstart*nc]);
-
-  random_vector(&v, lelt, rank);
-
-  ones_vector(&u, lelt);
+  random_vector(&v, lelt, rank); ones_vector(&u, lelt);
 
   ax(&v, &u, gsh, weights, lpts/lelt);
 

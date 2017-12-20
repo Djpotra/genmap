@@ -6,35 +6,31 @@
 
 //------------------------------------------------------------------------------
 int32 main(int32 argc, char **argv) {
-  int32 *glo_num, *header, *elem_id;
-  int32 nc, lelt;
-  Vector init, alpha, beta, *q;
-  struct comm c;
-
   // Initialize genmap
+  struct comm c;
   init_genmap(&c, argc, argv);
 
   // Read the .map file
-  readmap(&c, &header, &glo_num, &elem_id, "nbrhd/nbrhd.map.bin");
+  struct element* elements; struct header mapheader;
+  readmap(&c, &elements, &mapheader, "nbrhd/nbrhd.map.bin");
 
   // Element distribution after reading the .map file
   int32 rank = c.id;
-
-  nc = header[NC];
-  lelt = header[MYCHUNK];
+  int32 lelt; lelt = mapheader.lelt;
 
   // Setup variables for lanczos
+  Vector init;
   int32 iter = 100;
   create_vector (&init, lelt);
   for (int32 i = 0; i < lelt; i++) {
     init.vv[i] = i;
   }
 
-  zeros_vector(&alpha, iter);
+  // Do lanczos
+  Vector alpha, beta, *q; zeros_vector(&alpha, iter);
   zeros_vector(&beta, iter - 1);
 
-  // Do lanczos
-  lanczos(&alpha, &beta, &q, &c, glo_num, &init, nc, lelt, iter);
+  lanczos(&alpha, &beta, &q, &c, &mapheader, elements, &init, iter);
 
   // Print alpha and beta
   if (rank == 0) {
@@ -52,7 +48,6 @@ int32 main(int32 argc, char **argv) {
 
   // Free data structures
   delete_vector(&alpha); delete_vector(&beta); delete_vector(&init);
-  free(glo_num); free(elem_id); free(header);
 
   finalize_genmap(&c);
   return 0;

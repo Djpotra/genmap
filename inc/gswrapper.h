@@ -12,8 +12,8 @@
 #include "name.h"
 #include "fail.h"
 #include "mem.h"
-#include "comm.h"
 #include "gs_defs.h"
+#include "comm.h"
 #include "gs.h"
 
 //------------------------------------------------------------------------------
