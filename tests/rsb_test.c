@@ -213,12 +213,14 @@ int32 main(int32 argc, char** argv)
     zeros_vector(&beta , iter - 1);
 
     lanczos(&alpha, &beta, &q, &partn, &mapheader, elements, &init, iter);
+#if 0
 #ifdef DEBUG
     printf("alpha = [");
     for (int32 i = 0; i < iter; i++) {
       printf("%lf, ", alpha.vv[i]);
     }
     printf("]\n");
+#endif
 #endif
 
     // Run inverse power iteration in each processor in the partition
