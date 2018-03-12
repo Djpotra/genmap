@@ -6,27 +6,38 @@
 void test_1() {
   GenmapVector x, y;
 
-  CreateVector(&x, 20);
-  CreateVector(&y, 10);
+  GenmapCreateVector(&x, 20);
+  GenmapCreateVector(&y, 10);
 
   assert(x->size == 20);
   assert(y->size == 10);
 
-  DestroyVector(x);
-  DestroyVector(y);
+  GenmapDestroyVector(x);
+  GenmapDestroyVector(y);
 }
-////------------------------------------------------------------------------------
-//int32 test_2() {
-//  double vx[5] = {0., 0., 0., 0., 0.};
-//  Vector x = { .size = 5, .vv = vx };
-//  Vector y = { .size = 5, .vv = vx };
-//
-//  double vz[5] = {0., 0., 0., 0., 1.};
-//  Vector z = { .size = 5, .vv = vz };
-//
-//  return vectors_equal(&y, &x, 1e-12) && \
-//         !vectors_equal(&y, &z, 1e-12);
-//}
+//------------------------------------------------------------------------------
+void test_2() {
+  GenmapVector x, y, z;
+
+  GenmapCreateVector(&x, 5);
+  GenmapCreateVector(&y, 5);
+  GenmapCreateVector(&z, 5);
+
+  GenmapScalar dx[5] = {0., 0., 0., 0., 0.};
+  GenmapScalar dy[5] = {0., 0., 0., 0., 0.};
+  GenmapScalar dz[5] = {0., 0., 0., 0., 1.};
+
+  GenmapSetVector(x, dx);
+  GenmapSetVector(y, dy);
+  GenmapSetVector(z, dz);
+
+  assert(GenmapVectorsEqual(x, y, 1e-12));
+  assert(!GenmapVectorsEqual(y, z, 1e-12));
+
+  GenmapDestroyVector(x);
+  GenmapDestroyVector(y);
+  GenmapDestroyVector(z);
+}
 ////------------------------------------------------------------------------------
 //int32 test_3() {
 //  Vector y;
@@ -106,6 +117,7 @@ void test_1() {
 ////------------------------------------------------------------------------------
 int main() {
   test_1();
+  test_2();
 
   return 0;
 }

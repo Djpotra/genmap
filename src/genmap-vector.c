@@ -1,12 +1,13 @@
 #include <genmap-impl.h>
 
 #include <stdio.h>
+#include <string.h>
 
 GenmapUInt32 genmap_srand_initialized = 0;
 //------------------------------------------------------------------------------
 // Vector operations
-
-void CreateVector(GenmapVector *x, GenmapInt32 size) {
+//
+int GenmapCreateVector(GenmapVector *x, GenmapInt32 size) {
   /* Asserts:
        - size > 0
   */
@@ -15,6 +16,7 @@ void CreateVector(GenmapVector *x, GenmapInt32 size) {
   GenmapMalloc(1, x);
   if(*x == NULL) {
     printf("malloc failed in %s:%d", __FILE__, __LINE__);
+    return 1;
   }
 
   (*x)->size = size;
@@ -23,11 +25,17 @@ void CreateVector(GenmapVector *x, GenmapInt32 size) {
   GenmapMalloc(size, &(*x)->data);
   if((*x)->data == NULL) {
     printf("malloc failed in %s:%d", __FILE__, __LINE__);
+    return 1;
   }
+
+  return 0;
 }
 //------------------------------------------------------------------------------
-// Vector operations
-void DestroyVector(GenmapVector x) {
+int GenmapSetVector(GenmapVector x, GenmapScalar *array) {
+  return memcpy(x->data, array, sizeof(GenmapScalar)*x->size);
+}
+//------------------------------------------------------------------------------
+int GenmapDestroyVector(GenmapVector x) {
   if(x->data) {
     free(x->data);
     x->data = NULL;
@@ -37,26 +45,25 @@ void DestroyVector(GenmapVector x) {
     free(x);
     x = NULL;
   }
+
+  return 0;
 }
-////------------------------------------------------------------------------------
-//int32 vectors_equal(Vector *x, Vector *y, double tol) {
-//  /* Asserts:
-//       - size of y == size of x
-//  */
-//  assert(x->size == y->size);
-//
-//  int32 equal = 1;
-//
-//  int32 n = x->size;
-//  for(int32 i = 0; i < n; i++) {
-//    if(fabs(x->vv[i] - y->vv[i]) > tol) {
-//      equal = 0;
-//      break;
-//    }
-//  }
-//
-//  return equal;
-//}
+//------------------------------------------------------------------------------
+int GenmapVectorsEqual(GenmapVector x, GenmapVector y, GenmapScalar tol) {
+  /* Asserts:
+       - size of y == size of x
+  */
+  assert(x->size == y->size);
+
+  GenmapInt32 n = x->size;
+  for(GenmapInt32 i = 0; i < n; i++) {
+    if(fabs(x->data[i] - y->data[i]) > tol) {
+      return 0;
+    }
+  }
+
+  return 1;
+}
 ////------------------------------------------------------------------------------
 //void random_vector(Vector *x, int32 size, int32 seed) {
 //  create_vector(x, size);

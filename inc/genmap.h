@@ -18,28 +18,23 @@ typedef struct GenmapVector_private *GenmapVector;
 //------------------------------------------------------------------------------
 // GenmapVector operations
 //
-void CreateVector(GenmapVector *x, GenmapInt32 size);
+int GenmapCreateVector(GenmapVector *x, GenmapInt32 size);
+int GenmapSetVector(GenmapVector x, GenmapScalar *array);
+int GenmapGetVector(GenmapVector x, GenmapScalar *array);
 
-void DestroyVector(GenmapVector x);
+int GenmapRandomVector(GenmapVector x, GenmapInt32 size, GenmapInt32 seed);
+int GenmapOnesVector(GenmapVector x, GenmapInt32 size);
+int GenmapZerosVector(GenmapVector x, GenmapInt32 size);
 
-GenmapInt32 VectorsEqual(GenmapVector x, GenmapVector y, GenmapScalar tol);
-
-void RandomVector(GenmapVector x, GenmapInt32 size, GenmapInt32 seed);
-
-void OnesVector(GenmapVector x, GenmapInt32 size);
-
-void ZerosVector(GenmapVector x, GenmapInt32 size);
-
-GenmapScalar NormVector(GenmapVector *x, GenmapInt32 p);
-
-void AxpbyVector(GenmapVector z, GenmapVector x, GenmapScalar alpha, \
+int GenmapScaleVector(GenmapVector y, GenmapVector x, GenmapScalar alpha);
+int GenmapAxpbyVector(GenmapVector z, GenmapVector x, GenmapScalar alpha, \
                  GenmapVector *y, GenmapScalar beta);
 
-void ScaleVector(GenmapVector y, GenmapVector x, GenmapScalar alpha);
+int GenmapVectorsEqual(GenmapVector x, GenmapVector y, GenmapScalar tol);
+GenmapScalar GenmapDotVector(GenmapVector x, GenmapVector y);
+GenmapScalar GenmapNormVector(GenmapVector *x, GenmapInt32 p);
 
-GenmapScalar DotVector(GenmapVector x, GenmapVector y);
+int GenmapPrintVector(GenmapVector x);
+int GenmapDestroyVector(GenmapVector x);
 
-void CopyVector(GenmapVector x, GenmapVector y);
-
-void PrintVector(GenmapVector x);
 //------------------------------------------------------------------------------
