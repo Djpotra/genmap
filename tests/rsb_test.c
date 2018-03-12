@@ -8,8 +8,8 @@
 
 //------------------------------------------------------------------------------
 int comp_element(const void *a, const void *b) {
-  struct element  aae = *((struct element*) a);
-  struct element  bbe = *((struct element*) b);
+  struct element aae = *((struct element *) a);
+  struct element bbe = *((struct element *) b);
 
   double aa = aae.fiedler;
   double bb = bbe.fiedler;
@@ -179,8 +179,10 @@ int32 main(int32 argc, char** argv) {
   int32 partitions = 2;
   // Set global id
   int32 global_id = global.id;
+  // Find the partition size
+  int32 partition_size = (int32) ceil(global.np / (1.0 * partitions));
   // Find the partition id
-  int32 partn_id = global_id / partitions;
+  int32 partn_id = global_id / partition_size;
 
   for(int32 i = 0; i < 2; i++) {
     MPI_Comm_split(mpi_global, partn_id, global_id, &mpi_partn);

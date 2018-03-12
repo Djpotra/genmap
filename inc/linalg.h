@@ -1,41 +1,38 @@
-#ifndef _LINALG_H_
-#define _LINALG_H_
-
-#include "dtypes.h"
+#ifndef _GENMAP_VECTOR_H_
+#define _GENMAP_VECTOR_H_
 
 //------------------------------------------------------------------------------
 // Vector operations
 
-struct genmap_vector {
+struct GenmapVector_private {
   int32 size;
   double *vv;
 };
-typedef struct genmap_vector Vector;
 
-void   create_vector(Vector *x, int32 size);
+void CreateVector(GenmapVector x, int32 size);
 
-void   delete_vector(Vector *x);
+void DeleteVector(GenmapVector x);
 
-int32    vectors_equal(Vector *x, Vector *y, double tol);
+int32 VectorsEqual(GenmapVector x, GenmapVector y, double tol);
 
-void   random_vector(Vector *x, int32 size, int32 seed);
+void RandomVector(GenmapVector x, int32 size, int32 seed);
 
-void   ones_vector(Vector *x, int32 size);
+void OnesVector(GenmapVector x, int32 size);
 
-void   zeros_vector(Vector *x, int32 size);
+void ZerosVector(GenmapVector x, int32 size);
 
 double norm_vector(Vector *x, int32 p);
 
-void   z_axpby_vector(Vector *z, Vector *x, double alpha, \
+void Z_axpbyVector(GenmapVector z, GenmapVector x, double alpha, \
                       Vector *y, double beta);
 
-void   scale_vector(Vector *y, Vector *x,  double alpha);
+void ScaleVector(GenmapVector y, GenmapVector x,  double alpha);
 
-double dot_vector(Vector *x, Vector *y);
+double DotVector(GenmapVector x, GenmapVector y);
 
-void   copy_vector(Vector *x, Vector *y);
+void CopyVector(GenmapVector x, GenmapVector y);
 
-void   print_vector(Vector *x);
+void PrintVector(GenmapVector x);
 
 //TODO: get rid of this !!
 void   mult_scalar_add_vector(Vector *y, double alpha, Vector *x, \
@@ -43,7 +40,7 @@ void   mult_scalar_add_vector(Vector *y, double alpha, Vector *x, \
 //------------------------------------------------------------------------------
 // Linear solve
 
-void symtridiag_solve(Vector *x, Vector *b, Vector *alpha, Vector *beta);
+void SymtridiagSolve(GenmapVector x, GenmapVector b, GenmapVector alpha, Vector beta);
 //------------------------------------------------------------------------------
 
 #endif
