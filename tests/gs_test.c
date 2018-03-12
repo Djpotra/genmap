@@ -31,8 +31,8 @@ int32 main(int32 argc, char** argv) {
   struct comm c;
   init_genmap(&c, argc, argv);
 
-  run_test(&test_1,"gs_comm1");
-  run_test(&test_2,"gs_comm2");
+  run_test(&test_1, "gs_comm1");
+  run_test(&test_2, "gs_comm2");
 
   finalize_genmap(&c);
 

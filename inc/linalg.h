@@ -27,7 +27,7 @@ void   zeros_vector(Vector *x, int32 size);
 double norm_vector(Vector *x, int32 p);
 
 void   z_axpby_vector(Vector *z, Vector *x, double alpha, \
-                                             Vector *y, double beta);
+                      Vector *y, double beta);
 
 void   scale_vector(Vector *y, Vector *x,  double alpha);
 
@@ -39,7 +39,7 @@ void   print_vector(Vector *x);
 
 //TODO: get rid of this !!
 void   mult_scalar_add_vector(Vector *y, double alpha, Vector *x, \
-                                                        double beta);
+                              double beta);
 //------------------------------------------------------------------------------
 // Linear solve
 

@@ -13,10 +13,10 @@ int32 main(int32 argc, char **argv) {
   struct element *elements; struct header mapheader;
   readmap(&c, &elements, &mapheader, "nbrhd/nbrhd.map.bin");
 
-  int32 nc = mapheader.nc; 
+  int32 nc = mapheader.nc;
   int32 lelt = mapheader.lelt;
-  int32 lpts = nc*lelt;
-  int32 *glo_num; glo_num = malloc(sizeof(int32)*lpts);
+  int32 lpts = nc * lelt;
+  int32 *glo_num; glo_num = malloc(sizeof(int32) * lpts);
   for (int32 i = 0; i < lpts; i++) {
     glo_num[i] = elements[i].globalId;
   }
@@ -28,7 +28,7 @@ int32 main(int32 argc, char **argv) {
   Vector u, v;
   random_vector(&v, lelt, rank); ones_vector(&u, lelt);
 
-  ax(&v, &u, gsh, weights, lpts/lelt);
+  ax(&v, &u, gsh, weights, lpts / lelt);
 
   for (int32 i = 0; i < lelt; i++) {
     printf("v: %lf\n", v.vv[i]);
@@ -38,7 +38,7 @@ int32 main(int32 argc, char **argv) {
     printf("rank = %d, weight[%d] = %lf\n", rank, i, weights[i]);
   }
 
-  if (rank < np/2) {
+  if (rank < np / 2) {
     for (int32 i = 0; i < lelt; i++) {
       u.vv[i] = 0;
     }
@@ -48,7 +48,7 @@ int32 main(int32 argc, char **argv) {
     }
   }
 
-  ax(&v, &u, gsh, weights, lpts/lelt);
+  ax(&v, &u, gsh, weights, lpts / lelt);
 
   for (int32 i = 0; i < lelt; i++) {
     printf("v[%d]: %lf\n", i, v.vv[i]);

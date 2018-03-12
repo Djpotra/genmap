@@ -20,7 +20,7 @@ int32 test_2() {
   Vector z = { .size = 5, .vv = vz };
 
   return vectors_equal(&y, &x, 1e-12) && \
-                           !vectors_equal(&y, &z, 1e-12);
+         !vectors_equal(&y, &z, 1e-12);
 }
 //------------------------------------------------------------------------------
 int32 test_3() {
@@ -86,7 +86,7 @@ int32 test_7() {
   Vector answer2 = { .size = 6, .vv = vans2 };
 
   return vectors_equal(&answer1, &y, 1e-12) && \
-                        vectors_equal(&answer2, &z, 1e-12);
+         vectors_equal(&answer2, &z, 1e-12);
 }
 //------------------------------------------------------------------------------
 int32 test_8() {
@@ -100,14 +100,14 @@ int32 test_8() {
 }
 //------------------------------------------------------------------------------
 int32 main() {
-  run_test(&test_1,"vector_1");
-  run_test(&test_2,"vector_2");
-  run_test(&test_3,"vector_3");
-  run_test(&test_4,"vector_4");
-  run_test(&test_5,"vector_5");
-  run_test(&test_6,"vector_6");
-  run_test(&test_7,"vector_7");
-  run_test(&test_8,"vector_8");
+  run_test(&test_1, "vector_1");
+  run_test(&test_2, "vector_2");
+  run_test(&test_3, "vector_3");
+  run_test(&test_4, "vector_4");
+  run_test(&test_5, "vector_5");
+  run_test(&test_6, "vector_6");
+  run_test(&test_7, "vector_7");
+  run_test(&test_8, "vector_8");
 
   return 0;
 }

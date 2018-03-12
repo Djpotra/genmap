@@ -7,8 +7,7 @@
 #include "eig.h"
 
 //------------------------------------------------------------------------------
-int comp_element(const void *a, const void *b)
-{
+int comp_element(const void *a, const void *b) {
   struct element  aae = *((struct element*) a);
   struct element  bbe = *((struct element*) b);
 
@@ -19,8 +18,7 @@ int comp_element(const void *a, const void *b)
 }
 
 //------------------------------------------------------------------------------
-void parallel_sort(struct element *local, int32 lelt, struct comm *c)
-{
+void parallel_sort(struct element *local, int32 lelt, struct comm *c) {
   int32 id, np; np = c->np; id = c->id;
   int32 partner, left, right;
   int32 llelt, rlelt, recvlelt;
@@ -49,7 +47,7 @@ void parallel_sort(struct element *local, int32 lelt, struct comm *c)
 
   int32 maxlelt = llelt > rlelt ? llelt : rlelt;
 
-  struct element *other = malloc(sizeof(struct element)*maxlelt);
+  struct element *other = malloc(sizeof(struct element) * maxlelt);
 
   for (int32 i = 0; i < np; i++) {
     qsort(local, lelt, sizeof(struct element), comp_element);
@@ -121,8 +119,7 @@ void parallel_sort(struct element *local, int32 lelt, struct comm *c)
 }
 
 //------------------------------------------------------------------------------
-int32 main(int32 argc, char** argv)
-{
+int32 main(int32 argc, char** argv) {
   // Global and local communicators
   struct comm global, partn;
   struct gs_data *partn_h, *global_h;
@@ -153,8 +150,7 @@ int32 main(int32 argc, char** argv)
   // Needed comm_scan
   int32 exsum, buf;
 
-  for (int32 i = 0; i < 2; i++)
-  {
+  for (int32 i = 0; i < 2; i++) {
     MPI_Comm_split(mpi_global, partn_id, global_id, &mpi_partn);
     comm_init(&partn, mpi_partn); gop_init(&partn_h, &partn);
 
@@ -168,14 +164,14 @@ int32 main(int32 argc, char** argv)
     double partn_sum = dot_vector(&init, &ones);
     gop(&partn_sum, partn_h, gs_double, gs_add, 0);
     int32  partn_nel = lelt;
-    gop(&partn_nel, partn_h, gs_int   , gs_add, 0);
+    gop(&partn_nel, partn_h, gs_int, gs_add, 0);
     partn_sum /= sqrt(partn_nel);
     z_axpby_vector(&init, &init, 1.0, &ones, -partn_sum);
 
     // Run lanczos in the partition
     int32 iter = 10;
     zeros_vector(&alpha, iter    );
-    zeros_vector(&beta , iter - 1);
+    zeros_vector(&beta, iter - 1);
 
     lanczos(&alpha, &beta, &q, &partn, &mapheader, elements, &init, iter);
 #if 0
@@ -201,7 +197,7 @@ int32 main(int32 argc, char** argv)
     for (int32 i = 0; i < lelt; i++) {
       fiedler.vv[i] = 0.0;
       for (int32 j = 0; j < n; j++) {
-        fiedler.vv[i] += q[j].vv[i]*eVector.vv[j];
+        fiedler.vv[i] += q[j].vv[i] * eVector.vv[j];
       }
       fiedler.vv[i] = fabs(fiedler.vv[i]);
       if (partn_max < fiedler.vv[i]) {
@@ -210,7 +206,7 @@ int32 main(int32 argc, char** argv)
     }
     gop(&partn_max, partn_h, gs_double, gs_max, 0);
     for (int32 i = 0; i < lelt; i++) {
-      fiedler.vv[i] = fiedler.vv[i]/partn_max;
+      fiedler.vv[i] = fiedler.vv[i] / partn_max;
     }
 
     // find  an approximation for global fiedler vector
@@ -233,7 +229,7 @@ int32 main(int32 argc, char** argv)
 
     comm_scan(&exsum, &partn, gs_int, gs_add, &lelt, 1, &buf);
 
-    int32 medianPos = (partn_nel + 1)/2;
+    int32 medianPos = (partn_nel + 1) / 2;
     if (exsum + lelt < medianPos) {
       partn_id = 0;
     } else {
@@ -248,8 +244,7 @@ int32 main(int32 argc, char** argv)
 #ifdef DEBUG
   printf("%d: %d\n", global_id, exsum);
 
-  for (int32 i = 0; i < 1; i++)
-  {
+  for (int32 i = 0; i < 1; i++) {
     printf("%d ", mapheader.nel);
     printf("%d ", mapheader.nactive);
     printf("%d ", mapheader.depth);
@@ -263,8 +258,7 @@ int32 main(int32 argc, char** argv)
   printf("\n");
 
   int32 i = 0;
-  while (i < mapheader.lelt)
-  {
+  while (i < mapheader.lelt) {
     printf("%d ", elements[i].globalId);
     i++;
   }

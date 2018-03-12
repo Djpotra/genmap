@@ -19,7 +19,7 @@ void create_vector(Vector *x, int32 size) {
 
   x->size = size;
   x->vv = NULL;
-  x->vv = (double *) malloc(sizeof(double)*size);
+  x->vv = (double *) malloc(sizeof(double) * size);
   if (x->vv == NULL) {
     printf("malloc failed in %s:%d", __FILE__, __LINE__);
   }
@@ -42,9 +42,9 @@ int32 vectors_equal(Vector *x, Vector *y, double tol) {
   */
   assert(x->size == y->size);
 
-  int32  equal = 1;
+  int32 equal = 1;
 
-  int32      n = x->size;
+  int32 n = x->size;
   for (int32 i = 0; i < n; i++) {
     if (fabs(x->vv[i] - y->vv[i]) > tol) {
       equal = 0;
@@ -64,7 +64,7 @@ void random_vector(Vector *x, int32 size, int32 seed) {
   }
 
   for (int32 i = 0; i < size; i++) {
-    x->vv[i] = (double) rand()/RAND_MAX*2. - 1.;
+    x->vv[i] = (double) rand() / RAND_MAX * 2. - 1.;
   }
 }
 //------------------------------------------------------------------------------
@@ -96,7 +96,7 @@ double norm_vector(Vector *x, int32 p) {
     }
   } else if (p == 2) {
     for (int32 i = 0; i < n; i++) {
-      norm += x->vv[i]*x->vv[i];
+      norm += x->vv[i] * x->vv[i];
     }
     norm = sqrt(norm);
   } else if (p == -1) {
@@ -111,7 +111,7 @@ double norm_vector(Vector *x, int32 p) {
 }
 //------------------------------------------------------------------------------
 void mult_scalar_add_vector(Vector *y, double alpha, Vector *x, \
-                                                        double beta) {
+                            double beta) {
   /* Asserts:
        - size y = size x
   */
@@ -119,12 +119,12 @@ void mult_scalar_add_vector(Vector *y, double alpha, Vector *x, \
 
   int32 n = x->size;
   for (int32 i = 0; i < n; i++) {
-    y->vv[i] = alpha*y->vv[i] + beta*x->vv[i];
+    y->vv[i] = alpha * y->vv[i] + beta * x->vv[i];
   }
 }
 //------------------------------------------------------------------------------
 void z_axpby_vector(Vector *z, Vector *x, double alpha, \
-                                             Vector *y, double beta) {
+                    Vector *y, double beta) {
   /* asserts:
        - size z = size x = size y
   */
@@ -133,7 +133,7 @@ void z_axpby_vector(Vector *z, Vector *x, double alpha, \
 
   int32 n = x->size;
   for (int32 i = 0; i < n; i++) {
-    z->vv[i] = alpha*x->vv[i] + beta*y->vv[i];
+    z->vv[i] = alpha * x->vv[i] + beta * y->vv[i];
   }
 }
 //------------------------------------------------------------------------------
@@ -145,7 +145,7 @@ void scale_vector(Vector *y, Vector *x,  double alpha) {
 
   int32 n = x->size;
   for (int32 i = 0; i < n; i++) {
-    y->vv[i] = alpha*(x->vv[i]);
+    y->vv[i] = alpha * (x->vv[i]);
   }
 }
 //------------------------------------------------------------------------------
@@ -159,7 +159,7 @@ double dot_vector(Vector *x, Vector *y) {
 
   int32 n = x->size;
   for (int32 i = 0; i < n; i++) {
-    dot += y->vv[i]*x->vv[i];
+    dot += y->vv[i] * x->vv[i];
   }
 
   return dot;
@@ -196,8 +196,7 @@ void print_vector(Vector *x) {
 //------------------------------------------------------------------------------
 // Linear solves
 
-void symtridiag_solve(Vector *x, Vector *b, Vector *alpha, Vector *beta)
-{
+void symtridiag_solve(Vector *x, Vector *b, Vector *alpha, Vector *beta) {
   assert(b->size == alpha->size);
   assert(alpha->size == beta->size + 1);
   assert(b->size > 0);
@@ -205,18 +204,18 @@ void symtridiag_solve(Vector *x, Vector *b, Vector *alpha, Vector *beta)
   int32 n = b->size;
 
   Vector diag;
-  create_vector(&diag, n); copy_vector(&diag   , alpha);
+  create_vector(&diag, n); copy_vector(&diag, alpha);
   create_vector(x, n); copy_vector(x, b);
 
   for (int32 i = 0; i < n - 1; i++) {
-    double m = (beta->vv[i]/diag.vv[i]);
-    x->vv[i+1] = x->vv[i+1] - m*x->vv[i];
-    diag.vv[i+1] = diag.vv[i+1] - m*beta->vv[i];
+    double m = (beta->vv[i] / diag.vv[i]);
+    x->vv[i + 1] = x->vv[i + 1] - m * x->vv[i];
+    diag.vv[i + 1] = diag.vv[i + 1] - m * beta->vv[i];
   }
 
-  x->vv[n - 1] = x->vv[n - 1]/diag.vv[n - 1];
+  x->vv[n - 1] = x->vv[n - 1] / diag.vv[n - 1];
   for (int32 i = n - 2; i >= 0; i--) {
-    x->vv[i] =  (x->vv[i] - beta->vv[i]*x->vv[i + 1])/diag.vv[i];
+    x->vv[i] =  (x->vv[i] - beta->vv[i] * x->vv[i + 1]) / diag.vv[i];
   }
 
   return;

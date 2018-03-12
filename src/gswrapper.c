@@ -6,8 +6,7 @@
 int32 gop_setup = 0;
 
 //------------------------------------------------------------------------------
-void init_genmap(struct comm *c, int32 argc, char **argv)
-{
+void init_genmap(struct comm *c, int32 argc, char **argv) {
 #ifdef MPI
   MPI_Init(&argc, &argv);
 #else
@@ -16,8 +15,7 @@ void init_genmap(struct comm *c, int32 argc, char **argv)
   comm_init(c, MPI_COMM_WORLD);
 }
 
-void finalize_genmap(struct comm *c)
-{
+void finalize_genmap(struct comm *c) {
   comm_free(c);
 
 #ifdef MPI
@@ -35,7 +33,8 @@ void gop_init(struct gs_data **gsh, struct comm *c) {
 }
 
 //------------------------------------------------------------------------------
-void gop(void *u, struct gs_data *goph, gs_dom dom, gs_op op, unsigned transpose) {
+void gop(void *u, struct gs_data *goph, gs_dom dom, gs_op op,
+         unsigned transpose) {
   if (gop_setup == 0) {
     printf("gop_init must be called before gop\n");
     return;
