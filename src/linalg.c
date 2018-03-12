@@ -111,7 +111,7 @@ double norm_vector(Vector *x, int32 p) {
 }
 //------------------------------------------------------------------------------
 void mult_scalar_add_vector(Vector *y, double alpha, Vector *x, \
-                                                        double beta) {
+                            double beta) {
   /* Asserts:
        - size y = size x
   */
@@ -124,7 +124,7 @@ void mult_scalar_add_vector(Vector *y, double alpha, Vector *x, \
 }
 //------------------------------------------------------------------------------
 void z_axpby_vector(Vector *z, Vector *x, double alpha, \
-                                             Vector *y, double beta) {
+                    Vector *y, double beta) {
   /* asserts:
        - size z = size x = size y
   */
@@ -196,8 +196,7 @@ void print_vector(Vector *x) {
 //------------------------------------------------------------------------------
 // Linear solves
 
-void symtridiag_solve(Vector *x, Vector *b, Vector *alpha, Vector *beta)
-{
+void symtridiag_solve(Vector *x, Vector *b, Vector *alpha, Vector *beta) {
   assert(b->size == alpha->size);
   assert(alpha->size == beta->size + 1);
   assert(b->size > 0);
@@ -205,7 +204,7 @@ void symtridiag_solve(Vector *x, Vector *b, Vector *alpha, Vector *beta)
   int32 n = b->size;
 
   Vector diag;
-  create_vector(&diag, n); copy_vector(&diag   , alpha);
+  create_vector(&diag, n); copy_vector(&diag, alpha);
   create_vector(x, n); copy_vector(x, b);
 
   for (int32 i = 0; i < n - 1; i++) {

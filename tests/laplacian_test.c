@@ -13,7 +13,7 @@ int32 main(int32 argc, char **argv) {
   struct element *elements; struct header mapheader;
   readmap(&c, &elements, &mapheader, "nbrhd/nbrhd.map.bin");
 
-  int32 nc = mapheader.nc; 
+  int32 nc = mapheader.nc;
   int32 lelt = mapheader.lelt;
   int32 lpts = nc*lelt;
   int32 *glo_num; glo_num = malloc(sizeof(int32)*lpts);

@@ -4,8 +4,7 @@
 //------------------------------------------------------------------------------
 #ifdef MPI
 void readmap_mpi(struct comm *c, struct element **elements,
-                                           struct header *mapheader, char* name)
-{
+                 struct header *mapheader, char* name) {
   MPI_File fh;
   MPI_Offset offset;
   MPI_Status st;
@@ -58,8 +57,7 @@ void readmap_mpi(struct comm *c, struct element **elements,
 
 //------------------------------------------------------------------------------
 void readmap_serial(struct element **elements, struct header *mapheader,
-                                                                     char* name)
-{
+                    char* name) {
   FILE *fp = fopen(name, "rb");
   if (fp == NULL) {
     printf("Unable to open the file.\n");
@@ -102,8 +100,7 @@ void readmap_serial(struct element **elements, struct header *mapheader,
 
 //------------------------------------------------------------------------------
 void readmap(struct comm *c, struct element **elements,
-                                           struct header *mapheader, char* name)
-{
+             struct header *mapheader, char* name) {
 #ifdef MPI
   readmap_mpi   (c, elements, mapheader, name);
 #else

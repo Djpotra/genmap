@@ -24,7 +24,8 @@ void finalize_genmap(struct comm *c);
 //------------------------------------------------------------------------------
 void gop_init(struct gs_data **gsh, struct comm *c);
 
-void gop(void *u, struct gs_data *goph, gs_dom dom, gs_op op, unsigned transpose);
+void gop(void *u, struct gs_data *goph, gs_dom dom, gs_op op,
+         unsigned transpose);
 
 //------------------------------------------------------------------------------
 #endif

@@ -45,14 +45,14 @@ struct element {
 //------------------------------------------------------------------------------
 #ifdef MPI
 void readmap_mpi(struct comm *c, struct element **elements,
-                                          struct header *mapheader, char* name);
+                 struct header *mapheader, char* name);
 #endif
 
 void readmap_serial(struct element **elements, struct header *mapheader,
-                                                                    char* name);
+                    char* name);
 
 void readmap(struct comm *c, struct element **elements,
-                                          struct header *mapheader, char* name);
+             struct header *mapheader, char* name);
 //------------------------------------------------------------------------------
 
 #endif
