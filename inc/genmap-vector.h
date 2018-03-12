@@ -1,14 +1,19 @@
 #ifndef _GENMAP_VECTOR_H_
 #define _GENMAP_VECTOR_H_
 
-//------------------------------------------------------------------------------
-// Vector operations
+#include <genmap.h>
 
+//------------------------------------------------------------------------------
+// Genmap_Vector
+//
 struct GenmapVector_private {
-  int32 size;
-  double *vv;
+  GenmapInt32 size;
+  GenmapScalar *vv;
 };
 
+//------------------------------------------------------------------------------
+// Vector operations
+//
 void CreateVector(GenmapVector x, int32 size);
 
 void DeleteVector(GenmapVector x);
@@ -23,7 +28,7 @@ void ZerosVector(GenmapVector x, int32 size);
 
 double norm_vector(Vector *x, int32 p);
 
-void Z_axpbyVector(GenmapVector z, GenmapVector x, double alpha, \
+void AxpbyVector(GenmapVector z, GenmapVector x, double alpha, \
                       Vector *y, double beta);
 
 void ScaleVector(GenmapVector y, GenmapVector x,  double alpha);
@@ -40,7 +45,7 @@ void   mult_scalar_add_vector(Vector *y, double alpha, Vector *x, \
 //------------------------------------------------------------------------------
 // Linear solve
 
-void SymtridiagSolve(GenmapVector x, GenmapVector b, GenmapVector alpha, Vector beta);
+void SymTridiagSolve(GenmapVector x, GenmapVector b, GenmapVector alpha, Vector beta);
 //------------------------------------------------------------------------------
 
 #endif

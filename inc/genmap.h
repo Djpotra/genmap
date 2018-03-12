@@ -2,10 +2,12 @@
 #define _GENMAP_H_
 #endif
 
-typedef int int32;
-typedef unsigned int uint32;
+typedef int GenmapInt32;
+typedef unsigned int GenmapUInt32;
 
-typedef long int64;
-typedef unsigned long uint64;
+typedef long GenmapInt64;
+typedef unsigned long GenmapUInt64;
+
+typedef double GenmapScalar
 
 typedef struct GenmapVector_private *GenmapVector;
