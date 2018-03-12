@@ -19,39 +19,6 @@ int comp_element(const void *a, const void *b)
 }
 
 //------------------------------------------------------------------------------
-void scatter_by_max(struct element *elements, int32 lelt, struct comm *c) {
-
-  int32 id, np; np = c->np; id = c->id;
-  MPI_Comm global = c->c;
-
-  // ElementType
-  MPI_Datatype ElementType;
-
-  int32 blocklen[2] = {1, 10};
-  MPI_Aint offset[2], extent;
-  offset[0] = 0; MPI_Type_extent(MPI_DOUBLE, &extent); offset[1] = extent;
-  MPI_Datatype types[2] = {MPI_DOUBLE, MPI_INT};
-
-  MPI_Type_create_struct(2, blocklen, offset, types, &ElementType);
-  MPI_Type_commit(&ElementType);
-
-  struct element *recv_data = NULL;
-  struct element e = {elements[lelt-1].fiedler, lelt, 4, {0}};
-  if (id == 0) {
-    recv_data = malloc(sizeof(struct element)*np);
-  }
-
-  MPI_Gather(&e, 1, ElementType, recv_data, 1, ElementType, 0, global);
-
-  if (id == 0) {
-    for (int32 i = 0; i < np; i++) {
-      printf("(%lf, %d) ", recv_data[i].fiedler, recv_data[i].globalId);
-    }
-    printf("\n");
-  }
-}
-
-//------------------------------------------------------------------------------
 void parallel_sort(struct element *local, int32 lelt, struct comm *c)
 {
   int32 id, np; np = c->np; id = c->id;
@@ -177,13 +144,14 @@ int32 main(int32 argc, char** argv)
   // Data structures needed to find Fiedler vector
   Vector fiedler; create_vector(&fiedler, lelt);
 
+  // Set number of partitions to number of MPI ranks
+  int32 np = global.np; int32 global_id = global.id;
+  int32 npartn = np;
+  // Partition id
+  int32 partn_id = global_id;
+
+  // Needed comm_scan
   int32 exsum, buf;
-  // Set number of partitions
-  int32 partitions = 2;
-  // Set global id
-  int32 global_id = global.id;
-  // Find the partition id
-  int32 partn_id = global_id/partitions;
 
   for (int32 i = 0; i < 2; i++)
   {
@@ -201,7 +169,6 @@ int32 main(int32 argc, char** argv)
     gop(&partn_sum, partn_h, gs_double, gs_add, 0);
     int32  partn_nel = lelt;
     gop(&partn_nel, partn_h, gs_int   , gs_add, 0);
-
     partn_sum /= sqrt(partn_nel);
     z_axpby_vector(&init, &init, 1.0, &ones, -partn_sum);
 
@@ -246,11 +213,22 @@ int32 main(int32 argc, char** argv)
       fiedler.vv[i] = fiedler.vv[i]/partn_max;
     }
 
-    // find the median of the global fiedler vector in parallel
+    // find  an approximation for global fiedler vector
     for (int32 i = 0; i < lelt; i++) {
       elements[i].fiedler = fiedler.vv[i];
     }
 
+    // Run rqi
+    // \theta = v^TLv
+    // do
+    //   solve (L-\theta I) x = v
+    //   v = x / ||x||
+    //   \theta = v^TLv
+    //   \rho = \sqrt{(Lv)^T(Lv) - \theta^2}
+    // while \rho > \epsilon
+    // return v
+
+    // Sort
     parallel_sort(elements, lelt, &global);
 
     comm_scan(&exsum, &partn, gs_int, gs_add, &lelt, 1, &buf);
