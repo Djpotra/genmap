@@ -3,8 +3,7 @@
 #include "mpiwrapper.h"
 
 //------------------------------------------------------------------------------
-int32 test_1(struct comm *c)
-{
+int32 test_1(struct comm *c) {
   char *name = "nbrhd/nbrhd.map.bin";
   struct element *elements; struct header mapheader;
   readmap(c, &elements, &mapheader, name);
@@ -12,14 +11,12 @@ int32 test_1(struct comm *c)
   return 1;
 }
 //------------------------------------------------------------------------------
-int32 test_2(struct comm *c)
-{
+int32 test_2(struct comm *c) {
   char *name = "nbrhd/nbrhd.map.bin";
   struct element *elements; struct header mapheader;
   readmap(c, &elements, &mapheader, name);
 
-  for (int32 i = 0; i < 1; i++)
-  {
+  for (int32 i = 0; i < 1; i++) {
     printf("%d ", mapheader.nel);
     printf("%d ", mapheader.nactive);
     printf("%d ", mapheader.depth);
@@ -33,8 +30,7 @@ int32 test_2(struct comm *c)
   printf("\n");
 
   int32 i = 0;
-  while (i < mapheader.nc*mapheader.lelt)
-  {
+  while (i < mapheader.nc*mapheader.lelt) {
     printf("%d ", elements[i].globalId);
     i++;
     if (i%mapheader.nc == 0) printf("\n");
@@ -43,8 +39,7 @@ int32 test_2(struct comm *c)
   return 1;
 }
 //------------------------------------------------------------------------------
-int32 main(int32 argc, char **argv)
-{
+int32 main(int32 argc, char **argv) {
 
   struct comm c;
   init_genmap(&c, argc, argv);

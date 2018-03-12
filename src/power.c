@@ -5,8 +5,7 @@
 
 //------------------------------------------------------------------------------
 void power(Vector *eVector, Vector *alpha, Vector *beta, Vector *init,
-                                                                    int32 iter)
-{
+           int32 iter) {
   assert(alpha->size == beta->size + 1);
   assert(alpha->size == eVector->size);
 
@@ -25,7 +24,7 @@ void power(Vector *eVector, Vector *alpha, Vector *beta, Vector *init,
       y.vv[0] = alpha->vv[0]*x.vv[0] + beta->vv[0]*x.vv[1];
       for (int32 i = 1; i < n - 1; i++) {
         y.vv[i] = beta->vv[i - 1]*x.vv[i - 1] + alpha->vv[i]*x.vv[i] +
-                                                    beta->vv[i]*x.vv[i + 1];
+                  beta->vv[i]*x.vv[i + 1];
       }
       y.vv[n - 1] = beta->vv[n - 2]*x.vv[n - 2] + alpha->vv[n - 1]*x.vv[n - 1];
 
@@ -41,8 +40,7 @@ void power(Vector *eVector, Vector *alpha, Vector *beta, Vector *init,
 
 //------------------------------------------------------------------------------
 void invpower(Vector *eVector, Vector *alpha, Vector *beta, Vector *init,
-                                                                    int32 iter)
-{
+              int32 iter) {
   assert(alpha->size == beta->size + 1);
   assert(alpha->size == eVector->size);
 

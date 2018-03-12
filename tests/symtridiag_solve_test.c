@@ -4,8 +4,7 @@
 
 #include <stdio.h>
 //------------------------------------------------------------------------------
-int test_1()
-{
+int test_1() {
   int32 n = 3;
   Vector alpha, beta, b, x;
 
@@ -24,8 +23,7 @@ int test_1()
 }
 
 //------------------------------------------------------------------------------
-int test_2()
-{
+int test_2() {
   int32 n = 4;
   Vector alpha, beta, b, x;
 
@@ -47,8 +45,7 @@ int test_2()
 }
 
 //------------------------------------------------------------------------------
-int test_3()
-{
+int test_3() {
   int32 n = 4;
   Vector alpha, beta, b, x;
 
@@ -72,8 +69,7 @@ int test_3()
 }
 
 //------------------------------------------------------------------------------
-int32 main(int32 argc, char** argv)
-{
+int32 main(int32 argc, char** argv) {
   run_test(&test_1, "symtridiag_solve_1");
   run_test(&test_2, "symtridiag_solve_2");
   run_test(&test_3, "symtridiag_solve_3");

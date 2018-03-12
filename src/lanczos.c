@@ -7,9 +7,8 @@
 
 //------------------------------------------------------------------------------
 void lanczos( Vector *alpha, Vector *beta, Vector **q, struct comm *c,
-      struct header* mapheader, struct element *elements, Vector *init,
-                                                                  int32 iter)
-{
+              struct header* mapheader, struct element *elements, Vector *init,
+              int32 iter) {
   assert(alpha->size == iter);
   assert(alpha->size == beta->size + 1);
 
@@ -43,7 +42,7 @@ void lanczos( Vector *alpha, Vector *beta, Vector **q, struct comm *c,
   }
   double *weights = NULL;
 
-  struct gs_data *axh; 
+  struct gs_data *axh;
   ax_init(&axh, &weights, c, nc*lelt, lelt, glo_num);
 
   for (int32 k = 0; k < iter; k++) {
@@ -80,8 +79,7 @@ void lanczos( Vector *alpha, Vector *beta, Vector **q, struct comm *c,
 }
 //------------------------------------------------------------------------------
 void lanczos_old(Vector *alpha, Vector *beta, Vector **q, struct comm *c,
-                 int32 *glo_num, Vector *init, int32 nc, int32 lelt, int32 iter)
-{
+                 int32 *glo_num, Vector *init, int32 nc, int32 lelt, int32 iter) {
   assert(alpha->size == iter);
   assert(alpha->size == beta->size + 1);
 
