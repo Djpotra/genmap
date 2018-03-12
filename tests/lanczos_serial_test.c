@@ -232,14 +232,14 @@ int32 test_5() {
 }
 //------------------------------------------------------------------------------
 int32 main() {
-  run_test(&test_1,   "lnczs1"  );
+  run_test(&test_1,   "lnczs1");
   run_test(&test_1_2, "lnczs1_2");
-  run_test(&test_2,   "lnczs2"  );
+  run_test(&test_2,   "lnczs2");
   run_test(&test_2_2, "lnczs2_2");
-  run_test(&test_3,   "lnczs3"  );
+  run_test(&test_3,   "lnczs3");
   run_test(&test_3_2, "lnczs3_2");
-  run_test(&test_4,   "lnczs4"  );
-  run_test(&test_5,   "lnczs5"  );
+  run_test(&test_4,   "lnczs4");
+  run_test(&test_5,   "lnczs5");
 
   return 0;
 }

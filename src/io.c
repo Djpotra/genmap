@@ -30,7 +30,7 @@ void readmap_mpi(struct comm *c, struct element **elements,
   int32 lelt = nel / c->np;
 
   int32 start = c->id * lelt * (nc + 1);
-  if (c->id == c->np - 1) lelt = nel - c->id * lelt;
+  if(c->id == c->np - 1) lelt = nel - c->id * lelt;
 
   mapheader->nc = nc;
   mapheader->lelt = lelt;
@@ -40,13 +40,13 @@ void readmap_mpi(struct comm *c, struct element **elements,
 
   MPI_File_seek(fh, (MAP_HEADER_SIZE + start)*sizeof(int32), MPI_SEEK_SET);
   int32 gid;
-  for (int32 i = 0; i < lelt; i++) {
+  for(int32 i = 0; i < lelt; i++) {
     struct element *elementi = *elements + i;
     MPI_File_read(fh, &gid,  1, MPI_INT, &st);
     elementi->globalId = gid;
 
     MPI_File_read(fh, vertices, nc, MPI_INT, &st);
-    for (int32 j = 0; j < nc; j++) {
+    for(int32 j = 0; j < nc; j++) {
       elementi->vertices[j] = vertices[j];
     }
   }
@@ -59,7 +59,7 @@ void readmap_mpi(struct comm *c, struct element **elements,
 void readmap_serial(struct element **elements, struct header *mapheader,
                     char* name) {
   FILE *fp = fopen(name, "rb");
-  if (fp == NULL) {
+  if(fp == NULL) {
     printf("Unable to open the file.\n");
     exit(1);
   }
@@ -85,12 +85,12 @@ void readmap_serial(struct element **elements, struct header *mapheader,
   *elements = malloc(sizeof(struct element) * nel);
   int32 vertices[nc];
 
-  for (int32 i = 0; i < nel; i++) {
+  for(int32 i = 0; i < nel; i++) {
     struct element *elementi = elements[i];
     result += fread(&elementi->globalId, sizeof(int32), 1, fp);
 
     result += fread(vertices, sizeof(int32), nc, fp);
-    for (int32 j = 0; j < nc; j++) {
+    for(int32 j = 0; j < nc; j++) {
       elementi->vertices[j] = vertices[j];
     }
   }
@@ -102,7 +102,7 @@ void readmap_serial(struct element **elements, struct header *mapheader,
 void readmap(struct comm *c, struct element **elements,
              struct header *mapheader, char* name) {
 #ifdef MPI
-  readmap_mpi   (c, elements, mapheader, name);
+  readmap_mpi(c, elements, mapheader, name);
 #else
   readmap_serial(elements, mapheader, name);
 #endif

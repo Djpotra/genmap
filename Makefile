@@ -89,5 +89,5 @@ clean:
 astyle:
 	astyle --style=google --indent=spaces=2 --max-code-length=80 \
 	    --keep-one-line-statements --keep-one-line-blocks --lineend=linux \
-            --suffix=none --preserve-date --formatted --pad-oper\
-	    tests/*.[ch] src/*.[ch] inc/*.[ch]
+            --suffix=none --preserve-date --formatted --pad-oper \
+	    --unpad-paren tests/*.[ch] src/*.[ch] inc/*.[ch]

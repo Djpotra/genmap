@@ -8,13 +8,13 @@ int test_1() {
   int32 n = 3;
   Vector alpha, beta, b, x;
 
-  ones_vector (&alpha, n   );
+  ones_vector(&alpha, n);
   zeros_vector(&beta, n - 1);
-  ones_vector (&b, n       );
+  ones_vector(&b, n);
 
   symtridiag_solve(&x, &b, &alpha, &beta);
 
-  for (int32 i = 0; i < n; i++) {
+  for(int32 i = 0; i < n; i++) {
     printf("%lf, ", x.vv[i]);
   }
   printf("\n");
@@ -27,13 +27,13 @@ int test_2() {
   int32 n = 4;
   Vector alpha, beta, b, x;
 
-  ones_vector(&alpha, n   ); scale_vector(&alpha, &alpha, 2.0);
-  ones_vector(&beta, n - 1); scale_vector(&beta, &beta, -1.0 );
-  ones_vector(&b, n       );
+  ones_vector(&alpha, n); scale_vector(&alpha, &alpha, 2.0);
+  ones_vector(&beta, n - 1); scale_vector(&beta, &beta, -1.0);
+  ones_vector(&b, n);
 
   symtridiag_solve(&x, &b, &alpha, &beta);
 
-  for (int32 i = 0; i < n; i++) {
+  for(int32 i = 0; i < n; i++) {
     printf("%lf, ", x.vv[i]);
   }
   printf("\n");
@@ -59,7 +59,7 @@ int test_3() {
 
   symtridiag_solve(&x, &b, &alpha, &beta);
 
-  for (int32 i = 0; i < n; i++) {
+  for(int32 i = 0; i < n; i++) {
     printf("%lf, ", x.vv[i]);
   }
   printf("\n");

@@ -21,19 +21,19 @@ int32 main(int32 argc, char **argv) {
 
   double sum = rank;
   gop(&sum, goph, gs_double, gs_add, 0);
-  if (rank == 0) {
+  if(rank == 0) {
     printf("Sum is : %lf\n", sum);
   }
 
   double min = rank;
   gop(&min, goph, gs_double, gs_min, 0);
-  if (rank == 0) {
+  if(rank == 0) {
     printf("Min is : %lf\n", min);
   }
 
   double max = rank;
   gop(&max, goph, gs_double, gs_max, 0);
-  if (rank == 0) {
+  if(rank == 0) {
     printf("Max is : %lf\n", max);
   }
 

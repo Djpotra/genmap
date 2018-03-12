@@ -6,9 +6,9 @@
 #include "lanczos.h"
 
 //------------------------------------------------------------------------------
-void lanczos( Vector *alpha, Vector *beta, Vector **q, struct comm *c,
-              struct header* mapheader, struct element *elements, Vector *init,
-              int32 iter) {
+void lanczos(Vector *alpha, Vector *beta, Vector **q, struct comm *c,
+             struct header* mapheader, struct element *elements, Vector *init,
+             int32 iter) {
   assert(alpha->size == iter);
   assert(alpha->size == beta->size + 1);
 
@@ -37,7 +37,7 @@ void lanczos( Vector *alpha, Vector *beta, Vector **q, struct comm *c,
   int32 nc = mapheader->nc;
   int32 lelt = mapheader->lelt;
   int32 *glo_num; glo_num = malloc(sizeof(int32) * lelt);
-  for (int32 i = 0; i < lelt; i++) {
+  for(int32 i = 0; i < lelt; i++) {
     glo_num[i] = elements[i].globalId;
   }
   double *weights = NULL;
@@ -45,7 +45,7 @@ void lanczos( Vector *alpha, Vector *beta, Vector **q, struct comm *c,
   struct gs_data *axh;
   ax_init(&axh, &weights, c, nc * lelt, lelt, glo_num);
 
-  for (int32 k = 0; k < iter; k++) {
+  for(int32 k = 0; k < iter; k++) {
     // Store q1
     create_vector(*q + k, n);
     copy_vector(*q + k, &q1);
@@ -56,13 +56,13 @@ void lanczos( Vector *alpha, Vector *beta, Vector **q, struct comm *c,
     alpha->vv[k] = dot_vector(&q1, &u);
     gop(&alpha->vv[k], goph, gs_double, gs_add, 0);
 
-    z_axpby_vector(&u, &u, 1., &q0, -b           );
+    z_axpby_vector(&u, &u, 1., &q0, -b);
     z_axpby_vector(&u, &u, 1., &q1, -alpha->vv[k]);
 
     b = dot_vector(&u, &u);
     gop(&b, goph, gs_double, gs_add, 0);
     b = sqrt(b);
-    if (k < iter - 1) {
+    if(k < iter - 1) {
       beta->vv[k] = b;
     }
 
@@ -119,7 +119,7 @@ void lanczos_old(Vector *alpha, Vector *beta, Vector **q, struct comm *c,
   struct gs_data *axh; double *weights = NULL;
   ax_init(&axh, &weights, c, nc * lelt, lelt, glo_num);
 
-  for (int32 k = 0; k < iter; k++) {
+  for(int32 k = 0; k < iter; k++) {
     // Store q1
     create_vector(*q + k, n);
     copy_vector(*q + k, &q1);
@@ -130,13 +130,13 @@ void lanczos_old(Vector *alpha, Vector *beta, Vector **q, struct comm *c,
     alpha->vv[k] = dot_vector(&q1, &u);
     gop(&alpha->vv[k], goph, gs_double, gs_add, 0);
 
-    z_axpby_vector(&u, &u, 1., &q0, -b           );
+    z_axpby_vector(&u, &u, 1., &q0, -b);
     z_axpby_vector(&u, &u, 1., &q1, -alpha->vv[k]);
 
     b = dot_vector(&u, &u);
     gop(&b, goph, gs_double, gs_add, 0);
     b = sqrt(b);
-    if (k < iter - 1) {
+    if(k < iter - 1) {
       beta->vv[k] = b;
     }
 
@@ -174,11 +174,11 @@ void lanczos_serial(Vector *alpha, Vector *beta, CSRMatrix *A, Vector *init) {
 
   // Set q1 to normalized initial vector
   create_vector(&q1,    n);
-  copy_vector  (&q1, init);
+  copy_vector(&q1, init);
   norm_q1 = norm_vector(&q1, 2);
   mult_scalar_add_vector(&q1, 0., &q1, 1. / norm_q1);
 
-  for (int32 k = 0; k < n; k++) {
+  for(int32 k = 0; k < n; k++) {
     csr_matrix_vector_multiply(&u, A, &q1);
 
     alpha->vv[k] = dot_vector(&q1, &u);
@@ -187,7 +187,7 @@ void lanczos_serial(Vector *alpha, Vector *beta, CSRMatrix *A, Vector *init) {
     mult_scalar_add_vector(&u, 1., &q1, -alpha->vv[k]);
 
     b = norm_vector(&u, 2);
-    if (k < n - 1) {
+    if(k < n - 1) {
       beta->vv[k] = b;
     }
 
@@ -220,7 +220,7 @@ void lanczos_serial2(Vector *alpha, Vector *beta, CSRMatrix *A, Vector *init) {
   copy_vector(&r, &v);
   zeros_vector(&v1, n);
 
-  while (i < n - 1) {
+  while(i < n - 1) {
     mult_scalar_add_vector(&v, 0., &r, 1. / b1);
 
     csr_matrix_vector_multiply(&p, A, &v);

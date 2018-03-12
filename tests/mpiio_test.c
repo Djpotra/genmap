@@ -16,7 +16,7 @@ int32 test_2(struct comm *c) {
   struct element *elements; struct header mapheader;
   readmap(c, &elements, &mapheader, name);
 
-  for (int32 i = 0; i < 1; i++) {
+  for(int32 i = 0; i < 1; i++) {
     printf("%d ", mapheader.nel);
     printf("%d ", mapheader.nactive);
     printf("%d ", mapheader.depth);
@@ -30,10 +30,10 @@ int32 test_2(struct comm *c) {
   printf("\n");
 
   int32 i = 0;
-  while (i < mapheader.nc * mapheader.lelt) {
+  while(i < mapheader.nc * mapheader.lelt) {
     printf("%d ", elements[i].globalId);
     i++;
-    if (i % mapheader.nc == 0) printf("\n");
+    if(i % mapheader.nc == 0) printf("\n");
   }
 
   return 1;

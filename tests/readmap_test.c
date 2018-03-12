@@ -11,7 +11,7 @@ int32 test_1(struct comm *c) {
   printf("npts = %d\n", mapheader.npts);
   printf("lelt = %d\n", mapheader.lelt);
 
-  for (int32 i = 0; i < MAP_HEADER_SIZE; i++) {
+  for(int32 i = 0; i < MAP_HEADER_SIZE; i++) {
     printf("%d\n", elements[i].globalId);
   }
 

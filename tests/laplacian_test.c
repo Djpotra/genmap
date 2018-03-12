@@ -17,7 +17,7 @@ int32 main(int32 argc, char **argv) {
   int32 lelt = mapheader.lelt;
   int32 lpts = nc * lelt;
   int32 *glo_num; glo_num = malloc(sizeof(int32) * lpts);
-  for (int32 i = 0; i < lpts; i++) {
+  for(int32 i = 0; i < lpts; i++) {
     glo_num[i] = elements[i].globalId;
   }
 
@@ -30,27 +30,27 @@ int32 main(int32 argc, char **argv) {
 
   ax(&v, &u, gsh, weights, lpts / lelt);
 
-  for (int32 i = 0; i < lelt; i++) {
+  for(int32 i = 0; i < lelt; i++) {
     printf("v: %lf\n", v.vv[i]);
   }
 
-  for (int32 i = 0; i < lelt; i++) {
+  for(int32 i = 0; i < lelt; i++) {
     printf("rank = %d, weight[%d] = %lf\n", rank, i, weights[i]);
   }
 
-  if (rank < np / 2) {
-    for (int32 i = 0; i < lelt; i++) {
+  if(rank < np / 2) {
+    for(int32 i = 0; i < lelt; i++) {
       u.vv[i] = 0;
     }
   } else {
-    for (int32 i = 0; i < lelt; i++) {
+    for(int32 i = 0; i < lelt; i++) {
       u.vv[i] = 1;
     }
   }
 
   ax(&v, &u, gsh, weights, lpts / lelt);
 
-  for (int32 i = 0; i < lelt; i++) {
+  for(int32 i = 0; i < lelt; i++) {
     printf("v[%d]: %lf\n", i, v.vv[i]);
   }
 

@@ -64,7 +64,7 @@ int32 test_6() {
   return (norm_vector(&x, 1) == 6.0 && \
           norm_vector(&x, 2) == sqrt(6.0) && \
           norm_vector(&y, 1) == 5.0 && \
-          norm_vector(&y, 2) == sqrt(7.0) );
+          norm_vector(&y, 2) == sqrt(7.0));
 }
 //------------------------------------------------------------------------------
 int32 test_7() {
