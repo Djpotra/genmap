@@ -18,9 +18,9 @@ typedef struct GenmapVector_private *GenmapVector;
 //------------------------------------------------------------------------------
 // GenmapVector operations
 //
-void CreateVector(GenmapVector x, GenmapInt32 size);
+void CreateVector(GenmapVector *x, GenmapInt32 size);
 
-void DeleteVector(GenmapVector x);
+void DestroyVector(GenmapVector x);
 
 GenmapInt32 VectorsEqual(GenmapVector x, GenmapVector y, GenmapScalar tol);
 

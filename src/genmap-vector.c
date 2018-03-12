@@ -6,28 +6,28 @@ GenmapUInt32 genmap_srand_initialized = 0;
 //------------------------------------------------------------------------------
 // Vector operations
 
-void CreateVector(GenmapVector x, GenmapInt32 size) {
+void CreateVector(GenmapVector *x, GenmapInt32 size) {
   /* Asserts:
        - size > 0
   */
   assert(size > 0);
 
-  GenmapMalloc(size, &x);
-  if(x->data == NULL) {
+  GenmapMalloc(1, x);
+  if(*x == NULL) {
     printf("malloc failed in %s:%d", __FILE__, __LINE__);
   }
 
-  x->size = size;
-  x->data = NULL;
+  (*x)->size = size;
+  (*x)->data = NULL;
 
-  GenmapMalloc(size, &x->data);
-  if(x->data == NULL) {
+  GenmapMalloc(size, &(*x)->data);
+  if((*x)->data == NULL) {
     printf("malloc failed in %s:%d", __FILE__, __LINE__);
   }
 }
 //------------------------------------------------------------------------------
 // Vector operations
-void DeleteVector(GenmapVector x) {
+void DestroyVector(GenmapVector x) {
   if(x->data) {
     free(x->data);
     x->data = NULL;
