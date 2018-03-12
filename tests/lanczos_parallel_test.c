@@ -21,8 +21,8 @@ int32 main(int32 argc, char **argv) {
   // Setup variables for lanczos
   Vector init;
   int32 iter = 100;
-  create_vector (&init, lelt);
-  for (int32 i = 0; i < lelt; i++) {
+  create_vector(&init, lelt);
+  for(int32 i = 0; i < lelt; i++) {
     init.vv[i] = i;
   }
 
@@ -33,14 +33,14 @@ int32 main(int32 argc, char **argv) {
   lanczos(&alpha, &beta, &q, &c, &mapheader, elements, &init, iter);
 
   // Print alpha and beta
-  if (rank == 0) {
+  if(rank == 0) {
     printf("beta = [");
-    for (int32 i = 0; i < beta.size; i++) {
+    for(int32 i = 0; i < beta.size; i++) {
       printf("%.17g, ", beta.vv[i]);
     }
     printf("]\n");
     printf("alpha= [");
-    for (int32 i = 0; i < alpha.size; i++) {
+    for(int32 i = 0; i < alpha.size; i++) {
       printf("%.17g, ", alpha.vv[i]);
     }
     printf("]\n");

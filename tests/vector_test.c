@@ -64,7 +64,7 @@ int32 test_6() {
   return (norm_vector(&x, 1) == 6.0 && \
           norm_vector(&x, 2) == sqrt(6.0) && \
           norm_vector(&y, 1) == 5.0 && \
-          norm_vector(&y, 2) == sqrt(7.0) );
+          norm_vector(&y, 2) == sqrt(7.0));
 }
 //------------------------------------------------------------------------------
 int32 test_7() {
@@ -100,14 +100,14 @@ int32 test_8() {
 }
 //------------------------------------------------------------------------------
 int32 main() {
-  run_test(&test_1,"vector_1");
-  run_test(&test_2,"vector_2");
-  run_test(&test_3,"vector_3");
-  run_test(&test_4,"vector_4");
-  run_test(&test_5,"vector_5");
-  run_test(&test_6,"vector_6");
-  run_test(&test_7,"vector_7");
-  run_test(&test_8,"vector_8");
+  run_test(&test_1, "vector_1");
+  run_test(&test_2, "vector_2");
+  run_test(&test_3, "vector_3");
+  run_test(&test_4, "vector_4");
+  run_test(&test_5, "vector_5");
+  run_test(&test_6, "vector_6");
+  run_test(&test_7, "vector_7");
+  run_test(&test_8, "vector_8");
 
   return 0;
 }

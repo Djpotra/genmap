@@ -16,10 +16,10 @@ void csr_matrix_vector_multiply(Vector *y, CSRMatrix *A, Vector *x) {
   double *vy = y->vv;
   int32      n = A->nrows;
 
-  for (int32 i=0; i<n; i++) {
+  for(int32 i = 0; i < n; i++) {
     vy[i] = 0.0;
-    for (int32 j = ia[i]; j < ia[i + 1]; j++) {
-      vy[i] += va[j]*vx[ja[j]];
+    for(int32 j = ia[i]; j < ia[i + 1]; j++) {
+      vy[i] += va[j] * vx[ja[j]];
     }
   }
 }

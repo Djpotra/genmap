@@ -9,10 +9,10 @@ int32 test_1() {
   int32 n = 3;
   Vector alpha, beta, eVector, init;
 
-  create_vector(&alpha, n    ); ones_vector(&alpha, n);
+  create_vector(&alpha, n); ones_vector(&alpha, n);
   create_vector(&beta, n - 1); beta.vv[0] = 2.0; beta.vv[1] = 3.0;
 
-  create_vector(&init, n    ); ones_vector(&init, n);
+  create_vector(&init, n); ones_vector(&init, n);
   create_vector(&eVector, n);
 
   power(&eVector, &alpha, &beta, &init, 15);
@@ -27,11 +27,11 @@ int32 test_2() {
   int32 n = 4;
   Vector alpha, beta, eVector, init;
 
-  create_vector(&alpha, n    );
-  for (int i = 0; i < n; i++) alpha.vv[i] = (double) i + 2.0;
+  create_vector(&alpha, n);
+  for(int i = 0; i < n; i++) alpha.vv[i] = (double) i + 2.0;
   create_vector(&beta, n - 1); ones_vector(&beta, n - 1);
 
-  create_vector(&init, n    ); ones_vector(&init, n    );
+  create_vector(&init, n); ones_vector(&init, n);
   create_vector(&eVector, n);
 
   power(&eVector, &alpha, &beta, &init, 15);
@@ -47,10 +47,10 @@ int32 test_3() {
   int32 n = 3;
   Vector alpha, beta, eVector, init;
 
-  create_vector(&alpha, n    ); ones_vector(&alpha, n);
+  create_vector(&alpha, n); ones_vector(&alpha, n);
   create_vector(&beta, n - 1); beta.vv[0] = 2.0; beta.vv[1] = 3.0;
 
-  create_vector(&init, n    ); ones_vector(&init, n);
+  create_vector(&init, n); ones_vector(&init, n);
   create_vector(&eVector, n);
 
   invpower(&eVector, &alpha, &beta, &init, 15);
@@ -65,11 +65,11 @@ int32 test_4() {
   int32 n = 4;
   Vector alpha, beta, eVector, init;
 
-  create_vector(&alpha, n    );
-  for (int32 i = 0; i < n; i++) alpha.vv[i] = (double) i + 2.0;
+  create_vector(&alpha, n);
+  for(int32 i = 0; i < n; i++) alpha.vv[i] = (double) i + 2.0;
   create_vector(&beta, n - 1); ones_vector(&beta, n - 1);
 
-  ones_vector  (&init, n  );
+  ones_vector(&init, n);
   create_vector(&eVector, n);
 
   invpower(&eVector, &alpha, &beta, &init, 15);

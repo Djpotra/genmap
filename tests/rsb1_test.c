@@ -25,36 +25,36 @@ void parallel_sort(struct element *local, int32 lelt, struct comm *c) {
 
   left = id - 1; llelt = 0;
   right = id + 1; rlelt = 0;
-  if (id % 2 == 0) {
-    if (left >= 0)
+  if(id % 2 == 0) {
+    if(left >= 0)
       comm_send(c, &lelt, sizeof(int32), left, 0);
-    if (right < np)
+    if(right < np)
       comm_send(c, &lelt, sizeof(int32), right, 0);
-    if (left >= 0)
+    if(left >= 0)
       comm_recv(c, &llelt, sizeof(int32), left, 0);
-    if (right < np)
+    if(right < np)
       comm_recv(c, &rlelt, sizeof(int32), right, 0);
   } else {
-    if (right < np)
+    if(right < np)
       comm_recv(c, &rlelt, sizeof(int32), right, 0);
-    if (left >= 0)
+    if(left >= 0)
       comm_recv(c, &llelt, sizeof(int32), left, 0);
-    if (right < np)
+    if(right < np)
       comm_send(c, &lelt, sizeof(int32), right, 0);
-    if (left >= 0)
+    if(left >= 0)
       comm_send(c, &lelt, sizeof(int32), left, 0);
   }
 
   int32 maxlelt = llelt > rlelt ? llelt : rlelt;
 
-  struct element *other = malloc(sizeof(struct element)*maxlelt);
+  struct element *other = malloc(sizeof(struct element) * maxlelt);
 
-  for (int32 i = 0; i < np; i++) {
+  for(int32 i = 0; i < np; i++) {
     qsort(local, lelt, sizeof(struct element), comp_element);
 
     // Even phase
-    if (i % 2 == 0) {
-      if (id % 2 == 0) {
+    if(i % 2 == 0) {
+      if(id % 2 == 0) {
         partner = id + 1;
         recvlelt = rlelt;
       } else {
@@ -62,7 +62,7 @@ void parallel_sort(struct element *local, int32 lelt, struct comm *c) {
         recvlelt = llelt;
       }
     } else {
-      if (id % 2 == 0) {
+      if(id % 2 == 0) {
         partner = id - 1;
         recvlelt = llelt;
       } else {
@@ -72,11 +72,11 @@ void parallel_sort(struct element *local, int32 lelt, struct comm *c) {
     }
 
     // Move on if partner is not valid
-    if (partner < 0 || partner > np - 1) {
+    if(partner < 0 || partner > np - 1) {
       continue;
     }
 
-    if (id % 2 == 0) {
+    if(id % 2 == 0) {
       comm_send(c, local, sizeof(struct element)*lelt, partner, 1);
       comm_recv(c, other, sizeof(struct element)*recvlelt, partner, 2);
     } else {
@@ -86,12 +86,12 @@ void parallel_sort(struct element *local, int32 lelt, struct comm *c) {
 
     struct element tmp;
 
-    if (id < partner) { // keep smaller part
+    if(id < partner) {  // keep smaller part
       int32 locali = lelt - 1;
       int32 otheri = 0;
 
-      while (locali > -1 && otheri < recvlelt) {
-        if (local[locali].fiedler < other[otheri].fiedler)
+      while(locali > -1 && otheri < recvlelt) {
+        if(local[locali].fiedler < other[otheri].fiedler)
           break;
         else {
           tmp = local[locali];
@@ -104,8 +104,8 @@ void parallel_sort(struct element *local, int32 lelt, struct comm *c) {
       int32 locali = 0;
       int32 otheri = recvlelt - 1;
 
-      while (locali < lelt  && otheri > -1) {
-        if (local[locali].fiedler > other[otheri].fiedler)
+      while(locali < lelt  && otheri > -1) {
+        if(local[locali].fiedler > other[otheri].fiedler)
           break;
         else {
           tmp = local[locali];
@@ -150,7 +150,7 @@ int32 main(int32 argc, char** argv) {
   // Needed comm_scan
   int32 exsum, buf;
 
-  for (int32 i = 0; i < 2; i++) {
+  for(int32 i = 0; i < 2; i++) {
     MPI_Comm_split(mpi_global, partn_id, global_id, &mpi_partn);
     comm_init(&partn, mpi_partn); gop_init(&partn_h, &partn);
 
@@ -170,14 +170,14 @@ int32 main(int32 argc, char** argv) {
 
     // Run lanczos in the partition
     int32 iter = 10;
-    zeros_vector(&alpha, iter    );
+    zeros_vector(&alpha, iter);
     zeros_vector(&beta, iter - 1);
 
     lanczos(&alpha, &beta, &q, &partn, &mapheader, elements, &init, iter);
 #if 0
 #ifdef DEBUG
     printf("alpha = [");
-    for (int32 i = 0; i < iter; i++) {
+    for(int32 i = 0; i < iter; i++) {
       printf("%lf, ", alpha.vv[i]);
     }
     printf("]\n");
@@ -194,23 +194,23 @@ int32 main(int32 argc, char** argv) {
 
     // find the local fiedler vector
     double partn_max = 0.0;
-    for (int32 i = 0; i < lelt; i++) {
+    for(int32 i = 0; i < lelt; i++) {
       fiedler.vv[i] = 0.0;
-      for (int32 j = 0; j < n; j++) {
-        fiedler.vv[i] += q[j].vv[i]*eVector.vv[j];
+      for(int32 j = 0; j < n; j++) {
+        fiedler.vv[i] += q[j].vv[i] * eVector.vv[j];
       }
       fiedler.vv[i] = fabs(fiedler.vv[i]);
-      if (partn_max < fiedler.vv[i]) {
+      if(partn_max < fiedler.vv[i]) {
         partn_max = fiedler.vv[i];
       }
     }
     gop(&partn_max, partn_h, gs_double, gs_max, 0);
-    for (int32 i = 0; i < lelt; i++) {
-      fiedler.vv[i] = fiedler.vv[i]/partn_max;
+    for(int32 i = 0; i < lelt; i++) {
+      fiedler.vv[i] = fiedler.vv[i] / partn_max;
     }
 
     // find  an approximation for global fiedler vector
-    for (int32 i = 0; i < lelt; i++) {
+    for(int32 i = 0; i < lelt; i++) {
       elements[i].fiedler = fiedler.vv[i];
     }
 
@@ -229,8 +229,8 @@ int32 main(int32 argc, char** argv) {
 
     comm_scan(&exsum, &partn, gs_int, gs_add, &lelt, 1, &buf);
 
-    int32 medianPos = (partn_nel + 1)/2;
-    if (exsum + lelt < medianPos) {
+    int32 medianPos = (partn_nel + 1) / 2;
+    if(exsum + lelt < medianPos) {
       partn_id = 0;
     } else {
       partn_id = 1;
@@ -244,7 +244,7 @@ int32 main(int32 argc, char** argv) {
 #ifdef DEBUG
   printf("%d: %d\n", global_id, exsum);
 
-  for (int32 i = 0; i < 1; i++) {
+  for(int32 i = 0; i < 1; i++) {
     printf("%d ", mapheader.nel);
     printf("%d ", mapheader.nactive);
     printf("%d ", mapheader.depth);
@@ -258,19 +258,19 @@ int32 main(int32 argc, char** argv) {
   printf("\n");
 
   int32 i = 0;
-  while (i < mapheader.lelt) {
+  while(i < mapheader.lelt) {
     printf("%d ", elements[i].globalId);
     i++;
   }
 
   printf("fiedler: %d = [", global.id);
-  for (int32 i = 0; i < lelt; i++) {
+  for(int32 i = 0; i < lelt; i++) {
     printf("%lf, ", fiedler.vv[i]);
   }
   printf("], %d\n", global.id);
 
   printf("sorted_fiedler: %d = [", global.id);
-  for (int32 i = 0; i < lelt; i++) {
+  for(int32 i = 0; i < lelt; i++) {
     printf("(%lf, %d), ", elements[i].fiedler, elements[i].globalId);
   }
   printf("], %d\n", global.id);

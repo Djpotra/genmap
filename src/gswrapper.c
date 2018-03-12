@@ -35,7 +35,7 @@ void gop_init(struct gs_data **gsh, struct comm *c) {
 //------------------------------------------------------------------------------
 void gop(void *u, struct gs_data *goph, gs_dom dom, gs_op op,
          unsigned transpose) {
-  if (gop_setup == 0) {
+  if(gop_setup == 0) {
     printf("gop_init must be called before gop\n");
     return;
   }
