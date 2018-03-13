@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 
 GenmapUInt32 genmap_srand_initialized = 0;
 //------------------------------------------------------------------------------
@@ -32,7 +33,8 @@ int GenmapCreateVector(GenmapVector *x, GenmapInt32 size) {
 }
 
 int GenmapSetVector(GenmapVector x, GenmapScalar *array) {
-  return memcpy(x->data, array, sizeof(GenmapScalar) * x->size);
+  memcpy(x->data, array, sizeof(GenmapScalar) * x->size);
+  return 0;
 }
 
 int GenmapDestroyVector(GenmapVector x) {
@@ -63,6 +65,20 @@ int GenmapVectorsEqual(GenmapVector x, GenmapVector y, GenmapScalar tol) {
   }
 
   return 1;
+}
+
+int GenmapCopyVector(GenmapVector x, GenmapVector y) {
+  /* Asserts:
+       - size y = size x
+  */
+  assert(y->size == x->size);
+
+  GenmapInt32 n = x->size;
+  for(GenmapInt32 i = 0; i < n; i++) {
+    x->data[i] = y->data[i];
+  }
+
+  return 0;
 }
 ////------------------------------------------------------------------------------
 //void random_vector(Vector *x, int32 size, int32 seed) {
@@ -173,18 +189,6 @@ int GenmapVectorsEqual(GenmapVector x, GenmapVector y, GenmapScalar tol) {
 //  }
 //
 //  return dot;
-//}
-////------------------------------------------------------------------------------
-//void copy_vector(Vector *x, Vector *y) {
-//  /* Asserts:
-//       - size y = size x
-//  */
-//  assert(y->size == x->size);
-//
-//  int32 n = x->size;
-//  for(int32 i = 0; i < n; i++) {
-//    x->vv[i] = y->vv[i];
-//  }
 //}
 ////------------------------------------------------------------------------------
 //void print_vector(Vector *x) {

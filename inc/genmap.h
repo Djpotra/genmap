@@ -31,8 +31,9 @@ int GenmapAxpbyVector(GenmapVector z, GenmapVector x, GenmapScalar alpha, \
                       GenmapVector *y, GenmapScalar beta);
 
 int GenmapVectorsEqual(GenmapVector x, GenmapVector y, GenmapScalar tol);
+int GenmapCopyVector(GenmapVector x, GenmapVector y);
 GenmapScalar GenmapDotVector(GenmapVector x, GenmapVector y);
-GenmapScalar GenmapNormVector(GenmapVector *x, GenmapInt32 p);
+GenmapScalar GenmapNormVector(GenmapVector x, GenmapInt32 p);
 
 int GenmapPrintVector(GenmapVector x);
 int GenmapDestroyVector(GenmapVector x);
