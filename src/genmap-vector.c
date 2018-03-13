@@ -30,11 +30,11 @@ int GenmapCreateVector(GenmapVector *x, GenmapInt32 size) {
 
   return 0;
 }
-//------------------------------------------------------------------------------
+
 int GenmapSetVector(GenmapVector x, GenmapScalar *array) {
   return memcpy(x->data, array, sizeof(GenmapScalar)*x->size);
 }
-//------------------------------------------------------------------------------
+
 int GenmapDestroyVector(GenmapVector x) {
   if(x->data) {
     free(x->data);
@@ -48,7 +48,7 @@ int GenmapDestroyVector(GenmapVector x) {
 
   return 0;
 }
-//------------------------------------------------------------------------------
+
 int GenmapVectorsEqual(GenmapVector x, GenmapVector y, GenmapScalar tol) {
   /* Asserts:
        - size of y == size of x

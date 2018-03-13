@@ -15,12 +15,6 @@ struct GenmapVector_private {
 };
 
 //------------------------------------------------------------------------------
-// Linear solve
-//
-void SymTridiagSolve(GenmapVector x, GenmapVector b, GenmapVector alpha,
-                     GenmapVector beta);
-
-//------------------------------------------------------------------------------
 // Malloc and Free
 //
 #define GenmapMalloc(n, p) *(p) = malloc(sizeof(**(p))*(n))

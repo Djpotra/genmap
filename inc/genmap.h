@@ -38,3 +38,9 @@ int GenmapPrintVector(GenmapVector x);
 int GenmapDestroyVector(GenmapVector x);
 
 //------------------------------------------------------------------------------
+// Linear solve
+//
+void SymTridiagSolve(GenmapVector x, GenmapVector b, GenmapVector alpha,
+                     GenmapVector beta);
+
+//------------------------------------------------------------------------------
