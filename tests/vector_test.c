@@ -3,7 +3,7 @@
 
 #include <math.h>
 //------------------------------------------------------------------------------
-void test_1() {
+void TestGenmapCreateVector() {
   GenmapVector x, y;
 
   GenmapCreateVector(&x, 20);
@@ -16,7 +16,7 @@ void test_1() {
   GenmapDestroyVector(y);
 }
 
-void test_2() {
+void TestGenmapSetVector() {
   GenmapVector x;
 
   GenmapCreateVector(&x, 5);
@@ -31,7 +31,7 @@ void test_2() {
   GenmapDestroyVector(x);
 }
 
-void test_3() {
+void TestGenmapVectorsEqual() {
   GenmapVector x, y, z;
 
   GenmapCreateVector(&x, 5);
@@ -52,6 +52,60 @@ void test_3() {
   GenmapDestroyVector(x);
   GenmapDestroyVector(y);
   GenmapDestroyVector(z);
+}
+
+void TestGenmapCopyVector() {
+  GenmapVector x, y;
+
+  GenmapCreateVector(&x, 5);
+  GenmapCreateVector(&y, 5);
+
+  GenmapScalar dx[5] = {1., 2., 3., 4., 5.};
+  GenmapSetVector(x, dx);
+
+  GenmapCopyVector(y, x);
+
+  assert(GenmapVectorsEqual(x, y, GENMAP_TOL));
+
+  GenmapDestroyVector(x);
+  GenmapDestroyVector(y);
+}
+
+void TestGenmapNormVector() {
+  GenmapVector x, y;
+
+  GenmapCreateVector(&x, 6);
+  GenmapCreateVector(&y, 6);
+
+  double dx[6] = {1., -1., 1., 1., 1., -1.};
+  double dy[6] = {1., -1., 0., -2., 0., -1.};
+
+  GenmapSetVector(x, dx);
+  GenmapSetVector(y, dy);
+
+  assert(GenmapNormVector(x, 1) == 6.0 && \
+         fabs(GenmapNormVector(x, 2) - sqrt(6.0)) < GENMAP_TOL && \
+         GenmapNormVector(x, -1) == 1 && \
+         GenmapNormVector(y, 1) == 5.0 && \
+         fabs(GenmapNormVector(y, 2) - sqrt(7.0)) < GENMAP_TOL && \
+         GenmapNormVector(y, -1) == 2);
+}
+
+void TestGenmapScaleVector() {
+  GenmapVector x, xscaled;
+
+  GenmapCreateVector(&x, 4);
+  GenmapCreateVector(&xscaled, 4);
+
+  double dx[4] = {2.0, 4.0, 6.0, 8.0};
+  double dxscaled[4] = {1.0, 2.0, 3.0, 4.0};
+
+  GenmapSetVector(x, dx);
+  GenmapSetVector(xscaled, dxscaled);
+
+  GenmapScaleVector(xscaled, x, 0.5);
+
+  assert(GenmapVectorsEqual(x, xscaled, GENMAP_TOL));
 }
 ////------------------------------------------------------------------------------
 //int32 test_3() {
@@ -85,18 +139,6 @@ void test_3() {
 //  return (y.size == 6);
 //}
 ////------------------------------------------------------------------------------
-//int32 test_6() {
-//  double vx[6] = {1., -1., 1., 1., 1., -1.};
-//  Vector x = { .size = 6, .vv = vx };
-//
-//  double vy[6] = {1., -1., 0., 2., 0., -1.};
-//  Vector y = { .size = 6, .vv = vy };
-//
-//  return (norm_vector(&x, 1) == 6.0 && \
-//          norm_vector(&x, 2) == sqrt(6.0) && \
-//          norm_vector(&y, 1) == 5.0 && \
-//          norm_vector(&y, 2) == sqrt(7.0));
-//}
 ////------------------------------------------------------------------------------
 //int32 test_7() {
 //  double vx[6] = {1., -1., 1., 1., 1., -1.};
@@ -131,9 +173,12 @@ void test_3() {
 //}
 ////------------------------------------------------------------------------------
 int main() {
-  test_1();
-  test_2();
-  test_3();
+  TestGenmapCreateVector();
+  TestGenmapSetVector();
+  TestGenmapVectorsEqual();
+  TestGenmapVectorsEqual();
+  TestGenmapCopyVector();
+  TestGenmapNormVector();
 
   return 0;
 }

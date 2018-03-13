@@ -67,7 +67,7 @@ int GenmapDestroyVector(GenmapVector x) {
   return 0;
 }
 
-int GenmapCopyVector(GenmapVector x, GenmapVector y) {
+int GenmapCopyVector(GenmapVector y, GenmapVector x) {
   /* Asserts:
        - size y = size x
   */
@@ -75,7 +75,7 @@ int GenmapCopyVector(GenmapVector x, GenmapVector y) {
 
   GenmapInt32 n = x->size;
   for(GenmapInt32 i = 0; i < n; i++) {
-    x->data[i] = y->data[i];
+    y->data[i] = x->data[i];
   }
 
   return 0;
@@ -117,6 +117,8 @@ int GenmapScaleVector(GenmapVector y, GenmapVector x,  GenmapScalar alpha) {
   for(GenmapInt32 i = 0; i < n; i++) {
     y->data[i] = alpha * x->data[i];
   }
+
+  return 0;
 }
 ////------------------------------------------------------------------------------
 //void random_vector(Vector *x, int32 size, int32 seed) {
