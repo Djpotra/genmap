@@ -32,7 +32,7 @@ int GenmapCreateVector(GenmapVector *x, GenmapInt32 size) {
 }
 
 int GenmapSetVector(GenmapVector x, GenmapScalar *array) {
-  return memcpy(x->data, array, sizeof(GenmapScalar)*x->size);
+  return memcpy(x->data, array, sizeof(GenmapScalar) * x->size);
 }
 
 int GenmapDestroyVector(GenmapVector x) {

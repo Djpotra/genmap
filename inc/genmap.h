@@ -28,7 +28,7 @@ int GenmapZerosVector(GenmapVector x, GenmapInt32 size);
 
 int GenmapScaleVector(GenmapVector y, GenmapVector x, GenmapScalar alpha);
 int GenmapAxpbyVector(GenmapVector z, GenmapVector x, GenmapScalar alpha, \
-                 GenmapVector *y, GenmapScalar beta);
+                      GenmapVector *y, GenmapScalar beta);
 
 int GenmapVectorsEqual(GenmapVector x, GenmapVector y, GenmapScalar tol);
 GenmapScalar GenmapDotVector(GenmapVector x, GenmapVector y);
@@ -47,8 +47,8 @@ void SymTridiagSolve(GenmapVector x, GenmapVector b, GenmapVector alpha,
 // Power and inverse power iterations
 //
 void GenmapPowerIter(GenmapVector eVector, GenmapVector alpha,
-		GenmapVector beta, GenmapVector init, GenmapInt32 iter);
+                     GenmapVector beta, GenmapVector init, GenmapInt32 iter);
 
 void GenmapInvPowerIter(GenmapVector eVector, GenmapVector alpha,
-		GenmapVector beta, GenmapVector init, GenmapInt32 iter);
+                        GenmapVector beta, GenmapVector init, GenmapInt32 iter);
 //------------------------------------------------------------------------------
