@@ -16,6 +16,11 @@ typedef double GenmapScalar;
 typedef struct GenmapVector_private *GenmapVector;
 
 //------------------------------------------------------------------------------
+// Genmap tolerances
+//
+#define GENMAP_TOL 1e-12
+
+//------------------------------------------------------------------------------
 // GenmapVector operations
 //
 int GenmapCreateVector(GenmapVector *x, GenmapInt32 size);

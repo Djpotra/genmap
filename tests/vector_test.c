@@ -15,8 +15,23 @@ void test_1() {
   GenmapDestroyVector(x);
   GenmapDestroyVector(y);
 }
-//------------------------------------------------------------------------------
+
 void test_2() {
+  GenmapVector x;
+
+  GenmapCreateVector(&x, 5);
+
+  GenmapScalar dx[5] = {0., 1., 2., 3., 4.};
+
+  GenmapSetVector(x, dx);
+
+  for(int i = 0; i < 5; i++)
+    assert(fabs(x->data[i] - i) < GENMAP_TOL);
+
+  GenmapDestroyVector(x);
+}
+
+void test_3() {
   GenmapVector x, y, z;
 
   GenmapCreateVector(&x, 5);
@@ -31,8 +46,8 @@ void test_2() {
   GenmapSetVector(y, dy);
   GenmapSetVector(z, dz);
 
-  assert(GenmapVectorsEqual(x, y, 1e-12));
-  assert(!GenmapVectorsEqual(y, z, 1e-12));
+  assert(GenmapVectorsEqual(x, y, GENMAP_TOL));
+  assert(!GenmapVectorsEqual(y, z, GENMAP_TOL));
 
   GenmapDestroyVector(x);
   GenmapDestroyVector(y);
@@ -47,7 +62,7 @@ void test_2() {
 //  double vans[5] = {0., 0., 0., 0., 0.};
 //  Vector answer = { .size = 5, .vv = vans };
 //
-//  return (y.size == 5 && vectors_equal(&y, &answer, 1e-12));
+//  return (y.size == 5 && vectors_equal(&y, &answer, GENMAP_TOL));
 //}
 ////------------------------------------------------------------------------------
 //int32 test_4() {
@@ -58,7 +73,7 @@ void test_2() {
 //  double vans[6] = {1., 1., 1., 1., 1., 1.};
 //  Vector answer = { .size = 6, .vv = vans };
 //
-//  return (y.size == 6 && vectors_equal(&y, &answer, 1e-12));
+//  return (y.size == 6 && vectors_equal(&y, &answer, GENMAP_TOL));
 //}
 ////------------------------------------------------------------------------------
 //int32 test_5() {
@@ -101,8 +116,8 @@ void test_2() {
 //  double vans2[6] = {0., 0., -1., 1., -1., 0.};
 //  Vector answer2 = { .size = 6, .vv = vans2 };
 //
-//  return vectors_equal(&answer1, &y, 1e-12) && \
-//         vectors_equal(&answer2, &z, 1e-12);
+//  return vectors_equal(&answer1, &y, GENMAP_TOL) && \
+//         vectors_equal(&answer2, &z, GENMAP_TOL);
 //}
 ////------------------------------------------------------------------------------
 //int32 test_8() {
@@ -118,6 +133,7 @@ void test_2() {
 int main() {
   test_1();
   test_2();
+  test_3();
 
   return 0;
 }

@@ -32,6 +32,22 @@ int GenmapCreateVector(GenmapVector *x, GenmapInt32 size) {
   return 0;
 }
 
+int GenmapVectorsEqual(GenmapVector x, GenmapVector y, GenmapScalar tol) {
+  /* Asserts:
+       - size of y == size of x
+  */
+  assert(x->size == y->size);
+
+  GenmapInt32 n = x->size;
+  for(GenmapInt32 i = 0; i < n; i++) {
+    if(fabs(x->data[i] - y->data[i]) > tol) {
+      return 0;
+    }
+  }
+
+  return 1;
+}
+
 int GenmapSetVector(GenmapVector x, GenmapScalar *array) {
   memcpy(x->data, array, sizeof(GenmapScalar) * x->size);
   return 0;
@@ -51,22 +67,6 @@ int GenmapDestroyVector(GenmapVector x) {
   return 0;
 }
 
-int GenmapVectorsEqual(GenmapVector x, GenmapVector y, GenmapScalar tol) {
-  /* Asserts:
-       - size of y == size of x
-  */
-  assert(x->size == y->size);
-
-  GenmapInt32 n = x->size;
-  for(GenmapInt32 i = 0; i < n; i++) {
-    if(fabs(x->data[i] - y->data[i]) > tol) {
-      return 0;
-    }
-  }
-
-  return 1;
-}
-
 int GenmapCopyVector(GenmapVector x, GenmapVector y) {
   /* Asserts:
        - size y = size x
@@ -80,6 +80,44 @@ int GenmapCopyVector(GenmapVector x, GenmapVector y) {
 
   return 0;
 }
+
+GenmapScalar GenmapNormVector(GenmapVector x, GenmapInt32 p) {
+  assert(x->size > 0);
+
+  GenmapInt32 n = x->size;
+  GenmapScalar norm = 0;
+
+  if(p == 1) {
+    for(GenmapInt32 i = 0; i < n; i++) {
+      norm += fabs(x->data[i]);
+    }
+  } else if(p == 2) {
+    for(GenmapInt32 i = 0; i < n; i++) {
+      norm += x->data[i] * x->data[i];
+    }
+    norm = sqrt(norm);
+  } else if(p == -1) {
+    norm = fabs(x->data[0]);
+
+    for(GenmapInt32 i = 1; i < n; i++) {
+      if(fabs(x->data[i]) > norm) norm = fabs(x->data[i]);
+    }
+  }
+
+  return norm;
+}
+
+int GenmapScaleVector(GenmapVector y, GenmapVector x,  GenmapScalar alpha) {
+  /* asserts:
+       - size x = size y
+  */
+  assert(x->size == y->size);
+
+  GenmapInt32 n = x->size;
+  for(GenmapInt32 i = 0; i < n; i++) {
+    y->data[i] = alpha * x->data[i];
+  }
+}
 ////------------------------------------------------------------------------------
 //void random_vector(Vector *x, int32 size, int32 seed) {
 //  create_vector(x, size);
@@ -90,7 +128,7 @@ int GenmapCopyVector(GenmapVector x, GenmapVector y) {
 //  }
 //
 //  for(int32 i = 0; i < size; i++) {
-//    x->vv[i] = (double) rand() / RAND_MAX * 2. - 1.;
+//    x->data[i] = (double) rand() / RAND_MAX * 2. - 1.;
 //  }
 //}
 ////------------------------------------------------------------------------------
@@ -98,7 +136,7 @@ int GenmapCopyVector(GenmapVector x, GenmapVector y) {
 //  create_vector(x, size);
 //
 //  for(int32 i = 0; i < size; i++) {
-//    x->vv[i] = 1.;
+//    x->data[i] = 1.;
 //  }
 //}
 ////------------------------------------------------------------------------------
@@ -106,34 +144,8 @@ int GenmapCopyVector(GenmapVector x, GenmapVector y) {
 //  create_vector(x, size);
 //
 //  for(int32 i = 0; i < size; i++) {
-//    x->vv[i] = 0.;
+//    x->data[i] = 0.;
 //  }
-//}
-////------------------------------------------------------------------------------
-//double norm_vector(Vector *x, int32 p) {
-//  assert(x->size > 0);
-//
-//  int32 n = x->size;
-//  double norm = 0.;
-//
-//  if(p == 1) {
-//    for(int32 i = 0; i < n; i++) {
-//      norm += fabs(x->vv[i]);
-//    }
-//  } else if(p == 2) {
-//    for(int32 i = 0; i < n; i++) {
-//      norm += x->vv[i] * x->vv[i];
-//    }
-//    norm = sqrt(norm);
-//  } else if(p == -1) {
-//    norm = fabs(x->vv[0]);
-//
-//    for(int32 i = 1; i < n; i++) {
-//      if(fabs(x->vv[i]) > norm) norm = fabs(x->vv[i]);
-//    }
-//  }
-//
-//  return norm;
 //}
 ////------------------------------------------------------------------------------
 //void mult_scalar_add_vector(Vector *y, double alpha, Vector *x, \
@@ -145,7 +157,7 @@ int GenmapCopyVector(GenmapVector x, GenmapVector y) {
 //
 //  int32 n = x->size;
 //  for(int32 i = 0; i < n; i++) {
-//    y->vv[i] = alpha * y->vv[i] + beta * x->vv[i];
+//    y->data[i] = alpha * y->data[i] + beta * x->data[i];
 //  }
 //}
 ////------------------------------------------------------------------------------
@@ -159,21 +171,10 @@ int GenmapCopyVector(GenmapVector x, GenmapVector y) {
 //
 //  int32 n = x->size;
 //  for(int32 i = 0; i < n; i++) {
-//    z->vv[i] = alpha * x->vv[i] + beta * y->vv[i];
+//    z->data[i] = alpha * x->data[i] + beta * y->data[i];
 //  }
 //}
 ////------------------------------------------------------------------------------
-//void scale_vector(Vector *y, Vector *x,  double alpha) {
-//  /* asserts:
-//       - size x = size y
-//  */
-//  assert(x->size == y->size);
-//
-//  int32 n = x->size;
-//  for(int32 i = 0; i < n; i++) {
-//    y->vv[i] = alpha * (x->vv[i]);
-//  }
-//}
 ////------------------------------------------------------------------------------
 //double dot_vector(Vector *x, Vector *y) {
 //  /* Asserts:
@@ -185,7 +186,7 @@ int GenmapCopyVector(GenmapVector x, GenmapVector y) {
 //
 //  int32 n = x->size;
 //  for(int32 i = 0; i < n; i++) {
-//    dot += y->vv[i] * x->vv[i];
+//    dot += y->data[i] * x->data[i];
 //  }
 //
 //  return dot;
@@ -195,13 +196,13 @@ int GenmapCopyVector(GenmapVector x, GenmapVector y) {
 //  /* Asserts:
 //       - size y > 0
 //  */
-//  printf("(%f", x->vv[0]);
+//  printf("(%f", x->data[0]);
 //  for(int32 i = 1; i < x->size - 1; i++) {
-//    printf(", %f", x->vv[i]);
+//    printf(", %f", x->data[i]);
 //  }
 //
 //  if(x->size > 1) {
-//    printf(", %f)", x->vv[x->size - 1]);
+//    printf(", %f)", x->data[x->size - 1]);
 //  } else {
 //    printf(")");
 //  }
@@ -222,14 +223,14 @@ int GenmapCopyVector(GenmapVector x, GenmapVector y) {
 //  create_vector(x, n); copy_vector(x, b);
 //
 //  for(int32 i = 0; i < n - 1; i++) {
-//    double m = (beta->vv[i] / diag.vv[i]);
-//    x->vv[i + 1] = x->vv[i + 1] - m * x->vv[i];
-//    diag.vv[i + 1] = diag.vv[i + 1] - m * beta->vv[i];
+//    double m = (beta->data[i] / diag.data[i]);
+//    x->data[i + 1] = x->data[i + 1] - m * x->data[i];
+//    diag.data[i + 1] = diag.data[i + 1] - m * beta->data[i];
 //  }
 //
-//  x->vv[n - 1] = x->vv[n - 1] / diag.vv[n - 1];
+//  x->data[n - 1] = x->data[n - 1] / diag.data[n - 1];
 //  for(int32 i = n - 2; i >= 0; i--) {
-//    x->vv[i] = (x->vv[i] - beta->vv[i] * x->vv[i + 1]) / diag.vv[i];
+//    x->data[i] = (x->data[i] - beta->data[i] * x->data[i + 1]) / diag.data[i];
 //  }
 //
 //  return;
