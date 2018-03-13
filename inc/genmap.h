@@ -44,3 +44,11 @@ void SymTridiagSolve(GenmapVector x, GenmapVector b, GenmapVector alpha,
                      GenmapVector beta);
 
 //------------------------------------------------------------------------------
+// Power and inverse power iterations
+//
+void GenmapPowerIter(GenmapVector eVector, GenmapVector alpha,
+		GenmapVector beta, GenmapVector init, GenmapInt32 iter);
+
+void GenmapInvPowerIter(GenmapVector eVector, GenmapVector alpha,
+		GenmapVector beta, GenmapVector init, GenmapInt32 iter);
+//------------------------------------------------------------------------------
