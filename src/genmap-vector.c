@@ -120,6 +120,16 @@ int GenmapScaleVector(GenmapVector y, GenmapVector x,  GenmapScalar alpha) {
 
   return 0;
 }
+
+int GenmapCreateOnesVector(GenmapVector *x, GenmapInt32 size) {
+  GenmapCreateVector(x, size);
+
+  for(GenmapInt32 i = 0; i < size; i++) {
+    (*x)->data[i] = 1.;
+  }
+
+  return 0;
+}
 ////------------------------------------------------------------------------------
 //void random_vector(Vector *x, int32 size, int32 seed) {
 //  create_vector(x, size);
@@ -134,13 +144,6 @@ int GenmapScaleVector(GenmapVector y, GenmapVector x,  GenmapScalar alpha) {
 //  }
 //}
 ////------------------------------------------------------------------------------
-//void ones_vector(Vector *x, int32 size) {
-//  create_vector(x, size);
-//
-//  for(int32 i = 0; i < size; i++) {
-//    x->data[i] = 1.;
-//  }
-//}
 ////------------------------------------------------------------------------------
 //void zeros_vector(Vector *x, int32 size) {
 //  create_vector(x, size);

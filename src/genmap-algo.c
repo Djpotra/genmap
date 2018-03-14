@@ -41,8 +41,8 @@ void GenmapPowerIter(GenmapVector eVector, GenmapVector alpha,
   GenmapCopyVector(eVector, y);
 }
 
-//void GenmapInvPowerIter(GenmapVector eVector, GenmapVector alpha,
-//                        GenmapVector beta, GenmapVector init, GenmapInt32 iter) {
+void GenmapInvPowerIter(GenmapVector eVector, GenmapVector alpha,
+                        GenmapVector beta, GenmapVector init, GenmapInt32 iter) {
 //  assert(alpha->size == beta->size + 1);
 //  assert(alpha->size == eVector->size);
 //
@@ -69,6 +69,6 @@ void GenmapPowerIter(GenmapVector eVector, GenmapVector alpha,
 //  }
 //
 //  copy_vector(eVector, &y);
-//}
+}
 
 //------------------------------------------------------------------------------

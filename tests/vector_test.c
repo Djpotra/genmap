@@ -1,4 +1,3 @@
-#include <genmap.h>
 #include <genmap-impl.h>
 
 #include <math.h>
@@ -89,6 +88,9 @@ void TestGenmapNormVector() {
          GenmapNormVector(y, 1) == 5.0 && \
          fabs(GenmapNormVector(y, 2) - sqrt(7.0)) < GENMAP_TOL && \
          GenmapNormVector(y, -1) == 2);
+
+  GenmapDestroyVector(x);
+  GenmapDestroyVector(y);
 }
 
 void TestGenmapScaleVector() {
@@ -106,6 +108,24 @@ void TestGenmapScaleVector() {
   GenmapScaleVector(xscaled, x, 0.5);
 
   assert(GenmapVectorsEqual(x, xscaled, GENMAP_TOL));
+
+  GenmapDestroyVector(x);
+  GenmapDestroyVector(xscaled);
+}
+
+void TestGenmapCreateOnesVector() {
+  GenmapVector x, ones;
+
+  GenmapCreateOnesVector(&x, 6);
+  GenmapCreateVector(&ones, 6);
+
+  double dones[6] = {1., 1., 1., 1., 1., 1.};
+  GenmapSetVector(ones, dones);
+
+  assert(GenmapVectorsEqual(x, ones, GENMAP_TOL));
+
+  GenmapDestroyVector(x);
+  GenmapDestroyVector(ones);
 }
 ////------------------------------------------------------------------------------
 //int32 test_3() {
@@ -119,16 +139,6 @@ void TestGenmapScaleVector() {
 //  return (y.size == 5 && vectors_equal(&y, &answer, GENMAP_TOL));
 //}
 ////------------------------------------------------------------------------------
-//int32 test_4() {
-//  Vector y;
-//
-//  ones_vector(&y, 6);
-//
-//  double vans[6] = {1., 1., 1., 1., 1., 1.};
-//  Vector answer = { .size = 6, .vv = vans };
-//
-//  return (y.size == 6 && vectors_equal(&y, &answer, GENMAP_TOL));
-//}
 ////------------------------------------------------------------------------------
 //int32 test_5() {
 //  Vector y;
@@ -179,6 +189,7 @@ int main() {
   TestGenmapVectorsEqual();
   TestGenmapCopyVector();
   TestGenmapNormVector();
+  TestGenmapCreateOnesVector();
 
   return 0;
 }
