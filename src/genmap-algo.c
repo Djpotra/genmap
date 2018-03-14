@@ -39,6 +39,9 @@ void GenmapPowerIter(GenmapVector eVector, GenmapVector alpha,
   }
 
   GenmapCopyVector(eVector, y);
+
+  GenmapDestroyVector(x);
+  GenmapDestroyVector(y);
 }
 
 void GenmapInvPowerIter(GenmapVector eVector, GenmapVector alpha,

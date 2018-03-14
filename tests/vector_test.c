@@ -2,6 +2,8 @@
 
 #include <math.h>
 //------------------------------------------------------------------------------
+// Test GenmapVector
+//
 void TestGenmapCreateVector() {
   GenmapVector x, y;
 
