@@ -1,7 +1,7 @@
 #include <genmap-impl.h>
 
 #include <math.h>
-//------------------------------------------------------------------------------
+//
 // Test GenmapVector
 //
 void TestGenmapCreateVector() {
@@ -107,7 +107,7 @@ void TestGenmapScaleVector() {
   GenmapSetVector(x, dx);
   GenmapSetVector(xscaled, dxscaled);
 
-  GenmapScaleVector(xscaled, x, 0.5);
+  GenmapScaleVector(x, x, 0.5);
 
   assert(GenmapVectorsEqual(x, xscaled, GENMAP_TOL));
 
@@ -129,18 +129,6 @@ void TestGenmapCreateOnesVector() {
   GenmapDestroyVector(x);
   GenmapDestroyVector(ones);
 }
-////------------------------------------------------------------------------------
-//int32 test_3() {
-//  Vector y;
-//
-//  zeros_vector(&y, 5);
-//
-//  double vans[5] = {0., 0., 0., 0., 0.};
-//  Vector answer = { .size = 5, .vv = vans };
-//
-//  return (y.size == 5 && vectors_equal(&y, &answer, GENMAP_TOL));
-//}
-////------------------------------------------------------------------------------
 ////------------------------------------------------------------------------------
 //int32 test_5() {
 //  Vector y;
@@ -191,6 +179,7 @@ int main() {
   TestGenmapVectorsEqual();
   TestGenmapCopyVector();
   TestGenmapNormVector();
+  TestGenmapScaleVector();
   TestGenmapCreateOnesVector();
 
   return 0;

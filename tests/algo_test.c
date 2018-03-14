@@ -1,9 +1,10 @@
 #include <genmap-impl.h>
 
 #include <stdio.h>
-//------------------------------------------------------------------------------
+//
 // Test Algorithms
-// Power Iteration
+//
+// Power and inverse power Iteration
 void TestPowerIter1() {
   GenmapInt32 n = 3;
   GenmapVector alpha, beta, eVector, init;

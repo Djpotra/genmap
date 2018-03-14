@@ -2,11 +2,12 @@
 
 #include <math.h>
 #include <assert.h>
-//------------------------------------------------------------------------------
-// Power and inverse power iterations
 //
-void GenmapPowerIter(GenmapVector eVector, GenmapVector alpha,
-                     GenmapVector beta, GenmapVector init, GenmapInt32 iter) {
+// Algorithms
+//
+// Power and inverse power iterations
+int GenmapPowerIter(GenmapVector eVector, GenmapVector alpha,
+                    GenmapVector beta, GenmapVector init, GenmapInt32 iter) {
   assert(alpha->size == beta->size + 1);
   assert(alpha->size == eVector->size);
 
@@ -19,7 +20,7 @@ void GenmapPowerIter(GenmapVector eVector, GenmapVector alpha,
 
   if(n == 1) {
     eVector->data[0] = alpha->data[0];
-    return;
+    return 0;
   } else {
     for(GenmapInt32 j = 0; j < iter; j++) {
       // y = Ax
@@ -42,36 +43,71 @@ void GenmapPowerIter(GenmapVector eVector, GenmapVector alpha,
 
   GenmapDestroyVector(x);
   GenmapDestroyVector(y);
+
+  return 0;
 }
 
-void GenmapInvPowerIter(GenmapVector eVector, GenmapVector alpha,
-                        GenmapVector beta, GenmapVector init, GenmapInt32 iter) {
-//  assert(alpha->size == beta->size + 1);
-//  assert(alpha->size == eVector->size);
-//
-//  int32 n = alpha->size;
-//
-//  Vector x, y;
-//  create_vector(&x, n);
-//  create_vector(&y, n);
-//  copy_vector(&x, init);
-//
-//  if(n == 1) {
-//    eVector->vv[0] = alpha->vv[0];
-//    return;
-//  } else {
-//    for(int32 j = 0; j < iter; j++) {
-//      // Ay = x
-//      symtridiag_solve(&y, &x, alpha, beta);
-//
-//      // calculate 2-norm(y) and scale y by that amount
-//      scale_vector(&y, &y, 1.0 / norm_vector(&y, 2));
-//
-//      copy_vector(&x, &y);
-//    }
-//  }
-//
-//  copy_vector(eVector, &y);
-}
+int GenmapInvPowerIter(GenmapVector eVector, GenmapVector alpha,
+                       GenmapVector beta, GenmapVector init, GenmapInt32 iter) {
+  assert(alpha->size == beta->size + 1);
+  assert(alpha->size == eVector->size);
 
-//------------------------------------------------------------------------------
+  GenmapInt32 n = alpha->size;
+
+  GenmapVector x, y;
+  GenmapCreateVector(&x, n);
+  GenmapCreateVector(&y, n);
+
+  GenmapCopyVector(x, init);
+
+  if(n == 1) {
+    eVector->data[0] = alpha->data[0];
+    return 0;
+  } else {
+    for(GenmapInt32 j = 0; j < iter; j++) {
+      // Ay = x
+      GenmapSymTriDiagSolve(y, x, alpha, beta);
+
+      // calculate 2-norm(y) and scale y by that amount
+      GenmapScaleVector(y, y, 1.0 / GenmapNormVector(y, 2));
+
+      GenmapCopyVector(x, y);
+    }
+  }
+
+  GenmapCopyVector(eVector, y);
+
+  GenmapDestroyVector(x);
+  GenmapDestroyVector(y);
+
+  return 0;
+}
+//
+// Linear solve for Symmetric Tridiagonal Matrix
+//
+int GenmapSymTriDiagSolve(GenmapVector x, GenmapVector b, GenmapVector alpha,
+                          GenmapVector beta) {
+  assert(b->size == alpha->size);
+  assert(alpha->size == beta->size + 1);
+  assert(b->size > 0);
+
+  GenmapInt32 n = b->size;
+
+  GenmapVector diag;
+  GenmapCreateVector(&diag, n); GenmapCopyVector(diag, alpha);
+  GenmapCreateVector(&x, n); GenmapCopyVector(x, b);
+
+  for(GenmapInt32 i = 0; i < n - 1; i++) {
+    double m = (beta->data[i] / diag->data[i]);
+    x->data[i + 1] = x->data[i + 1] - m * x->data[i];
+    diag->data[i + 1] = diag->data[i + 1] - m * beta->data[i];
+  }
+
+  x->data[n - 1] = x->data[n - 1] / diag->data[n - 1];
+  for(GenmapInt32 i = n - 2; i >= 0; i--) {
+    x->data[i] = (x->data[i] - beta->data[i] * x->data[i + 1]) / diag->data[i];
+  }
+
+  GenmapDestroyVector(diag);
+  return 0;
+}

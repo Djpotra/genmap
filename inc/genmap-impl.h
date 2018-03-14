@@ -6,15 +6,14 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <assert.h>
-//------------------------------------------------------------------------------
+//
 // Genmap_Vector
 //
 struct GenmapVector_private {
   GenmapInt32 size;
   GenmapScalar *data;
 };
-
-//------------------------------------------------------------------------------
+//
 // Malloc and Free
 //
 #define GenmapMalloc(n, p) *(p) = malloc(sizeof(**(p))*(n))

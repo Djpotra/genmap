@@ -5,7 +5,7 @@
 #include <math.h>
 
 GenmapUInt32 genmap_srand_initialized = 0;
-//------------------------------------------------------------------------------
+//
 // Vector operations
 //
 int GenmapCreateVector(GenmapVector *x, GenmapInt32 size) {
@@ -144,7 +144,6 @@ int GenmapCreateOnesVector(GenmapVector *x, GenmapInt32 size) {
 //  }
 //}
 ////------------------------------------------------------------------------------
-////------------------------------------------------------------------------------
 //void zeros_vector(Vector *x, int32 size) {
 //  create_vector(x, size);
 //
@@ -211,34 +210,6 @@ int GenmapCreateOnesVector(GenmapVector *x, GenmapInt32 size) {
 //  } else {
 //    printf(")");
 //  }
-//}
-//
-////------------------------------------------------------------------------------
-//// Linear solves
-//
-//void symtridiag_solve(Vector *x, Vector *b, Vector *alpha, Vector *beta) {
-//  assert(b->size == alpha->size);
-//  assert(alpha->size == beta->size + 1);
-//  assert(b->size > 0);
-//
-//  int32 n = b->size;
-//
-//  Vector diag;
-//  create_vector(&diag, n); copy_vector(&diag, alpha);
-//  create_vector(x, n); copy_vector(x, b);
-//
-//  for(int32 i = 0; i < n - 1; i++) {
-//    double m = (beta->data[i] / diag.data[i]);
-//    x->data[i + 1] = x->data[i + 1] - m * x->data[i];
-//    diag.data[i + 1] = diag.data[i + 1] - m * beta->data[i];
-//  }
-//
-//  x->data[n - 1] = x->data[n - 1] / diag.data[n - 1];
-//  for(int32 i = n - 2; i >= 0; i--) {
-//    x->data[i] = (x->data[i] - beta->data[i] * x->data[i + 1]) / diag.data[i];
-//  }
-//
-//  return;
 //}
 //
 ////------------------------------------------------------------------------------

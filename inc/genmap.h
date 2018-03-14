@@ -15,12 +15,12 @@ typedef double GenmapScalar;
 
 typedef struct GenmapVector_private *GenmapVector;
 
-//------------------------------------------------------------------------------
+//
 // Genmap tolerances
 //
 #define GENMAP_TOL 1e-12
 
-//------------------------------------------------------------------------------
+//
 // GenmapVector operations
 //
 int GenmapCreateVector(GenmapVector *x, GenmapInt32 size);
@@ -43,19 +43,16 @@ GenmapScalar GenmapNormVector(GenmapVector x, GenmapInt32 p);
 
 int GenmapPrintVector(GenmapVector x);
 int GenmapDestroyVector(GenmapVector x);
-
-//------------------------------------------------------------------------------
+//
 // Linear solve
 //
-void SymTridiagSolve(GenmapVector x, GenmapVector b, GenmapVector alpha,
-                     GenmapVector beta);
-
-//------------------------------------------------------------------------------
+int GenmapSymTriDiagSolve(GenmapVector x, GenmapVector b, GenmapVector alpha,
+                          GenmapVector beta);
+//
 // Power and inverse power iterations
 //
-void GenmapPowerIter(GenmapVector eVector, GenmapVector alpha,
-                     GenmapVector beta, GenmapVector init, GenmapInt32 iter);
+int GenmapPowerIter(GenmapVector eVector, GenmapVector alpha,
+                    GenmapVector beta, GenmapVector init, GenmapInt32 iter);
 
-void GenmapInvPowerIter(GenmapVector eVector, GenmapVector alpha,
-                        GenmapVector beta, GenmapVector init, GenmapInt32 iter);
-//------------------------------------------------------------------------------
+int GenmapInvPowerIter(GenmapVector eVector, GenmapVector alpha,
+                       GenmapVector beta, GenmapVector init, GenmapInt32 iter);
