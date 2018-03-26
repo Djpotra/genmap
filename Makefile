@@ -1,6 +1,6 @@
 TARGET=genmap
 LIB=lib$(TARGET).a
-TESTS=tests
+TESTS=test
 
 GSLIB=gslib
 GSDIR ?= $(SRCROOT)/../gslib/src
@@ -8,7 +8,7 @@ MPI ?= 1
 DEBUG ?= 1
 
 CC=mpicc
-CFLAGS=-std=c99 -O2 -Wall -Wextra -g -Wno-unused-function -Wno-unused-parameter
+CFLAGS=-std=c99 -O2 -Wall -Wextra -Wno-unused-function -Wno-unused-parameter
 FC=mpif77
 FFLAGS=
 CXX=mpic++
@@ -42,6 +42,7 @@ ifeq ($(MPI),1)
 endif
 ifeq ($(DEBUG),1)
 	CFLAGS+= -DDEBUG
+	CFLAGS+= -g3
 endif
 
 .PHONY: all

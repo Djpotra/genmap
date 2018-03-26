@@ -19,7 +19,6 @@ typedef struct GenmapVector_private *GenmapVector;
 // Genmap tolerances
 //
 #define GENMAP_TOL 1e-12
-
 //
 // GenmapVector operations
 //

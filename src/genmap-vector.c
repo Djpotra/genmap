@@ -38,6 +38,10 @@ int GenmapVectorsEqual(GenmapVector x, GenmapVector y, GenmapScalar tol) {
   */
   assert(x->size == y->size);
 
+  for(GenmapInt32 i = 0; i < x->size; i++) {
+    assert(!isnan(x->data[i]) && !isnan(y->data[i]));
+  }
+
   GenmapInt32 n = x->size;
   for(GenmapInt32 i = 0; i < n; i++) {
     if(fabs(x->data[i] - y->data[i]) > tol) {
@@ -130,6 +134,26 @@ int GenmapCreateOnesVector(GenmapVector *x, GenmapInt32 size) {
 
   return 0;
 }
+
+int GenmapPrintVector(GenmapVector x) {
+  /* Asserts:
+       - size x > 0
+  */
+  assert(x->size > 0);
+
+  printf("(%lf", x->data[0]);
+  for(GenmapInt32 i = 1; i < x->size - 1; i++) {
+    printf(", %lf", x->data[i]);
+  }
+
+  if(x->size > 1) {
+    printf(", %lf)", x->data[x->size - 1]);
+  } else {
+    printf(")");
+  }
+
+  return 0;
+}
 ////------------------------------------------------------------------------------
 //void random_vector(Vector *x, int32 size, int32 seed) {
 //  create_vector(x, size);
@@ -195,21 +219,4 @@ int GenmapCreateOnesVector(GenmapVector *x, GenmapInt32 size) {
 //
 //  return dot;
 //}
-////------------------------------------------------------------------------------
-//void print_vector(Vector *x) {
-//  /* Asserts:
-//       - size y > 0
-//  */
-//  printf("(%f", x->data[0]);
-//  for(int32 i = 1; i < x->size - 1; i++) {
-//    printf(", %f", x->data[i]);
-//  }
-//
-//  if(x->size > 1) {
-//    printf(", %f)", x->data[x->size - 1]);
-//  } else {
-//    printf(")");
-//  }
-//}
-//
 ////------------------------------------------------------------------------------

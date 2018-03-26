@@ -33,7 +33,8 @@ int GenmapPowerIter(GenmapVector eVector, GenmapVector alpha,
                        x->data[n - 1];
 
       // calculate 2-norm(y)
-      GenmapScaleVector(y, y, 1.0 / GenmapNormVector(y, 2));
+      if(j != iter - 1)
+        GenmapScaleVector(y, y, 1.0 / GenmapNormVector(y, -1));
 
       GenmapCopyVector(x, y);
     }
@@ -69,7 +70,8 @@ int GenmapInvPowerIter(GenmapVector eVector, GenmapVector alpha,
       GenmapSymTriDiagSolve(y, x, alpha, beta);
 
       // calculate 2-norm(y) and scale y by that amount
-      GenmapScaleVector(y, y, 1.0 / GenmapNormVector(y, 2));
+      if(j != iter - 1)
+        GenmapScaleVector(y, y, 1.0 / GenmapNormVector(y, 2));
 
       GenmapCopyVector(x, y);
     }
@@ -87,23 +89,26 @@ int GenmapInvPowerIter(GenmapVector eVector, GenmapVector alpha,
 //
 int GenmapSymTriDiagSolve(GenmapVector x, GenmapVector b, GenmapVector alpha,
                           GenmapVector beta) {
-  assert(b->size == alpha->size);
+  assert((x->size == b->size) && (x->size == alpha->size));
   assert(alpha->size == beta->size + 1);
   assert(b->size > 0);
 
   GenmapInt32 n = b->size;
 
   GenmapVector diag;
-  GenmapCreateVector(&diag, n); GenmapCopyVector(diag, alpha);
-  GenmapCreateVector(&x, n); GenmapCopyVector(x, b);
+  GenmapCreateVector(&diag, n);
+  GenmapCopyVector(diag, alpha);
+
+  GenmapCopyVector(x, b);
 
   for(GenmapInt32 i = 0; i < n - 1; i++) {
-    double m = (beta->data[i] / diag->data[i]);
+    GenmapScalar m = (beta->data[i] / diag->data[i]);
     x->data[i + 1] = x->data[i + 1] - m * x->data[i];
     diag->data[i + 1] = diag->data[i + 1] - m * beta->data[i];
   }
 
   x->data[n - 1] = x->data[n - 1] / diag->data[n - 1];
+
   for(GenmapInt32 i = n - 2; i >= 0; i--) {
     x->data[i] = (x->data[i] - beta->data[i] * x->data[i + 1]) / diag->data[i];
   }
