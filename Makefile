@@ -27,7 +27,7 @@ FSRCS:=
 FOBJS:=$(FSRCS:.f=.o)
 LDFLAGS:=-lm -L$(GSDIR) -lgs
 
-TESTCSRC:=$(TESTDIR)/vector_test.c $(TESTDIR)/algo_test.c
+TESTCSRC:=$(TESTDIR)/vector-test.c $(TESTDIR)/algo-test.c
 
 TESTCOBJ:=$(TESTCSRC:.c=.o)
 TESTFSRC:=
