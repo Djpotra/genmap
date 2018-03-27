@@ -10,6 +10,8 @@ int GenmapInit(GenmapHandle *h, int argc, char **argv) {
 #endif
   GenmapMalloc(1, h);
   comm_init(&(*h)->c, MPI_COMM_WORLD);
+
+  return 0;
 }
 //
 // GenmapFinalize
@@ -24,6 +26,8 @@ int GenmapFinalize(GenmapHandle h) {
 #ifdef MPI
   MPI_Finalize();
 #endif
+
+  return 0;
 }
 //
 // TODO Malloc and Free
