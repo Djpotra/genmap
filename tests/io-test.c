@@ -7,47 +7,40 @@
 int TestIO1(GenmapHandle h) {
   char *name = "nbrhd/nbrhd.map.bin";
   GenmapElement elements;
-  GenmapHeader mapheader;
+  GenmapHeader mapHeader;
 
-  GenmapMalloc(1, &mapheader);
-  GenmapRead(h, &elements, mapheader, name);
+  GenmapMalloc(1, &mapHeader);
+  GenmapRead(h, &elements, mapHeader, name);
 
-  free(elements);
-  free(mapheader);
+  assert(mapHeader->nel == 8);
+  assert(mapHeader->nactive == 15);
+  assert(mapHeader->depth == 3);
+  assert(mapHeader->d2 == 8);
+  assert(mapHeader->npts == 32);
+  assert(mapHeader->nrank == 15);
+  assert(mapHeader->noutflow == 0);
+  assert(mapHeader->nc == 4);
 
-  return 0;
-}
+  GenmapInt elemFirst[4] = {4, 9, 12, 11};
+  GenmapInt elemLast[4] = {7, 6, 5, 1};
 
-int TestIO2(GenmapHandle h) {
-  char *name = "nbrhd/nbrhd.map.bin";
-  GenmapElement elements;
-  GenmapHeader mapheader;
-
-  GenmapMalloc(1, &mapheader);
-  GenmapRead(h, &elements, mapheader, name);
-
-  for(GenmapInt32 i = 0; i < 1; i++) {
-    printf("%d ", mapheader->nel);
-    printf("%d ", mapheader->nactive);
-    printf("%d ", mapheader->depth);
-    printf("%d ", mapheader->d2);
-    printf("%d ", mapheader->npts);
-    printf("%d ", mapheader->nrank);
-    printf("%d ", mapheader->noutflow);
-    printf("%d ", mapheader->nc);
-    printf("%d\n", mapheader->lelt);
-  }
-
-  for(GenmapInt32 i = 0;  i < mapheader->lelt; i++) {
-    printf("%d ", elements[i].globalId);
-    for(GenmapInt32 j = 0; j < mapheader->nc; j++) {
-      printf("%d ", elements[i].vertices[j]);
+  if(h->globalComm.id == 0) {
+    assert(elements[0].globalId == 6);
+    for(GenmapInt32 j = 0; j < mapHeader->nc; j++) {
+      assert(elements[0].vertices[j] == elemFirst[j]);
     }
-    printf("\n");
   }
 
+  if(h->globalComm.id == h->globalComm.np - 1) {
+    assert(elements[mapHeader->nel - 1].globalId == 1);
+    for(GenmapInt32 j = 0; j < mapHeader->nc; j++) {
+      assert(elements[mapHeader->lelt - 1].vertices[j] == elemLast[j]);
+    }
+  }
+
+  // TODO Create separate Free functions
   free(elements);
-  free(mapheader);
+  free(mapHeader);
 
   return 0;
 }
@@ -56,6 +49,5 @@ int main(int argc, char **argv) {
   GenmapHandle h;
   GenmapInit(&h, argc, argv);
   TestIO1(h);
-  TestIO2(h);
   GenmapFinalize(h);
 }

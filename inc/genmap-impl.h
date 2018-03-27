@@ -10,8 +10,12 @@
 // Genmap_Handle
 //
 struct GenmapHandle_private {
-  struct comm c;
-  struct gs_data *gsh;
+  struct comm globalComm;
+  struct comm localComm;
+  struct gs_data *globalHandle;
+  struct gs_data *localHandle;
+  GenmapScalar *globalWeights;
+  GenmapScalar *localWeights;
 };
 //
 // Genmap_Vector
