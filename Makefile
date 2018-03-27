@@ -7,11 +7,11 @@ GSDIR ?= $(SRCROOT)/../gslib/src
 MPI ?= 1
 DEBUG ?= 1
 
-CC=mpicc
+CC=gcc
 CFLAGS=-std=c99 -O2 -Wall -Wextra -Wno-unused-function -Wno-unused-parameter
-FC=mpif77
+FC=gofrtran
 FFLAGS=
-CXX=mpic++
+CXX=g++
 CXXFLAGS=
 
 SRCROOT =.
@@ -41,6 +41,9 @@ TESTOBJS:=$(TESTCOBJ) $(TESTFOBJ)
 
 ifeq ($(MPI),1)
 	CFLAGS+= -DMPI
+	CC=mpicc
+	FC=mpif77
+	CXX=mpic++
 endif
 ifeq ($(DEBUG),1)
 	CFLAGS+= -DDEBUG
