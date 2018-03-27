@@ -17,6 +17,10 @@ typedef double GenmapScalar;
 typedef struct GenmapHandle_private *GenmapHandle;
 
 typedef struct GenmapVector_private *GenmapVector;
+
+typedef struct GenmapElement_private *GenmapElement;
+
+typedef struct GenmapHeader_private *GenmapHeader;
 //
 // Genmap tolerances
 //
@@ -62,4 +66,9 @@ int GenmapPowerIter(GenmapVector eVector, GenmapVector alpha,
 
 int GenmapInvPowerIter(GenmapVector eVector, GenmapVector alpha,
                        GenmapVector beta, GenmapVector init, GenmapInt32 iter);
+//
+// Genmap I/O
+//
+int GenmapRead(GenmapHandle h, GenmapElement *elements, GenmapHeader mapheader,
+               char *name);
 #endif

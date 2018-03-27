@@ -20,7 +20,7 @@ int GenmapFinalize(GenmapHandle h) {
   comm_free(&h->c);
   // TODO Replace with free
   h->gsh = NULL;
-//  gs_free(h->gsh);
+  //gs_free(h->gsh);
   free(h);
   h = NULL;
 #ifdef MPI
