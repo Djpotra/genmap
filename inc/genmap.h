@@ -1,6 +1,7 @@
 #ifndef _GENMAP_H_
 #define _GENMAP_H_
-#endif
+
+#include <gslib.h>
 
 //------------------------------------------------------------------------------
 // Genmap types
@@ -13,12 +14,18 @@ typedef unsigned long GenmapUInt64;
 
 typedef double GenmapScalar;
 
-typedef struct GenmapVector_private *GenmapVector;
+typedef struct GenmapHandle_private *GenmapHandle;
 
+typedef struct GenmapVector_private *GenmapVector;
 //
 // Genmap tolerances
 //
 #define GENMAP_TOL 1e-12
+//
+// Genmap Init, Finalize, etc.
+//
+int GenmapInit(GenmapHandle *h, int argc, char **argv);
+int GenmapFinalize(GenmapHandle h);
 //
 // GenmapVector operations
 //
@@ -55,3 +62,4 @@ int GenmapPowerIter(GenmapVector eVector, GenmapVector alpha,
 
 int GenmapInvPowerIter(GenmapVector eVector, GenmapVector alpha,
                        GenmapVector beta, GenmapVector init, GenmapInt32 iter);
+#endif

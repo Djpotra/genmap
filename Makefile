@@ -20,14 +20,14 @@ INCDIR  =$(SRCROOT)/inc
 INCFLAGS=-I$(INCDIR) -I$(GSDIR)
 TESTDIR =$(SRCROOT)/tests
 
-CSRCS:=$(SRCDIR)/genmap-vector.c $(SRCDIR)/genmap-algo.c
+CSRCS:=$(SRCDIR)/genmap.c $(SRCDIR)/genmap-vector.c $(SRCDIR)/genmap-algo.c
 
 COBJS:=$(CSRCS:.c=.o)
 FSRCS:=
 FOBJS:=$(FSRCS:.f=.o)
 LDFLAGS:=-lm -L$(GSDIR) -lgs
 
-TESTCSRC:=$(TESTDIR)/vector-test.c $(TESTDIR)/algo-test.c
+TESTCSRC:=$(TESTDIR)/vector-test.c $(TESTDIR)/algo-test.c $(TESTDIR)/genmap-test.c
 
 TESTCOBJ:=$(TESTCSRC:.c=.o)
 TESTFSRC:=
