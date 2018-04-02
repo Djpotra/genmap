@@ -26,14 +26,14 @@ int TestIO1(GenmapHandle h) {
 
   if(h->globalComm.id == 0) {
     assert(elements[0].globalId == 6);
-    for(GenmapInt32 j = 0; j < mapHeader->nc; j++) {
+    for(GenmapInt j = 0; j < mapHeader->nc; j++) {
       assert(elements[0].vertices[j] == elemFirst[j]);
     }
   }
 
   if(h->globalComm.id == h->globalComm.np - 1) {
     assert(elements[mapHeader->nel - 1].globalId == 1);
-    for(GenmapInt32 j = 0; j < mapHeader->nc; j++) {
+    for(GenmapInt j = 0; j < mapHeader->nc; j++) {
       assert(elements[mapHeader->lelt - 1].vertices[j] == elemLast[j]);
     }
   }

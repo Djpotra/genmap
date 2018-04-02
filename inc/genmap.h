@@ -8,9 +8,10 @@
 //
 typedef int GenmapInt32;
 typedef unsigned int GenmapUInt32;
-
 typedef long GenmapInt64;
 typedef unsigned long GenmapUInt64;
+
+typedef GenmapInt32 GenmapInt;
 
 typedef double GenmapScalar;
 
@@ -33,14 +34,14 @@ int GenmapFinalize(GenmapHandle h);
 //
 // GenmapVector operations
 //
-int GenmapCreateVector(GenmapVector *x, GenmapInt32 size);
+int GenmapCreateVector(GenmapVector *x, GenmapInt size);
 int GenmapSetVector(GenmapVector x, GenmapScalar *array);
 int GenmapGetVector(GenmapVector x, GenmapScalar *array);
 
-int GenmapCreateRandomVector(GenmapVector *x, GenmapInt32 size,
-                             GenmapInt32 seed);
-int GenmapCreateOnesVector(GenmapVector *x, GenmapInt32 size);
-int GenmapCreateZerosVector(GenmapVector *x, GenmapInt32 size);
+int GenmapCreateRandomVector(GenmapVector *x, GenmapInt size,
+                             GenmapInt seed);
+int GenmapCreateOnesVector(GenmapVector *x, GenmapInt size);
+int GenmapCreateZerosVector(GenmapVector *x, GenmapInt size);
 
 int GenmapScaleVector(GenmapVector y, GenmapVector x, GenmapScalar alpha);
 int GenmapAxpbyVector(GenmapVector z, GenmapVector x, GenmapScalar alpha,
@@ -49,7 +50,7 @@ int GenmapAxpbyVector(GenmapVector z, GenmapVector x, GenmapScalar alpha,
 int GenmapVectorsEqual(GenmapVector x, GenmapVector y, GenmapScalar tol);
 int GenmapCopyVector(GenmapVector x, GenmapVector y);
 GenmapScalar GenmapDotVector(GenmapVector x, GenmapVector y);
-GenmapScalar GenmapNormVector(GenmapVector x, GenmapInt32 p);
+GenmapScalar GenmapNormVector(GenmapVector x, GenmapInt p);
 
 int GenmapPrintVector(GenmapVector x);
 int GenmapDestroyVector(GenmapVector x);
@@ -62,13 +63,16 @@ int GenmapSymTriDiagSolve(GenmapVector x, GenmapVector b, GenmapVector alpha,
 // Power and inverse power iterations
 //
 int GenmapPowerIter(GenmapVector eVector, GenmapVector alpha,
-                    GenmapVector beta, GenmapVector init, GenmapInt32 iter);
+                    GenmapVector beta, GenmapVector init, GenmapInt iter);
 
 int GenmapInvPowerIter(GenmapVector eVector, GenmapVector alpha,
-                       GenmapVector beta, GenmapVector init, GenmapInt32 iter);
+                       GenmapVector beta, GenmapVector init, GenmapInt iter);
 //
 // Genmap I/O
 //
 int GenmapRead(GenmapHandle h, GenmapElement *elements, GenmapHeader mapheader,
                char *name);
+//
+// Compute Laplacain times vector
+//
 #endif

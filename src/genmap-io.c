@@ -23,12 +23,12 @@ int GenmapRead(GenmapHandle h, GenmapElement *elements,
   }
 #endif
 
-  GenmapInt32 *headerArray;
+  GenmapInt *headerArray;
   GenmapMalloc(GENMAP_HEADER_SIZE, &headerArray);
 #ifdef MPI
   MPI_File_read(fh, headerArray, GENMAP_HEADER_SIZE, MPI_INT, &st);
 #else
-  GenmapInt32 result = fread(headerArray, sizeof(GenmapInt32), GENMAP_HEADER_SIZE,
+  GenmapInt result = fread(headerArray, sizeof(GenmapInt), GENMAP_HEADER_SIZE,
                              fp);
 #endif
 
@@ -41,12 +41,12 @@ int GenmapRead(GenmapHandle h, GenmapElement *elements,
   mapheader->nrank = headerArray[GENMAP_NRANK];
   mapheader->noutflow = headerArray[GENMAP_NOUTFLOW];
 
-  GenmapInt32 nel = headerArray[GENMAP_NEL];
-  GenmapInt32 nc = headerArray[GENMAP_NPTS] / nel;
-  GenmapInt32 lelt = nel / h->globalComm.np;
+  GenmapInt nel = headerArray[GENMAP_NEL];
+  GenmapInt nc = headerArray[GENMAP_NPTS] / nel;
+  GenmapInt lelt = nel / h->globalComm.np;
 
 #ifdef MPI
-  GenmapInt32 start = h->globalComm.id * lelt * (nc + 1);
+  GenmapInt start = h->globalComm.id * lelt * (nc + 1);
   if(h->globalComm.id == h->globalComm.np - 1)
     lelt = nel - h->globalComm.id * lelt;
 #endif
@@ -57,18 +57,18 @@ int GenmapRead(GenmapHandle h, GenmapElement *elements,
   GenmapMalloc(lelt, elements);
 
 #ifdef MPI
-  MPI_File_seek(fh, (GENMAP_HEADER_SIZE + start)*sizeof(GenmapInt32),
+  MPI_File_seek(fh, (GENMAP_HEADER_SIZE + start)*sizeof(GenmapInt),
                 MPI_SEEK_SET);
 #endif
 
-  for(GenmapInt32 i = 0; i < lelt; i++) {
+  for(GenmapInt i = 0; i < lelt; i++) {
     GenmapElement elementi = *elements + i;
 #ifdef MPI
     MPI_File_read(fh, &elementi->globalId,  1, MPI_INT, &st);
     MPI_File_read(fh, elementi->vertices, nc, MPI_INT, &st);
 #else
-    result += fread(&elementi->globalId, sizeof(GenmapInt32), 1, fp);
-    result += fread(elementi->vertices, sizeof(GenmapInt32), nc, fp);
+    result += fread(&elementi->globalId, sizeof(GenmapInt), 1, fp);
+    result += fread(elementi->vertices, sizeof(GenmapInt), nc, fp);
 #endif
   }
 

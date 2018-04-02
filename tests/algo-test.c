@@ -100,7 +100,7 @@ void TestSymTriDiagSolve3() {
 // Power and inverse power Iteration
 //
 void TestPowerIter1() {
-  GenmapInt32 n = 3;
+  GenmapInt n = 3;
   GenmapVector alpha, beta, eVector, init;
 
   GenmapCreateOnesVector(&alpha, n);
@@ -123,11 +123,11 @@ void TestPowerIter1() {
 }
 
 void TestPowerIter2() {
-  GenmapInt32 n = 4;
+  GenmapInt n = 4;
   GenmapVector alpha, beta, eVector, init;
 
   GenmapCreateVector(&alpha, n);
-  for(GenmapInt32 i = 0; i < n; i++)
+  for(GenmapInt i = 0; i < n; i++)
     alpha->data[i] = (double) i + 2.0;
   GenmapCreateOnesVector(&beta, n - 1);
   GenmapCreateOnesVector(&init, n);
@@ -147,7 +147,7 @@ void TestPowerIter2() {
 }
 
 void TestInvPowerIter1() {
-  GenmapInt32 n = 3;
+  GenmapInt n = 3;
   GenmapVector alpha, beta, eVector, init;
 
   GenmapCreateOnesVector(&alpha, n);
@@ -170,11 +170,11 @@ void TestInvPowerIter1() {
 }
 
 void TestInvPowerIter2() {
-  GenmapInt32 n = 4;
+  GenmapInt n = 4;
   GenmapVector alpha, beta, eVector, init;
 
   GenmapCreateVector(&alpha, n);
-  for(GenmapInt32 i = 0; i < n; i++)
+  for(GenmapInt i = 0; i < n; i++)
     alpha->data[i] = (double) i + 2.0;
   GenmapCreateOnesVector(&beta, n - 1);
 

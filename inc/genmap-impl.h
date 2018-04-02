@@ -21,7 +21,7 @@ struct GenmapHandle_private {
 // Genmap_Vector
 //
 struct GenmapVector_private {
-  GenmapInt32 size;
+  GenmapInt size;
   GenmapScalar *data;
 };
 //
@@ -41,24 +41,24 @@ struct GenmapVector_private {
 // Genmap Input File header
 //
 struct GenmapHeader_private {
-  GenmapInt32 nel;
-  GenmapInt32 nactive;
-  GenmapInt32 depth;
-  GenmapInt32 d2;
-  GenmapInt32 npts;
-  GenmapInt32 nrank;
-  GenmapInt32 noutflow;
-  GenmapInt32 nc;
-  GenmapInt32 lelt;
+  GenmapInt nel;
+  GenmapInt nactive;
+  GenmapInt depth;
+  GenmapInt d2;
+  GenmapInt npts;
+  GenmapInt nrank;
+  GenmapInt noutflow;
+  GenmapInt nc;
+  GenmapInt lelt;
 };
 //
 // Genmap Element
 //
 struct GenmapElement_private {
   GenmapScalar fiedler;
-  GenmapInt32 globalId;
-  GenmapInt32 nc;
-  GenmapInt32 vertices[8];
+  GenmapInt globalId;
+  GenmapInt nc;
+  GenmapInt vertices[8];
 };
 //
 // Malloc and Free
