@@ -21,7 +21,7 @@ INCFLAGS=-I$(INCDIR) -I$(GSDIR)
 TESTDIR =$(SRCROOT)/tests
 
 CSRCS:=$(SRCDIR)/genmap.c $(SRCDIR)/genmap-vector.c $(SRCDIR)/genmap-algo.c \
-	$(SRCDIR)/genmap-io.c
+	$(SRCDIR)/genmap-io.c $(SRCDIR)/genmap-comm.c
 
 COBJS:=$(CSRCS:.c=.o)
 FSRCS:=

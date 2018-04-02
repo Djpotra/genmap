@@ -7,15 +7,26 @@
 #include <stdlib.h>
 #include <assert.h>
 //
+// GenmapComm
+//
+struct GenmapComm_private {
+  struct comm gsComm;
+  struct gs_data *gsHandle;
+  GenmapScalar *laplacianWeights;
+};
+// Functions to return size and rank of GenmapComm
+GenmapInt GenmapNp_private(GenmapComm c);
+GenmapInt GenmapId_private(GenmapComm c);
+//
 // Genmap_Handle
 //
 struct GenmapHandle_private {
-  struct comm globalComm;
-  struct comm localComm;
-  struct gs_data *globalHandle;
-  struct gs_data *localHandle;
-  GenmapScalar *globalWeights;
-  GenmapScalar *localWeights;
+  // Data members
+  GenmapComm global;
+  GenmapComm local;
+  // Function members
+  GenmapInt (*Np)(GenmapComm c);
+  GenmapInt (*Id)(GenmapComm c);
 };
 //
 // Genmap_Vector

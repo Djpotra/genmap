@@ -9,7 +9,12 @@ int GenmapInit(GenmapHandle *h, int argc, char **argv) {
   int MPI_COMM_WORLD = 0;
 #endif
   GenmapMalloc(1, h);
-  comm_init(&(*h)->globalComm, MPI_COMM_WORLD);
+  GenmapMalloc(1, &(*h)->global);
+  GenmapMalloc(1, &(*h)->local);
+  (*h)->local = (*h)->global;
+  comm_init(&(*h)->global->gsComm, MPI_COMM_WORLD);
+  (*h)->Id = GenmapId_private;
+  (*h)->Np = GenmapNp_private;
 
   return 0;
 }
@@ -17,10 +22,11 @@ int GenmapInit(GenmapHandle *h, int argc, char **argv) {
 // GenmapFinalize
 //
 int GenmapFinalize(GenmapHandle h) {
-  comm_free(&h->globalComm);
+  comm_free(&h->global->gsComm);
   // TODO Replace with gsfree
-  h->globalHandle = NULL;
-  //gs_free(h->gsh);
+  free(h->local);
+  if(h->global != h->local)
+    free(h->global);
   free(h);
   h = NULL;
 #ifdef MPI

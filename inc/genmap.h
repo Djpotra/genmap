@@ -15,6 +15,8 @@ typedef GenmapInt32 GenmapInt;
 
 typedef double GenmapScalar;
 
+typedef struct GenmapComm_private *GenmapComm;
+
 typedef struct GenmapHandle_private *GenmapHandle;
 
 typedef struct GenmapVector_private *GenmapVector;

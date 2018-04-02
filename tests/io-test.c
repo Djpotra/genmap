@@ -24,14 +24,14 @@ int TestIO1(GenmapHandle h) {
   GenmapInt elemFirst[4] = {4, 9, 12, 11};
   GenmapInt elemLast[4] = {7, 6, 5, 1};
 
-  if(h->globalComm.id == 0) {
+  if(h->Id(h->global) == 0) {
     assert(elements[0].globalId == 6);
     for(GenmapInt j = 0; j < mapHeader->nc; j++) {
       assert(elements[0].vertices[j] == elemFirst[j]);
     }
   }
 
-  if(h->globalComm.id == h->globalComm.np - 1) {
+  if(h->Id(h->global) == h->Np(h->global) - 1) {
     assert(elements[mapHeader->lelt - 1].globalId == 1);
     for(GenmapInt j = 0; j < mapHeader->nc; j++) {
       assert(elements[mapHeader->lelt - 1].vertices[j] == elemLast[j]);

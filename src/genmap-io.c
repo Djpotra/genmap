@@ -43,12 +43,12 @@ int GenmapRead(GenmapHandle h, GenmapElement *elements,
 
   GenmapInt nel = headerArray[GENMAP_NEL];
   GenmapInt nc = headerArray[GENMAP_NPTS] / nel;
-  GenmapInt lelt = nel / h->globalComm.np;
+  GenmapInt lelt = nel / h->Np(h->global);
 
 #ifdef MPI
-  GenmapInt start = h->globalComm.id * lelt * (nc + 1);
-  if(h->globalComm.id == h->globalComm.np - 1)
-    lelt = nel - h->globalComm.id * lelt;
+  GenmapInt start = h->Id(h->global) * lelt * (nc + 1);
+  if(h->Id(h->global) == h->Np(h->global) - 1)
+    lelt = nel - h->Id(h->global) * lelt;
 #endif
 
   mapheader->nc = nc;
