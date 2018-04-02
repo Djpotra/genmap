@@ -1,10 +1,11 @@
 TARGET=genmap
 LIB=lib$(TARGET).a
-TESTS=test
+TEST=test
 
 GSLIB=gslib
 GSDIR ?= $(SRCROOT)/../gslib/src
 MPI ?= 1
+VALGRIND ?= 0
 DEBUG ?= 1
 
 CC=gcc
@@ -51,13 +52,7 @@ ifeq ($(DEBUG),1)
 endif
 
 .PHONY: all
-all: $(TARGET) $(TESTS)
-
-#.PHONY: $(GSLIB)
-#$(GSLIB): $(GSDIR)
-#    cd $(GSDIR) && $(MAKE) -j -B
-#MPI=1
-#CC=$(CC) CFLAGS=$(CFLAGS) ADDUS=0 lib
+all: $(TARGET) $(TEST)
 
 .PHONY: $(TARGET)
 $(TARGET): $(COBJS) $(FOBJS)
@@ -70,8 +65,9 @@ $(COBJS): %.o: %.c
 $(FOBJS): %.o: %.f
 	$(FC) $(FFLAGS) $(INCFLAGS) -c $< -o $@
 
-.PHONY: $(TESTS)
-$(TESTS): $(TESTCOBJ) $(TESTFOBJ)
+.PHONY: $(TEST)
+$(TEST): $(TESTCOBJ) $(TESTFOBJ)
+	cd $(TESTDIR) && ./run-tests.sh $(MPI) $(VALGRIND)
 
 $(TESTCOBJ): %.o: %.c
 	$(CC) $(CFLAGS) $(INCFLAGS) $< -o $@ $(TESTLDFLAGS)

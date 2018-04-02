@@ -13,8 +13,6 @@ if [ $# -gt 0 ]; then
   fi
 fi
 
-make -C .. MPI=$test_mpi
-
 if [ $test_valgrind -eq 1 ]; then
   VALGRIND_CMD="valgrind"
 fi
