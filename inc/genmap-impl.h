@@ -25,8 +25,8 @@ struct GenmapHandle_private {
   GenmapComm global;
   GenmapComm local;
   // Function members
-  GenmapInt (*Np)(GenmapComm c);
-  GenmapInt (*Id)(GenmapComm c);
+  GenmapInt(*Np)(GenmapComm c);
+  GenmapInt(*Id)(GenmapComm c);
 };
 //
 // Genmap_Vector

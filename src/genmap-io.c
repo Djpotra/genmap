@@ -29,7 +29,7 @@ int GenmapRead(GenmapHandle h, GenmapElement *elements,
   MPI_File_read(fh, headerArray, GENMAP_HEADER_SIZE, MPI_INT, &st);
 #else
   GenmapInt result = fread(headerArray, sizeof(GenmapInt), GENMAP_HEADER_SIZE,
-                             fp);
+                           fp);
 #endif
 
   // nel, nactive, depth, d2, npts, nrank, noutflow
