@@ -2,8 +2,7 @@
 #define _GENMAP_H_
 
 #include <gslib.h>
-
-//------------------------------------------------------------------------------
+//
 // Genmap types
 //
 typedef int GenmapInt32;
@@ -21,7 +20,7 @@ typedef struct GenmapHandle_private *GenmapHandle;
 
 typedef struct GenmapVector_private *GenmapVector;
 
-typedef struct GenmapElement_private *GenmapElement;
+typedef struct GenmapElements_private *GenmapElements;
 
 typedef struct GenmapHeader_private *GenmapHeader;
 //
@@ -29,7 +28,22 @@ typedef struct GenmapHeader_private *GenmapHeader;
 //
 #define GENMAP_TOL 1e-12
 //
-// Genmap Init, Finalize, etc.
+// GenmapComm: Create, Destroy
+//
+int GenmapCommInit(GenmapComm *c);
+int GenmapDestroyComm(GenmapComm c);
+//
+// GenmapHeader: Create, Destroy
+//
+int GenmapHeaderInit(GenmapHeader *h);
+int GenmapDestroyHeader(GenmapHeader h);
+//
+// GenmapElements: Create, Destroy
+//
+int GenmapElementsInit(GenmapElements *e);
+int GenmapDestroyElements(GenmapElements e);
+//
+// Genmap: Init, Finalize
 //
 int GenmapInit(GenmapHandle *h, int argc, char **argv);
 int GenmapFinalize(GenmapHandle h);
@@ -72,8 +86,18 @@ int GenmapInvPowerIter(GenmapVector eVector, GenmapVector alpha,
 //
 // Genmap I/O
 //
-int GenmapRead(GenmapHandle h, GenmapElement *elements, GenmapHeader mapheader,
-               char *name);
+#define GENMAP_HEADER_SIZE 7
+#define GENMAP_NEL      0
+#define GENMAP_NACTIVE  1
+#define GENMAP_DEPTH    2
+#define GENMAP_D2       3
+#define GENMAP_NPTS     4
+#define GENMAP_NRANK    5
+#define GENMAP_NOUTFLOW 6
+#define GENMAP_NC       7
+#define GENMAP_LELT     8
+
+int GenmapRead(GenmapHandle h, char *name);
 //
 // Compute Laplacain times vector
 //

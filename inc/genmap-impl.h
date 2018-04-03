@@ -15,39 +15,14 @@ struct GenmapComm_private {
   GenmapScalar *laplacianWeights;
 };
 // Functions to return size and rank of GenmapComm
-GenmapInt GenmapNp_private(GenmapComm c);
-GenmapInt GenmapId_private(GenmapComm c);
-//
-// Genmap_Handle
-//
-struct GenmapHandle_private {
-  // Data members
-  GenmapComm global;
-  GenmapComm local;
-  // Function members
-  GenmapInt(*Np)(GenmapComm c);
-  GenmapInt(*Id)(GenmapComm c);
-};
-//
-// Genmap_Vector
-//
-struct GenmapVector_private {
-  GenmapInt size;
-  GenmapScalar *data;
-};
-//
-// Genmap File I/O
-//
-#define GENMAP_HEADER_SIZE 7
-#define GENMAP_NEL      0
-#define GENMAP_NACTIVE  1
-#define GENMAP_DEPTH    2
-#define GENMAP_D2       3
-#define GENMAP_NPTS     4
-#define GENMAP_NRANK    5
-#define GENMAP_NOUTFLOW 6
-#define GENMAP_NC       7
-#define GENMAP_LELT     8
+int GenmapNp_private(GenmapComm c);
+
+int GenmapId_private(GenmapComm c);
+
+int GenmapAx_private(GenmapVector v, GenmapVector u, GenmapHandle h,
+                     GenmapComm c);
+int GenmapAxInit_private(GenmapVector v, GenmapVector u, GenmapHandle h,
+                         GenmapComm c);
 //
 // Genmap Input File header
 //
@@ -65,11 +40,36 @@ struct GenmapHeader_private {
 //
 // Genmap Element
 //
-struct GenmapElement_private {
-  GenmapScalar fiedler;
-  GenmapInt globalId;
-  GenmapInt nc;
-  GenmapInt vertices[8];
+struct GenmapElements_private {
+  GenmapScalar *fiedler;
+  GenmapInt *globalId;
+  GenmapInt *vertices;
+};
+//
+// Genmap_Handle
+//
+struct GenmapHandle_private {
+  // Data members
+  GenmapComm global;
+  GenmapComm local;
+  GenmapHeader header;
+  GenmapElements elements;
+  // Function members
+  GenmapInt(*Np)(GenmapComm c);
+  GenmapInt(*Id)(GenmapComm c);
+  GenmapInt(*Ax)(GenmapVector v, GenmapVector u, GenmapComm c);
+};
+//
+// GenmapHandle_private: Create, Destroy
+//
+int GenmapHandleInit_private(GenmapHandle *h);
+int GenmapDestroyHandle_private(GenmapHandle h);
+//
+// Genmap_Vector
+//
+struct GenmapVector_private {
+  GenmapInt size;
+  GenmapScalar *data;
 };
 //
 // Malloc and Free

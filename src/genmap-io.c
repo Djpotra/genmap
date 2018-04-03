@@ -4,8 +4,7 @@
 //
 // Do File I/O in parallel
 //
-int GenmapRead(GenmapHandle h, GenmapElement *elements,
-               GenmapHeader mapheader, char* name) {
+int GenmapRead(GenmapHandle h, char* name) {
 #ifdef MPI
   MPI_File fh;
   MPI_Offset offset;
@@ -33,13 +32,13 @@ int GenmapRead(GenmapHandle h, GenmapElement *elements,
 #endif
 
   // nel, nactive, depth, d2, npts, nrank, noutflow
-  mapheader->nel = headerArray[GENMAP_NEL];
-  mapheader->nactive = headerArray[GENMAP_NACTIVE];
-  mapheader->depth = headerArray[GENMAP_DEPTH];
-  mapheader->d2 = headerArray[GENMAP_D2];
-  mapheader->npts = headerArray[GENMAP_NPTS];
-  mapheader->nrank = headerArray[GENMAP_NRANK];
-  mapheader->noutflow = headerArray[GENMAP_NOUTFLOW];
+  h->header->nel = headerArray[GENMAP_NEL];
+  h->header->nactive = headerArray[GENMAP_NACTIVE];
+  h->header->depth = headerArray[GENMAP_DEPTH];
+  h->header->d2 = headerArray[GENMAP_D2];
+  h->header->npts = headerArray[GENMAP_NPTS];
+  h->header->nrank = headerArray[GENMAP_NRANK];
+  h->header->noutflow = headerArray[GENMAP_NOUTFLOW];
 
   GenmapInt nel = headerArray[GENMAP_NEL];
   GenmapInt nc = headerArray[GENMAP_NPTS] / nel;
@@ -51,24 +50,24 @@ int GenmapRead(GenmapHandle h, GenmapElement *elements,
     lelt = nel - h->Id(h->global) * lelt;
 #endif
 
-  mapheader->nc = nc;
-  mapheader->lelt = lelt;
+  h->header->nc = nc;
+  h->header->lelt = lelt;
 
-  GenmapMalloc(lelt, elements);
-
+  GenmapMalloc(lelt, &h->elements->globalId);
+  GenmapMalloc(lelt, &h->elements->fiedler);
+  GenmapMalloc(lelt * nc, &h->elements->vertices);
 #ifdef MPI
   MPI_File_seek(fh, (GENMAP_HEADER_SIZE + start)*sizeof(GenmapInt),
                 MPI_SEEK_SET);
 #endif
 
   for(GenmapInt i = 0; i < lelt; i++) {
-    GenmapElement elementi = *elements + i;
 #ifdef MPI
-    MPI_File_read(fh, &elementi->globalId,  1, MPI_INT, &st);
-    MPI_File_read(fh, elementi->vertices, nc, MPI_INT, &st);
+    MPI_File_read(fh, h->elements->globalId + i,  1, MPI_INT, &st);
+    MPI_File_read(fh, h->elements->vertices + i * nc, nc, MPI_INT, &st);
 #else
-    result += fread(&elementi->globalId, sizeof(GenmapInt), 1, fp);
-    result += fread(elementi->vertices, sizeof(GenmapInt), nc, fp);
+    result += fread(h->elements->globalId + i, sizeof(GenmapInt), 1, fp);
+    result += fread(h->elements->vertices + i * nc, sizeof(GenmapInt), nc, fp);
 #endif
   }
 
