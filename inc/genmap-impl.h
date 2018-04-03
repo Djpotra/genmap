@@ -14,6 +14,11 @@ struct GenmapComm_private {
   struct gs_data *gsHandle;
   GenmapScalar *laplacianWeights;
 };
+// GenmapComm: Create, Destroy
+int GenmapCreateComm_private(GenmapComm *c, GenmapCommExternal ce);
+
+int GenmapDestroyComm_private(GenmapComm c);
+
 // Functions to return size and rank of GenmapComm
 int GenmapNp_private(GenmapComm c);
 
@@ -24,8 +29,9 @@ int GenmapAx_private(GenmapVector v, GenmapVector u, GenmapHandle h,
 int GenmapAxInit_private(GenmapVector v, GenmapVector u, GenmapHandle h,
                          GenmapComm c);
 //
-// Genmap Input File header
+// File I/O
 //
+// Genmap Input File header
 struct GenmapHeader_private {
   GenmapInt nel;
   GenmapInt nactive;
@@ -37,14 +43,22 @@ struct GenmapHeader_private {
   GenmapInt nc;
   GenmapInt lelt;
 };
-//
+// GenmapHeader: Create, Destroy
+int GenmapCreateHeader_private(GenmapHeader *h);
+
+int GenmapDestroyHeader_private(GenmapHeader h);
 // Genmap Element
-//
 struct GenmapElements_private {
   GenmapScalar *fiedler;
   GenmapInt *globalId;
   GenmapInt *vertices;
 };
+// GenmapElements: Create, Destroy
+int GenmapCreateElements_private(GenmapElements *e);
+
+int GenmapDestroyElements_private(GenmapElements e);
+// Function to read from FILE
+int GenmapRead_private(GenmapHandle h, char *name);
 //
 // Genmap_Handle
 //
@@ -59,10 +73,9 @@ struct GenmapHandle_private {
   GenmapInt(*Id)(GenmapComm c);
   GenmapInt(*Ax)(GenmapVector v, GenmapVector u, GenmapComm c);
 };
-//
-// GenmapHandle_private: Create, Destroy
-//
-int GenmapHandleInit_private(GenmapHandle *h);
+// GenmapHandle: Create, Destroy
+int GenmapCreateHandle_private(GenmapHandle *h);
+
 int GenmapDestroyHandle_private(GenmapHandle h);
 //
 // Genmap_Vector
@@ -75,5 +88,4 @@ struct GenmapVector_private {
 // Malloc and Free
 //
 #define GenmapMalloc(n, p) *(p) = malloc(sizeof(**(p))*(n))
-
 #endif

@@ -8,11 +8,11 @@ MPI ?= 1
 VALGRIND ?= 0
 DEBUG ?= 1
 
-CC=gcc
+CC=mpicc
 CFLAGS=-std=c99 -O2 -Wall -Wextra -Wno-unused-function -Wno-unused-parameter
-FC=gofrtran
+FC=mpif77
 FFLAGS=
-CXX=g++
+CXX=mpic++
 CXXFLAGS=
 
 SRCROOT =.
@@ -21,16 +21,17 @@ INCDIR  =$(SRCROOT)/inc
 INCFLAGS=-I$(INCDIR) -I$(GSDIR)
 TESTDIR =$(SRCROOT)/tests
 
-CSRCS:=$(SRCDIR)/genmap.c $(SRCDIR)/genmap-vector.c $(SRCDIR)/genmap-algo.c \
-	$(SRCDIR)/genmap-io.c $(SRCDIR)/genmap-comm.c
+CSRCS:=$(SRCDIR)/genmap-handle.c $(SRCDIR)/genmap-vector.c \
+	$(SRCDIR)/genmap-algo.c $(SRCDIR)/genmap-io.c \
+	$(SRCDIR)/genmap-comm.c
 
 COBJS:=$(CSRCS:.c=.o)
 FSRCS:=
 FOBJS:=$(FSRCS:.f=.o)
 LDFLAGS:=-lm -L$(GSDIR) -lgs
 
-TESTCSRC:=$(TESTDIR)/vector-test.c $(TESTDIR)/algo-test.c $(TESTDIR)/genmap-test.c \
-	$(TESTDIR)/io-test.c
+TESTCSRC:=$(TESTDIR)/vector-test.c $(TESTDIR)/algo-test.c \
+	$(TESTDIR)/genmap-test.c $(TESTDIR)/io-test.c
 
 TESTCOBJ:=$(TESTCSRC:.c=.o)
 TESTFSRC:=
@@ -42,9 +43,6 @@ TESTOBJS:=$(TESTCOBJ) $(TESTFOBJ)
 
 ifeq ($(MPI),1)
 	CFLAGS+= -DMPI
-	CC=mpicc
-	FC=mpif77
-	CXX=mpic++
 endif
 ifeq ($(DEBUG),1)
 	CFLAGS+= -DDEBUG

@@ -14,7 +14,7 @@ if [ $# -gt 0 ]; then
 fi
 
 if [ $test_valgrind -eq 1 ]; then
-  VALGRIND_CMD="valgrind"
+  VALGRIND_CMD="valgrind --leak-check=full"
 fi
 if [ $test_mpi -eq 1 ]; then
   MPI_CMD="mpirun -np 4"

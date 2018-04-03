@@ -7,7 +7,7 @@
 int TestIO1(GenmapHandle h) {
   char *name = "nbrhd/nbrhd.map.bin";
 
-  GenmapRead(h, name);
+  GenmapRead_private(h, name);
 
   assert(h->header->nel == 8);
   assert(h->header->nactive == 15);
@@ -41,8 +41,18 @@ int TestIO1(GenmapHandle h) {
 }
 
 int main(int argc, char **argv) {
+#ifdef MPI
+  MPI_Init(&argc, &argv);
+#else
+  int MPI_COMM_WORLD = 0;
+#endif
+
   GenmapHandle h;
-  GenmapInit(&h, argc, argv);
+  GenmapInit(&h, MPI_COMM_WORLD);
   TestIO1(h);
   GenmapFinalize(h);
+
+#ifdef MPI
+  MPI_Finalize();
+#endif
 }

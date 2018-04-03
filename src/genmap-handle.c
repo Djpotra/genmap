@@ -1,5 +1,15 @@
 #include <genmap-impl.h>
 //
+// GenmapHeader: Create, Destroy
+//
+int GenmapHeaderInit_private(GenmapHeader *h);
+int GenmapDestroyHeader_private(GenmapHeader h);
+//
+// GenmapElements: Create, Destroy
+//
+int GenmapElementsInit_private(GenmapElements *e);
+int GenmapDestroyElements_private(GenmapElements e);
+//
 // GenmapHandle_private: Create, Destroy
 //
 int GenmapHandleInit_private(GenmapHandle *h) {
@@ -12,40 +22,33 @@ int GenmapDestroyHandle_private(GenmapHandle h) {
 //
 // GenmapInit
 //
-int GenmapInit(GenmapHandle *h, int argc, char **argv) {
-#ifdef MPI
-  MPI_Init(&argc, &argv);
-#else
-  int MPI_COMM_WORLD = 0;
-#endif
+int GenmapInit(GenmapHandle *h, GenmapCommExternal ce) {
   GenmapMalloc(1, h);
-  GenmapMalloc(1, &(*h)->global);
-  GenmapMalloc(1, &(*h)->local);
+
+  GenmapCreateComm_private(&(*h)->global, ce);
+  (*h)->local = NULL;
+
   GenmapMalloc(1, &(*h)->elements);
   GenmapMalloc(1, &(*h)->header);
-  comm_init(&(*h)->global->gsComm, MPI_COMM_WORLD);
-  (*h)->local = (*h)->global;
+
   (*h)->Id = GenmapId_private;
   (*h)->Np = GenmapNp_private;
   (*h)->Ax = GenmapAx_private;
+
   return 0;
 }
 //
 // GenmapFinalize
 //
 int GenmapFinalize(GenmapHandle h) {
-  comm_free(&h->global->gsComm);
-  // TODO Replace with gsfree
-  free(h->local);
-  if(h->global != h->local)
-    free(h->global);
+  if(h->global)
+    GenmapDestroyComm_private(h->global);
+  if(h->local)
+    GenmapDestroyComm_private(h->local);
   free(h->elements);
   free(h->header);
   free(h);
   h = NULL;
-#ifdef MPI
-  MPI_Finalize();
-#endif
 
   return 0;
 }

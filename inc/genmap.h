@@ -28,24 +28,17 @@ typedef struct GenmapHeader_private *GenmapHeader;
 //
 #define GENMAP_TOL 1e-12
 //
-// GenmapComm: Create, Destroy
+// GenmapCommExternal
 //
-int GenmapCommInit(GenmapComm *c);
-int GenmapDestroyComm(GenmapComm c);
-//
-// GenmapHeader: Create, Destroy
-//
-int GenmapHeaderInit(GenmapHeader *h);
-int GenmapDestroyHeader(GenmapHeader h);
-//
-// GenmapElements: Create, Destroy
-//
-int GenmapElementsInit(GenmapElements *e);
-int GenmapDestroyElements(GenmapElements e);
+#ifdef MPI
+typedef MPI_Comm GenmapCommExternal;
+#else
+typedef int GenmapCommExternal;
+#endif
 //
 // Genmap: Init, Finalize
 //
-int GenmapInit(GenmapHandle *h, int argc, char **argv);
+int GenmapInit(GenmapHandle *h, GenmapCommExternal ce);
 int GenmapFinalize(GenmapHandle h);
 //
 // GenmapVector operations
@@ -96,8 +89,6 @@ int GenmapInvPowerIter(GenmapVector eVector, GenmapVector alpha,
 #define GENMAP_NOUTFLOW 6
 #define GENMAP_NC       7
 #define GENMAP_LELT     8
-
-int GenmapRead(GenmapHandle h, char *name);
 //
 // Compute Laplacain times vector
 //
