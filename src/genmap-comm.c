@@ -27,13 +27,35 @@ int GenmapId_private(GenmapComm c) {
   return c->gsComm.id;
 }
 
-int GenmapAx_private(GenmapVector v, GenmapVector u, GenmapHandle h,
-                     GenmapComm c) {
+int GenmapAx_private(GenmapHandle h, GenmapComm c, GenmapVector u,
+                     GenmapVector weights, GenmapVector v) {
+  assert(u->size == v->size);
+
+  GenmapInt lelt = u->size;
+  GenmapInt nc = h->header->nc;
+
+  double *ucv;
+  GenmapMalloc(nc * lelt, &ucv);
+
+  for(GenmapInt i = 0; i < lelt; i++)
+    for(GenmapInt j = 0; j < nc; j++)
+      ucv[nc * i + j] = u->data[i];
+
+  gs(ucv, gs_double, gs_add, 0, c->gsHandle, NULL);
+
+  for(GenmapInt i = 0; i < lelt; i++) {
+    v->data[i] = weights->data[i] * u->data[i];
+    for(GenmapInt j = 0; j < nc; j ++) {
+      v->data[i] -= ucv[nc * i + j];
+    }
+  }
+
+  free(ucv);
+
   return 0;
 }
 
-int GenmapAxInit_private(GenmapVector weights, GenmapHandle h,
-                         GenmapComm c) {
+int GenmapAxInit_private(GenmapHandle h, GenmapComm c, GenmapVector weights) {
   GenmapInt lelt = h->header->lelt;
   GenmapInt nc = h->header->nc;
   GenmapInt numPoints = nc * lelt;
@@ -58,6 +80,8 @@ int GenmapAxInit_private(GenmapVector weights, GenmapHandle h,
       weights->data[i] += u[nc * i + j];
     }
   }
+
+  free(u);
 
   return 0;
 }

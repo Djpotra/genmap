@@ -23,11 +23,11 @@ int GenmapDestroyComm_private(GenmapComm c);
 int GenmapNp_private(GenmapComm c);
 
 int GenmapId_private(GenmapComm c);
+// Functions to do Laplacian
+int GenmapAxInit_private(GenmapHandle h, GenmapComm c, GenmapVector w);
 
-int GenmapAxInit_private(GenmapVector w, GenmapHandle h,
-                         GenmapComm c);
-int GenmapAx_private(GenmapVector v, GenmapVector u, GenmapHandle h,
-                     GenmapComm c);
+int GenmapAx_private(GenmapHandle h, GenmapComm c, GenmapVector u,
+                     GenmapVector weights, GenmapVector v);
 //
 // File I/O
 //
