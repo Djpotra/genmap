@@ -24,10 +24,10 @@ int GenmapNp_private(GenmapComm c);
 
 int GenmapId_private(GenmapComm c);
 
+int GenmapAxInit_private(GenmapVector w, GenmapHandle h,
+                         GenmapComm c);
 int GenmapAx_private(GenmapVector v, GenmapVector u, GenmapHandle h,
                      GenmapComm c);
-int GenmapAxInit_private(GenmapVector v, GenmapVector u, GenmapHandle h,
-                         GenmapComm c);
 //
 // File I/O
 //

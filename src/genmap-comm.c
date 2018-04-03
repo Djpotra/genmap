@@ -32,11 +32,32 @@ int GenmapAx_private(GenmapVector v, GenmapVector u, GenmapHandle h,
   return 0;
 }
 
-int GenmapAxInit_private(GenmapVector v, GenmapVector u, GenmapHandle h,
+int GenmapAxInit_private(GenmapVector weights, GenmapHandle h,
                          GenmapComm c) {
-//  int numPoints = h->mapHeader->lelt;
-//  GenmapInt *globalId;
-//  GenmapMalloc(numPoints, &globalNum);
-//  c->gsHandle = gs_setup(glo_num, numPoints, &c->gsComm, 0, gs_auto, 0);
+  GenmapInt lelt = h->header->lelt;
+  GenmapInt nc = h->header->nc;
+  GenmapInt numPoints = nc * lelt;
+
+  c->gsHandle = gs_setup(h->elements->globalId, numPoints, &c->gsComm, 0, gs_auto,
+                         0);
+
+  double *u;
+  GenmapMalloc(numPoints, &u);
+
+  for(GenmapInt i = 0; i < lelt; i++)
+    for(GenmapInt j = 0; j < nc; j++)
+      u[nc * i + j] = 1;
+
+  gs(u, gs_double, gs_add, 1, c->gsHandle, NULL);
+
+  assert(weights->size == lelt);
+
+  for(GenmapInt i = 0; i < lelt; i++) {
+    weights->data[i] = 0;
+    for(GenmapInt j = 0; j < nc; j++) {
+      weights->data[i] += u[nc * i + j];
+    }
+  }
+
   return 0;
 }
