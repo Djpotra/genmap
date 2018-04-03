@@ -23,7 +23,7 @@ TESTDIR =$(SRCROOT)/tests
 
 CSRCS:=$(SRCDIR)/genmap-handle.c $(SRCDIR)/genmap-vector.c \
 	$(SRCDIR)/genmap-algo.c $(SRCDIR)/genmap-io.c \
-	$(SRCDIR)/genmap-comm.c
+	$(SRCDIR)/genmap-comm.c $(SRCDIR)/genmap.c
 
 COBJS:=$(CSRCS:.c=.o)
 FSRCS:=

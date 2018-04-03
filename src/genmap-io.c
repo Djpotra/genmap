@@ -2,6 +2,45 @@
 
 #include <stdio.h>
 //
+// GenmapHeader: Create, Destroy
+//
+int GenmapCreateHeader_private(GenmapHeader *h) {
+  GenmapMalloc(1, h);
+
+  return 0;
+}
+
+int GenmapDestroyHeader_private(GenmapHeader h) {
+  free(h);
+  h = NULL;
+
+  return 0;
+}
+//
+// GenmapElements: Create, Destroy
+//
+int GenmapCreateElements_private(GenmapElements *e) {
+  GenmapMalloc(1, e);
+
+  (*e)->globalId = NULL;
+  (*e)->vertices = NULL;
+  (*e)->fiedler = NULL;
+
+  return 0;
+}
+
+int GenmapDestroyElements_private(GenmapElements e) {
+  if(e->globalId)
+    free(e->globalId);
+  if(e->vertices)
+    free(e->vertices);
+  if(e->fiedler)
+    free(e->fiedler);
+  free(e);
+  e = NULL;
+  return 0;
+}
+//
 // Do File I/O in parallel
 //
 int GenmapRead_private(GenmapHandle h, char* name) {
@@ -73,6 +112,8 @@ int GenmapRead_private(GenmapHandle h, char* name) {
 
 #ifdef MPI
   MPI_File_close(&fh);
+#else
+  fclose(fp);
 #endif
 
   free(headerArray);

@@ -15,6 +15,7 @@ int GenmapDestroyComm_private(GenmapComm c) {
   if(c->laplacianWeights)
     free(c->laplacianWeights);
   free(c);
+  c = NULL;
   return 0;
 }
 
