@@ -24,7 +24,7 @@ int GenmapNp_private(GenmapComm c);
 
 int GenmapId_private(GenmapComm c);
 // Functions to do Laplacian
-int GenmapAxInit_private(GenmapHandle h, GenmapComm c, GenmapVector w);
+int GenmapAxInit_private(GenmapHandle h, GenmapComm c, GenmapVector weights);
 
 int GenmapAx_private(GenmapHandle h, GenmapComm c, GenmapVector u,
                      GenmapVector weights, GenmapVector v);
@@ -71,7 +71,9 @@ struct GenmapHandle_private {
   // Function members
   GenmapInt(*Np)(GenmapComm c);
   GenmapInt(*Id)(GenmapComm c);
-  GenmapInt(*Ax)(GenmapVector v, GenmapVector u, GenmapComm c);
+  GenmapInt(*Ax)(GenmapHandle h, GenmapComm c, GenmapVector u,
+                 GenmapVector weights, GenmapVector v);
+  GenmapInt(*AxInit)(GenmapHandle h, GenmapComm c, GenmapVector weights);
 };
 // GenmapHandle: Create, Destroy
 int GenmapCreateHandle_private(GenmapHandle *h);

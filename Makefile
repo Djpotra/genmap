@@ -1,9 +1,12 @@
 TARGET=genmap
-LIB=lib$(TARGET).a
 TEST=test
-
 GSLIB=gslib
-GSDIR ?= $(SRCROOT)/../gslib/src
+
+LIB=lib$(TARGET).a
+
+GSDIR ?= $(SRCROOT)/../gslib
+GSLIBDIR=$(GSDIR)/src
+
 MPI ?= 1
 VALGRIND ?= 0
 DEBUG ?= 1
@@ -18,7 +21,7 @@ CXXFLAGS=
 SRCROOT =.
 SRCDIR  =$(SRCROOT)/src
 INCDIR  =$(SRCROOT)/inc
-INCFLAGS=-I$(INCDIR) -I$(GSDIR)
+INCFLAGS=-I$(INCDIR) -I$(GSLIBDIR)
 TESTDIR =$(SRCROOT)/tests
 
 CSRCS:=$(SRCDIR)/genmap-handle.c $(SRCDIR)/genmap-vector.c \
@@ -31,12 +34,12 @@ FOBJS:=$(FSRCS:.f=.o)
 LDFLAGS:=-lm -L$(GSDIR) -lgs
 
 TESTCSRC:=$(TESTDIR)/vector-test.c $(TESTDIR)/algo-test.c \
-	$(TESTDIR)/genmap-test.c $(TESTDIR)/io-test.c
+	$(TESTDIR)/genmap-test.c $(TESTDIR)/io-test.c $(TESTDIR)/ax-test.c
 
 TESTCOBJ:=$(TESTCSRC:.c=.o)
 TESTFSRC:=
 TESTFOBJ:=$(TESTFSRC:.f=.o)
-TESTLDFLAGS:=-L. -lgenmap -Wl,-rpath=. -L$(GSDIR) -lgs -lm
+TESTLDFLAGS:=-L. -lgenmap -Wl,-rpath=. -L$(GSLIBDIR) -lgs -lm
 
 SRCOBJS :=$(COBJS) $(FOBJS)
 TESTOBJS:=$(TESTCOBJ) $(TESTFOBJ)
@@ -50,7 +53,7 @@ ifeq ($(DEBUG),1)
 endif
 
 .PHONY: all
-all: $(TARGET) $(TEST)
+all: $(GSLIB) $(TARGET) $(TEST)
 
 .PHONY: $(TARGET)
 $(TARGET): $(COBJS) $(FOBJS)
@@ -65,7 +68,7 @@ $(FOBJS): %.o: %.f
 
 .PHONY: $(TEST)
 $(TEST): $(TESTCOBJ) $(TESTFOBJ)
-	cd $(TESTDIR) && ./run-tests.sh $(MPI) $(VALGRIND)
+	@cd $(TESTDIR) && ./run-tests.sh $(MPI) $(VALGRIND)
 
 $(TESTCOBJ): %.o: %.c
 	$(CC) $(CFLAGS) $(INCFLAGS) $< -o $@ $(TESTLDFLAGS)
@@ -73,9 +76,13 @@ $(TESTCOBJ): %.o: %.c
 $(TESTFOBJ): %.o: %.f
 	$(FC) $(FFLAGS) $(INCFLAGS) $< -o $@ $(TESTLDFLAGS)
 
+.PHONY: $(GSLIB)
+$(GSLIB):
+	@make -C $(GSDIR) clean && make CC=$(CC) MPI=$(MPI) -C $(GSDIR)
+
 .PHONY: clean
 clean:
-	rm -f $(SRCOBJS) $(TESTOBJS) $(TARGET)
+	@rm -f $(SRCOBJS) $(TESTOBJS) $(TARGET)
 
 .PHONY: astyle
 astyle:

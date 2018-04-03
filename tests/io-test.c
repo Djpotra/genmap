@@ -1,6 +1,8 @@
 #include <genmap-impl.h>
 
-#include <stdio.h>
+#ifdef MPI
+#include <mpi.h>
+#endif
 //
 // Test IO
 //

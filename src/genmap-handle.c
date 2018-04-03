@@ -13,6 +13,7 @@ int GenmapCreateHandle_private(GenmapHandle *h) {
   (*h)->Id = GenmapId_private;
   (*h)->Np = GenmapNp_private;
   (*h)->Ax = GenmapAx_private;
+  (*h)->AxInit = GenmapAxInit_private;
 
   return 0;
 }

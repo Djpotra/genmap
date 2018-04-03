@@ -92,9 +92,9 @@ int GenmapRead_private(GenmapHandle h, char* name) {
   h->header->nc = nc;
   h->header->lelt = lelt;
 
-  GenmapMalloc(lelt, &h->elements->globalId);
-  GenmapMalloc(lelt, &h->elements->fiedler);
-  GenmapMalloc(lelt * nc, &h->elements->vertices);
+  GenmapMalloc(lelt, &(h->elements->globalId));
+  GenmapMalloc(lelt, &(h->elements->fiedler));
+  GenmapMalloc(lelt * nc, &(h->elements->vertices));
 #ifdef MPI
   MPI_File_seek(fh, (GENMAP_HEADER_SIZE + start)*sizeof(GenmapInt),
                 MPI_SEEK_SET);
