@@ -7,7 +7,7 @@
 // Test IO
 //
 int TestIO1(GenmapHandle h) {
-  char *name = "nbrhd/nbrhd.map.bin";
+  char *name = "mesh/box2D_1.bin";
 
   GenmapRead_private(h, name);
 
