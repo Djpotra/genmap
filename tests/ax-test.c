@@ -13,10 +13,18 @@ int TestAx1(GenmapHandle h) {
 
   GenmapVector weights, u, v;
   GenmapCreateVector(&weights, h->header->lelt);
+  GenmapCreateOnesVector(&u, h->header->lelt);
+  GenmapCreateVector(&v, h->header->lelt);
 
   h->AxInit(h, h->global, weights);
+  for(GenmapInt i = 0; i < h->header->lelt; i++) {
+    printf("rank = %d, weight[%d] = %lf\n", h->Id(h->global), i, weights->data[i]);
+  }
+  h->Ax(h, h->global, u, weights, v);
 
   GenmapDestroyVector(weights);
+  GenmapDestroyVector(u);
+  GenmapDestroyVector(v);
 
   return 0;
 }

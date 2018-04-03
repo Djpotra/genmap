@@ -34,7 +34,7 @@ int GenmapAx_private(GenmapHandle h, GenmapComm c, GenmapVector u,
   GenmapInt lelt = u->size;
   GenmapInt nc = h->header->nc;
 
-  double *ucv;
+  GenmapScalar *ucv;
   GenmapMalloc(nc * lelt, &ucv);
 
   for(GenmapInt i = 0; i < lelt; i++)
@@ -63,7 +63,7 @@ int GenmapAxInit_private(GenmapHandle h, GenmapComm c, GenmapVector weights) {
   c->gsHandle = gs_setup(h->elements->globalId, numPoints, &c->gsComm, 0, gs_auto,
                          0);
 
-  double *u;
+  GenmapScalar *u;
   GenmapMalloc(numPoints, &u);
 
   for(GenmapInt i = 0; i < lelt; i++)
