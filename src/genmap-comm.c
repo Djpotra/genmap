@@ -60,7 +60,8 @@ int GenmapAxInit_private(GenmapHandle h, GenmapComm c, GenmapVector weights) {
   GenmapInt nc = h->header->nc;
   GenmapInt numPoints = nc * lelt;
 
-  c->gsHandle = gs_setup(h->elements->globalId, numPoints, &c->gsComm, 0, gs_auto, 0);
+  c->gsHandle = gs_setup(h->elements->globalId, numPoints, &c->gsComm, 0, gs_auto,
+                         0);
 
   GenmapScalar *u;
   GenmapMalloc(numPoints, &u);
@@ -81,6 +82,16 @@ int GenmapAxInit_private(GenmapHandle h, GenmapComm c, GenmapVector weights) {
   }
 
   free(u);
+
+  return 0;
+}
+
+int GenmapGop_private(GenmapComm c, GenmapScalar *v) {
+  GenmapScalar u;
+#ifdef MPI
+  MPI_Allreduce(v, &u, 1, MPI_DOUBLE, MPI_SUM, c->gsComm.c);
+  *v = u;
+#endif
 
   return 0;
 }

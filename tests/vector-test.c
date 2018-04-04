@@ -133,7 +133,7 @@ void TestGenmapCreateOnesVector() {
 void TestGenmapCreateZerosVector() {
   GenmapVector x, zeros;
 
-  GenmapCreateOnesVector(&x, 6);
+  GenmapCreateZerosVector(&x, 6);
   GenmapCreateVector(&zeros, 6);
 
   double dzeros[6] = {0., 0., 0., 0., 0., 0.};
@@ -144,16 +144,22 @@ void TestGenmapCreateZerosVector() {
   GenmapDestroyVector(x);
   GenmapDestroyVector(zeros);
 }
-//int32 test_8() {
-//  double vx[6] = {1., -1., 1., 1., 1., -1.};
-//  Vector x = { .size = 6, .vv = vx };
-//
-//  double vy[6] = {1., -1., 0., 2., 0., -1.};
-//  Vector y = { .size = 6, .vv = vy };
-//
-//  return (dot_vector(&x, &y) == 5.);
-//}
-////------------------------------------------------------------------------------
+
+void TestGenmapDotVector() {
+  GenmapVector x, y;
+
+  GenmapCreateVector(&x, 6);
+  GenmapCreateVector(&y, 6);
+
+  GenmapScalar dx[6] = {1., -1., 1., 1., 1., -1.};
+  GenmapSetVector(x, dx);
+
+  GenmapScalar dy[6] = {1., -1., 0., 2., 0., -1.};
+  GenmapSetVector(y, dy);
+
+  assert(GenmapDotVector(x, y) == 5.);
+}
+
 int main() {
   TestGenmapCreateVector();
   TestGenmapSetVector();
@@ -163,7 +169,8 @@ int main() {
   TestGenmapNormVector();
   TestGenmapScaleVector();
   TestGenmapCreateOnesVector();
+  TestGenmapCreateZerosVector();
+  TestGenmapDotVector();
 
   return 0;
 }
-////------------------------------------------------------------------------------

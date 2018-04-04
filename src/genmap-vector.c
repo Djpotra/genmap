@@ -3,8 +3,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
-
-GenmapUInt32 genmap_srand_initialized = 0;
 //
 // Vector operations
 //
@@ -16,7 +14,6 @@ int GenmapCreateVector(GenmapVector *x, GenmapInt size) {
 
   GenmapMalloc(1, x);
   if(*x == NULL) {
-    printf("malloc failed in %s:%d", __FILE__, __LINE__);
     return 1;
   }
 
@@ -25,7 +22,6 @@ int GenmapCreateVector(GenmapVector *x, GenmapInt size) {
 
   GenmapMalloc(size, &(*x)->data);
   if((*x)->data == NULL) {
-    printf("malloc failed in %s:%d", __FILE__, __LINE__);
     return 1;
   }
 
@@ -145,6 +141,33 @@ int GenmapCreateZerosVector(GenmapVector *x, GenmapInt size) {
   return 0;
 }
 
+GenmapScalar GenmapDotVector(GenmapVector y, GenmapVector x) {
+  /* asserts:
+       - size x = size y
+  */
+  assert(x->size == y->size);
+
+  GenmapScalar result = 0.0;
+  for(GenmapInt i = 0; i < x->size; i++) {
+    result += x->data[i] * y->data[i];
+  }
+
+  return result;
+}
+
+int GenmapAxpbyVector(GenmapVector z, GenmapVector x, GenmapScalar alpha,
+                      GenmapVector y, GenmapScalar beta) {
+  assert(z->size == x->size);
+  assert(z->size == y->size);
+
+  GenmapInt n = z->size;
+  for(GenmapInt i = 0; i < n; i++) {
+    z->data[i] = alpha * x->data[i] + beta * y->data[i];
+  }
+
+  return 0;
+}
+
 int GenmapPrintVector(GenmapVector x) {
   /* Asserts:
        - size x > 0
@@ -164,33 +187,3 @@ int GenmapPrintVector(GenmapVector x) {
 
   return 0;
 }
-////------------------------------------------------------------------------------
-//void random_vector(Vector *x, int32 size, int32 seed) {
-//  create_vector(x, size);
-//
-//  if(!genmap_srand_initialized) {
-//    srand(time(NULL) + seed);
-//    genmap_srand_initialized = 1;
-//  }
-//
-//  for(int32 i = 0; i < size; i++) {
-//    x->data[i] = (double) rand() / RAND_MAX * 2. - 1.;
-//  }
-//}
-////------------------------------------------------------------------------------
-//double dot_vector(Vector *x, Vector *y) {
-//  /* Asserts:
-//       - size y = size x
-//  */
-//  assert(y->size == x->size);
-//
-//  double dot = 0.;
-//
-//  int32 n = x->size;
-//  for(int32 i = 0; i < n; i++) {
-//    dot += y->data[i] * x->data[i];
-//  }
-//
-//  return dot;
-//}
-////------------------------------------------------------------------------------

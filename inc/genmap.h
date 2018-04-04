@@ -54,7 +54,7 @@ int GenmapCreateZerosVector(GenmapVector *x, GenmapInt size);
 
 int GenmapScaleVector(GenmapVector y, GenmapVector x, GenmapScalar alpha);
 int GenmapAxpbyVector(GenmapVector z, GenmapVector x, GenmapScalar alpha,
-                      GenmapVector *y, GenmapScalar beta);
+                      GenmapVector y, GenmapScalar beta);
 
 int GenmapVectorsEqual(GenmapVector x, GenmapVector y, GenmapScalar tol);
 int GenmapCopyVector(GenmapVector x, GenmapVector y);

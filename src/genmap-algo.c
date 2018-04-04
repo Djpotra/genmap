@@ -115,3 +115,65 @@ int GenmapSymTriDiagSolve(GenmapVector x, GenmapVector b, GenmapVector alpha,
   GenmapDestroyVector(diag);
   return 0;
 }
+
+void GenmapLanczos(GenmapHandle h, GenmapComm c, GenmapVector alpha,
+                   GenmapVector beta, GenmapVector init, GenmapInt iter) {
+  assert(alpha->size == iter);
+  assert(alpha->size == beta->size + 1);
+  assert(init->size == h->header->lelt);
+
+  GenmapVector q, q0, q1, u;
+  GenmapScalar normq1, b = 0.;
+
+  GenmapInt lelt = h->header->lelt;
+
+  // Create vector u and q1
+  GenmapCreateVector(&q, lelt);
+  GenmapCreateVector(&q1, lelt);
+  GenmapCopyVector(q1, init);
+  GenmapCreateVector(&u, lelt);
+
+  // Set q_0 and beta_0 to zero (both uses 0-indexing)
+  GenmapCreateZerosVector(&q0, lelt);
+  beta->data[0] = 0.;
+
+  normq1 = GenmapDotVector(q1, q1);
+  h->Gop(c, &normq1);
+  normq1 = sqrt(normq1);
+  GenmapScaleVector(q, q1, 1. / normq1);
+
+
+  // Store Local Laplacian weights
+  GenmapVector weights;
+  GenmapCreateVector(&weights, lelt);
+  h->AxInit(h, c, weights);
+
+  for(GenmapInt k = 0; k < iter; k++) {
+    // Multiplication by the laplacian
+    h->Ax(h, c, q1, weights, u);
+
+    alpha->data[k] = GenmapDotVector(q1, u);
+    h->Gop(h->local, &alpha->data[k]);
+
+    GenmapAxpbyVector(u, u, 1., q0, -b);
+    GenmapAxpbyVector(u, u, 1., q1, -alpha->data[k]);
+
+    b = GenmapDotVector(u, u);
+    h->Gop(c, &b);
+    b = sqrt(b);
+
+    if(k < iter - 1) {
+      beta->data[k] = b;
+    }
+
+    GenmapCopyVector(q0, q1);
+
+//    if (abs(beta->vv[k]) < DBL_EPSILON) {
+//      beta->size = k;
+//      alpha->size = k + 1;
+//      return;
+//    }
+
+    GenmapScaleVector(q1, u, 1. / beta->data[k]);
+  }
+}

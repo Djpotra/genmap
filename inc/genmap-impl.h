@@ -28,6 +28,8 @@ int GenmapAxInit_private(GenmapHandle h, GenmapComm c, GenmapVector weights);
 
 int GenmapAx_private(GenmapHandle h, GenmapComm c, GenmapVector u,
                      GenmapVector weights, GenmapVector v);
+// Functions to do global operations
+int GenmapGop_private(GenmapComm c, GenmapScalar *v);
 //
 // File I/O
 //
@@ -71,9 +73,10 @@ struct GenmapHandle_private {
   // Function members
   GenmapInt(*Np)(GenmapComm c);
   GenmapInt(*Id)(GenmapComm c);
-  GenmapInt(*Ax)(GenmapHandle h, GenmapComm c, GenmapVector u,
-                 GenmapVector weights, GenmapVector v);
-  GenmapInt(*AxInit)(GenmapHandle h, GenmapComm c, GenmapVector weights);
+  int (*Ax)(GenmapHandle h, GenmapComm c, GenmapVector u,
+            GenmapVector weights, GenmapVector v);
+  int (*AxInit)(GenmapHandle h, GenmapComm c, GenmapVector weights);
+  int (*Gop)(GenmapComm c, GenmapScalar *v);
 };
 // GenmapHandle: Create, Destroy
 int GenmapCreateHandle_private(GenmapHandle *h);
