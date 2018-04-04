@@ -129,39 +129,21 @@ void TestGenmapCreateOnesVector() {
   GenmapDestroyVector(x);
   GenmapDestroyVector(ones);
 }
-////------------------------------------------------------------------------------
-//int32 test_5() {
-//  Vector y;
-//
-//  random_vector(&y, 6, 0);
-//
-//  // TODO: add a test to check if inf_norm(y) <= 1.
-//  return (y.size == 6);
-//}
-////------------------------------------------------------------------------------
-////------------------------------------------------------------------------------
-//int32 test_7() {
-//  double vx[6] = {1., -1., 1., 1., 1., -1.};
-//  Vector x = { .size = 6, .vv = vx };
-//
-//  double vy[6] = {1., -1., 0., 2., 0., -1.};
-//  Vector y = { .size = 6, .vv = vy };
-//
-//  mult_scalar_add_vector(&y, 1., &x, 1.);
-//  double vans1[6] = {2., -2., 1., 3., 1., -2.};
-//  Vector answer1 = { .size = 6, .vv = vans1 };
-//
-//  double vz[6] = {1., -1., 0., 2., 0., -1.};
-//  Vector z = { .size = 6, .vv = vz };
-//
-//  mult_scalar_add_vector(&z, 1., &x, -1.);
-//  double vans2[6] = {0., 0., -1., 1., -1., 0.};
-//  Vector answer2 = { .size = 6, .vv = vans2 };
-//
-//  return vectors_equal(&answer1, &y, GENMAP_TOL) && \
-//         vectors_equal(&answer2, &z, GENMAP_TOL);
-//}
-////------------------------------------------------------------------------------
+
+void TestGenmapCreateZerosVector() {
+  GenmapVector x, zeros;
+
+  GenmapCreateOnesVector(&x, 6);
+  GenmapCreateVector(&zeros, 6);
+
+  double dzeros[6] = {0., 0., 0., 0., 0., 0.};
+  GenmapSetVector(zeros, dzeros);
+
+  assert(GenmapVectorsEqual(x, zeros, GENMAP_TOL));
+
+  GenmapDestroyVector(x);
+  GenmapDestroyVector(zeros);
+}
 //int32 test_8() {
 //  double vx[6] = {1., -1., 1., 1., 1., -1.};
 //  Vector x = { .size = 6, .vv = vx };

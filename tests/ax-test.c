@@ -1,34 +1,32 @@
 #include <genmap-impl.h>
 
-#include <stdio.h>
 #ifdef MPI
 #include <mpi.h>
 #endif
 //
-// Test IO
+// Test Ax
 //
 int TestAx1(GenmapHandle h) {
   char *name = "mesh/box2D_2.bin";
 
   GenmapRead_private(h, name);
 
-  GenmapVector weights, u, v;
+  GenmapVector weights, u, v, answer;
+
   GenmapCreateVector(&weights, h->header->lelt);
   GenmapCreateOnesVector(&u, h->header->lelt);
+  GenmapCreateZerosVector(&answer, h->header->lelt);
   GenmapCreateVector(&v, h->header->lelt);
 
   h->AxInit(h, h->global, weights);
-  for(GenmapInt i = 0; i < h->header->lelt; i++) {
-    printf("rank = %d, weight[%d] = %lf\n", h->Id(h->global), i, weights->data[i]);
-  }
   h->Ax(h, h->global, u, weights, v);
-  for(GenmapInt i = 0; i < h->header->lelt; i++) {
-    printf("rank = %d, v[%d] = %lf\n", h->Id(h->global), i, v->data[i]);
-  }
+
+  assert(GenmapVectorsEqual(v, answer, GENMAP_TOL) == 1);
 
   GenmapDestroyVector(weights);
   GenmapDestroyVector(u);
   GenmapDestroyVector(v);
+  GenmapDestroyVector(answer);
 
   return 0;
 }

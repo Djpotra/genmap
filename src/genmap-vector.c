@@ -135,6 +135,16 @@ int GenmapCreateOnesVector(GenmapVector *x, GenmapInt size) {
   return 0;
 }
 
+int GenmapCreateZerosVector(GenmapVector *x, GenmapInt size) {
+  GenmapCreateVector(x, size);
+
+  for(GenmapInt i = 0; i < size; i++) {
+    (*x)->data[i] = 0.;
+  }
+
+  return 0;
+}
+
 int GenmapPrintVector(GenmapVector x) {
   /* Asserts:
        - size x > 0
@@ -167,42 +177,6 @@ int GenmapPrintVector(GenmapVector x) {
 //    x->data[i] = (double) rand() / RAND_MAX * 2. - 1.;
 //  }
 //}
-////------------------------------------------------------------------------------
-//void zeros_vector(Vector *x, int32 size) {
-//  create_vector(x, size);
-//
-//  for(int32 i = 0; i < size; i++) {
-//    x->data[i] = 0.;
-//  }
-//}
-////------------------------------------------------------------------------------
-//void mult_scalar_add_vector(Vector *y, double alpha, Vector *x, \
-//                            double beta) {
-//  /* Asserts:
-//       - size y = size x
-//  */
-//  assert(y->size == x->size);
-//
-//  int32 n = x->size;
-//  for(int32 i = 0; i < n; i++) {
-//    y->data[i] = alpha * y->data[i] + beta * x->data[i];
-//  }
-//}
-////------------------------------------------------------------------------------
-//void z_axpby_vector(Vector *z, Vector *x, double alpha, \
-//                    Vector *y, double beta) {
-//  /* asserts:
-//       - size z = size x = size y
-//  */
-//  assert(z->size == x->size);
-//  assert(z->size == y->size);
-//
-//  int32 n = x->size;
-//  for(int32 i = 0; i < n; i++) {
-//    z->data[i] = alpha * x->data[i] + beta * y->data[i];
-//  }
-//}
-////------------------------------------------------------------------------------
 ////------------------------------------------------------------------------------
 //double dot_vector(Vector *x, Vector *y) {
 //  /* Asserts:
