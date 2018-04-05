@@ -1,6 +1,6 @@
 #include <genmap.h>
 //
-// GenmapHandle: Create, Destroy
+// GenmapHandle_default: Create, Destroy
 //
 int GenmapCreateHandle_default(GenmapHandle *h) {
   GenmapMalloc(1, h);
@@ -10,12 +10,12 @@ int GenmapCreateHandle_default(GenmapHandle *h) {
   (*h)->header = NULL;
   (*h)->elements = NULL;
 
-  (*h)->Id = GenmapId_default;
-  (*h)->Np = GenmapNp_default;
-  (*h)->Ax = GenmapAx_default;
-  (*h)->AxInit = GenmapAxInit_default;
-  (*h)->Gop = GenmapGop_default;
-  (*h)->Read = GenmapRead_default;
+  (*h)->Id = GenmapId_private;
+  (*h)->Np = GenmapNp_private;
+  (*h)->Ax = GenmapAx_private;
+  (*h)->AxInit = GenmapAxInit_private;
+  (*h)->Gop = GenmapGop_private;
+  (*h)->Read = GenmapRead_private;
 
   return 0;
 }

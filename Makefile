@@ -34,7 +34,8 @@ FOBJS:=$(FSRCS:.f=.o)
 LDFLAGS:=-lm -L$(GSDIR) -lgs
 
 TESTCSRC:=$(TESTDIR)/vector-test.c $(TESTDIR)/algo-test.c \
-	$(TESTDIR)/genmap-test.c $(TESTDIR)/io-test.c $(TESTDIR)/ax-test.c
+	$(TESTDIR)/genmap-test.c $(TESTDIR)/io-test.c $(TESTDIR)/ax-test.c \
+	$(TESTDIR)/lanczos-test.c
 
 TESTCOBJ:=$(TESTCSRC:.c=.o)
 TESTFSRC:=
