@@ -158,6 +158,9 @@ void TestGenmapDotVector() {
   GenmapSetVector(y, dy);
 
   assert(GenmapDotVector(x, y) == 5.);
+
+  GenmapDestroyVector(x);
+  GenmapDestroyVector(y);
 }
 
 int main() {

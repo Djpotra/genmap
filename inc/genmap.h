@@ -29,8 +29,7 @@ typedef struct GenmapHeader_private *GenmapHeader;
 #define GENMAP_TOL 1e-12
 //
 // Genmap Readers
-static void Register(void);
-
+//
 #define GENMAP_READER_LEN 256
 #define GENMAP_MAX_READERS 32
 
