@@ -110,16 +110,32 @@ void TestPowerIter1() {
   beta->data[0] = 2.0; beta->data[1] = 3.0;
 
   GenmapPowerIter(eVector, alpha, beta, init, 100);
-  GenmapPrintVector(eVector);
+
+  GenmapScalar eValCorrect = 4.60555127546399;
+  GenmapScalar eVal = 0;
+  for(GenmapInt i = 0; i < n; i++) {
+    if(abs(eVector->data[i]) > eVal)
+      eVal = eVector->data[i];
+  }
+
+  assert(abs(eVal - eValCorrect) < GENMAP_TOL);
+
   GenmapScaleVector(eVector, eVector, 1.0 / GenmapNormVector(eVector, 2));
-  printf("\n");
-  GenmapPrintVector(eVector);
-  printf("\n");
+
+  GenmapVector eVectorCorrect;
+  GenmapScalar d[3] = {3.922322702763679e-01, 7.071067811865475e-01, \
+                       5.883484054145522e-01
+                      };
+  GenmapCreateVector(&eVectorCorrect, n);
+  GenmapSetVector(eVectorCorrect, d);
+
+  assert(GenmapVectorsEqual(eVector, eVectorCorrect, GENMAP_TOL));
 
   GenmapDestroyVector(alpha);
   GenmapDestroyVector(beta);
   GenmapDestroyVector(eVector);
   GenmapDestroyVector(init);
+  GenmapDestroyVector(eVectorCorrect);
 }
 
 void TestPowerIter2() {
@@ -134,16 +150,32 @@ void TestPowerIter2() {
   GenmapCreateVector(&eVector, n);
 
   GenmapPowerIter(eVector, alpha, beta, init, 100);
-  GenmapPrintVector(eVector);
+
+  GenmapScalar eValCorrect = 5.745281240174139;
+  GenmapScalar eVal = 0;
+  for(GenmapInt i = 0; i < n; i++) {
+    if(abs(eVector->data[i]) > eVal)
+      eVal = eVector->data[i];
+  }
+
+  assert(abs(eVal - eValCorrect) < GENMAP_TOL);
+
   GenmapScaleVector(eVector, eVector, 1.0 / GenmapNormVector(eVector, 2));
-  printf("\n");
-  GenmapPrintVector(eVector);
-  printf("\n");
+
+  GenmapVector eVectorCorrect;
+  GenmapScalar d[4] = {0.062465125787784, 0.233949463778106, 0.57979194827105, \
+                       0.777950546743373
+                      };
+  GenmapCreateVector(&eVectorCorrect, n);
+  GenmapSetVector(eVectorCorrect, d);
+
+  assert(GenmapVectorsEqual(eVector, eVectorCorrect, GENMAP_TOL));
 
   GenmapDestroyVector(alpha);
   GenmapDestroyVector(beta);
   GenmapDestroyVector(eVector);
   GenmapDestroyVector(init);
+  GenmapDestroyVector(eVectorCorrect);
 }
 
 void TestInvPowerIter1() {
@@ -157,16 +189,32 @@ void TestInvPowerIter1() {
   GenmapCreateVector(&eVector, n);
 
   GenmapInvPowerIter(eVector, alpha, beta, init, 100);
-  GenmapPrintVector(eVector);
+
+  GenmapScalar eValCorrect = 1.0;
+  GenmapScalar eVal = 0;
+  for(GenmapInt i = 0; i < n; i++) {
+    if(abs(eVector->data[i]) > eVal)
+      eVal = eVector->data[i];
+  }
+
+  assert(abs(eVal - eValCorrect) < GENMAP_TOL);
+
   GenmapScaleVector(eVector, eVector, 1.0 / GenmapNormVector(eVector, 2));
-  printf("\n");
-  GenmapPrintVector(eVector);
-  printf("\n");
+
+  GenmapVector eVectorCorrect;
+  GenmapScalar d[4] = {8.320502943378435e-01,  -1.110223024625157e-16, \
+                       -5.547001962252294e-01
+                      };
+  GenmapCreateVector(&eVectorCorrect, n);
+  GenmapSetVector(eVectorCorrect, d);
+
+  assert(GenmapVectorsEqual(eVector, eVectorCorrect, GENMAP_TOL));
 
   GenmapDestroyVector(alpha);
   GenmapDestroyVector(beta);
   GenmapDestroyVector(eVector);
   GenmapDestroyVector(init);
+  GenmapDestroyVector(eVectorCorrect);
 }
 
 void TestInvPowerIter2() {
@@ -182,11 +230,26 @@ void TestInvPowerIter2() {
   GenmapCreateVector(&eVector, n);
 
   GenmapInvPowerIter(eVector, alpha, beta, init, 100);
-  GenmapPrintVector(eVector);
+
+  GenmapScalar eValCorrect = 0.796991351383626;
+  GenmapScalar eVal = 0;
+  for(GenmapInt i = 0; i < n; i++) {
+    if(abs(eVector->data[i]) > eVal)
+      eVal = eVector->data[i];
+  }
+
+  assert(abs(eVal - eValCorrect) < GENMAP_TOL);
+
   GenmapScaleVector(eVector, eVector, 1.0 / GenmapNormVector(eVector, 2));
-  printf("\n");
-  GenmapPrintVector(eVector);
-  printf("\n");
+
+  GenmapVector eVectorCorrect;
+  GenmapScalar d[4] = {0.777950546743372, -0.579791948271051, \
+                       0.233949463778106, -0.062465125787784
+                      };
+  GenmapCreateVector(&eVectorCorrect, n);
+  GenmapSetVector(eVectorCorrect, d);
+
+  assert(GenmapVectorsEqual(eVector, eVectorCorrect, GENMAP_TOL));
 
   GenmapDestroyVector(alpha);
   GenmapDestroyVector(beta);

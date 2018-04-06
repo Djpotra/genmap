@@ -90,7 +90,7 @@ $(TESTFOBJ): %.o: %.f
 
 .PHONY: $(GSLIB)
 $(GSLIB):
-	make -C $(GSDIR) && make CC=$(CC) MPI=$(MPI) -C $(GSDIR)
+	make CC=$(CC) MPI=$(MPI) -C $(GSDIR)
 
 .PHONY: clean
 clean:

@@ -31,7 +31,7 @@ int GenmapPowerIter(GenmapVector eVector, GenmapVector alpha,
       y->data[n - 1] = beta->data[n - 2] * x->data[n - 2] + alpha->data[n - 1] *
                        x->data[n - 1];
 
-      // calculate 2-norm(y)
+      // Normalize by inf-norm(y)
       if(j != iter - 1)
         GenmapScaleVector(y, y, 1.0 / GenmapNormVector(y, -1));
 
@@ -68,9 +68,9 @@ int GenmapInvPowerIter(GenmapVector eVector, GenmapVector alpha,
       // Ay = x
       GenmapSymTriDiagSolve(y, x, alpha, beta);
 
-      // calculate 2-norm(y) and scale y by that amount
+      // Normalize by inf-norm(y)
       if(j != iter - 1)
-        GenmapScaleVector(y, y, 1.0 / GenmapNormVector(y, 2));
+        GenmapScaleVector(y, y, 1.0 / GenmapNormVector(y, -1));
 
       GenmapCopyVector(x, y);
     }
