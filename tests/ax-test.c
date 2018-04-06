@@ -16,7 +16,7 @@ int TestAx1(GenmapHandle h) {
   GenmapCreateVector(&weights, h->header->lelt);
   GenmapCreateOnesVector(&u, h->header->lelt);
   GenmapCreateZerosVector(&answer, h->header->lelt);
-  GenmapCreateVector(&v, h->header->lelt);
+  GenmapCreateOnesVector(&v, h->header->lelt);
 
   h->AxInit(h, h->global, weights);
   h->Ax(h, h->global, u, weights, v);
