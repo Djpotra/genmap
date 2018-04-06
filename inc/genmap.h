@@ -61,6 +61,8 @@ int GenmapDestroyHeader(GenmapHandle h, GenmapHeader header);
 // GenmapElements: Create, Destroy
 int GenmapCreateElements(GenmapHandle h, GenmapElements *e);
 int GenmapDestroyElements(GenmapHandle h, GenmapElements e);
+// Function to read from FILE
+int GenmapRead(GenmapHandle h, char *name);
 //
 // GenmapHandle
 //
@@ -100,8 +102,6 @@ int GenmapAxInit(GenmapHandle h, GenmapComm c, GenmapVector weights);
 
 int GenmapAx(GenmapHandle h, GenmapComm c, GenmapVector u,
              GenmapVector weights, GenmapVector v);
-// Function to read from FILE
-int GenmapRead(GenmapHandle h, char *name);
 //
 // Linear solve
 //
