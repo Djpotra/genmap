@@ -116,8 +116,8 @@ int GenmapSymTriDiagSolve(GenmapVector x, GenmapVector b, GenmapVector alpha,
   return 0;
 }
 
-void GenmapLanczos(GenmapHandle h, GenmapComm c, GenmapVector alpha,
-                   GenmapVector beta, GenmapVector init, GenmapInt iter) {
+void GenmapLanczos(GenmapHandle h, GenmapComm c, GenmapVector init,
+                   GenmapVector alpha, GenmapVector beta, GenmapInt iter) {
   assert(alpha->size == iter);
   assert(alpha->size == beta->size + 1);
   assert(init->size == h->header->lelt);
@@ -141,7 +141,6 @@ void GenmapLanczos(GenmapHandle h, GenmapComm c, GenmapVector alpha,
   h->Gop(c, &normq1);
   normq1 = sqrt(normq1);
   GenmapScaleVector(q, q1, 1. / normq1);
-
 
   // Store Local Laplacian weights
   GenmapVector weights;
@@ -168,12 +167,17 @@ void GenmapLanczos(GenmapHandle h, GenmapComm c, GenmapVector alpha,
 
     GenmapCopyVector(q0, q1);
 
-//    if (abs(beta->vv[k]) < DBL_EPSILON) {
-//      beta->size = k;
-//      alpha->size = k + 1;
-//      return;
-//    }
+    if (abs(beta->data[k]) < GENMAP_TOL) {
+      beta->size = k;
+      alpha->size = k + 1;
+      return;
+    }
 
     GenmapScaleVector(q1, u, 1. / beta->data[k]);
   }
+
+  GenmapDestroyVector(q);
+  GenmapDestroyVector(q0);
+  GenmapDestroyVector(q1);
+  GenmapDestroyVector(u);
 }

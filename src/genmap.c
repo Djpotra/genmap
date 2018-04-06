@@ -68,6 +68,7 @@ int GenmapInit(GenmapHandle *h, GenmapCommExternal ce, char *reader) {
   (*h)->Create(*h);
 
   GenmapCreateComm(*h, &(*h)->global, ce);
+  GenmapCreateComm(*h, &(*h)->local, ce);
   GenmapCreateElements(*h, &(*h)->elements);
   GenmapCreateHeader(*h, &(*h)->header);
 
