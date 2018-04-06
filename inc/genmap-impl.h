@@ -39,14 +39,21 @@ struct GenmapElements_private {
 // Genmap_Handle
 //
 struct GenmapHandle_private {
-  // Data members
+  int (*Create)(GenmapHandle h);
+  int (*Destroy)(GenmapHandle h);
+
   GenmapComm global;
   GenmapComm local;
+  int (*CreateComm)(GenmapComm *c, GenmapCommExternal ce);
+  int (*DestroyComm)(GenmapComm c);
+
   GenmapHeader header;
+  int (*CreateHeader)(GenmapHeader *h);
+  int (*DestroyHeader)(GenmapHeader h);
+
   GenmapElements elements;
-  // Function members
-  int (*Create)(GenmapHandle *h);
-  int (*Destroy)(GenmapHandle h);
+  int (*CreateElements)(GenmapElements *e);
+  int (*DestroyElements)(GenmapElements e);
 
   GenmapInt(*Np)(GenmapComm c);
   GenmapInt(*Id)(GenmapComm c);

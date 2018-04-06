@@ -4,7 +4,7 @@ GSLIB=gslib
 
 LIB=lib$(TARGET).a
 
-GSDIR ?= $(SRCROOT)/../gslib
+GSDIR ?= $(SRCROOT)/../$(GSLIB)
 GSLIBDIR=$(GSDIR)/src
 
 MPI ?= 1
@@ -21,19 +21,19 @@ CXXFLAGS=
 SRCROOT =.
 SRCDIR  =$(SRCROOT)/src
 INCDIR  =$(SRCROOT)/inc
+READERSDIR=$(SRCROOT)/readers
+BUILDDIR=$(SRCROOT)/build
 TESTDIR =$(SRCROOT)/tests
-READERSDIR=readers
 DEFAULTDIR=$(READERSDIR)/default
 
 CSRCS:= $(SRCDIR)/genmap-vector.c $(SRCDIR)/genmap-algo.c \
-	$(SRCDIR)/genmap-io.c $(SRCDIR)/genmap-comm.c $(SRCDIR)/genmap.c \
-	$(SRCDIR)/genmap-handle.c
+	$(SRCDIR)/genmap-io.c $(SRCDIR)/genmap-comm.c $(SRCDIR)/genmap.c
 COBJS:=$(CSRCS:.c=.o)
 
 FSRCS:=
 FOBJS:=$(FSRCS:.f=.o)
 
-DEFAULTSRCS = $(DEFAULTDIR)/default.c $(DEFAULTDIR)/default-io.c \
+DEFAULTSRCS = $(DEFAULTDIR)/default.c $(DEFAULTDIR)/default-comm.c \
 	      $(DEFAULTDIR)/default-io.c
 DEFAULTOBJS = $(DEFAULTSRCS:.c=.o)
 
@@ -49,8 +49,8 @@ SRCOBJS :=$(COBJS) $(FOBJS) $(DEFAULTOBJS)
 TESTOBJS:=$(TESTCOBJ) $(TESTFOBJ)
 
 INCFLAGS=-I$(INCDIR) -I$(GSLIBDIR) -I$(DEFAULTDIR)
-LDFLAGS:=-lm -L$(GSDIR) -lgs
-TESTLDFLAGS:=-L. -Wl,-rpath=. -l$(TARGET) -Wl,-rpath=. -L$(GSLIBDIR) -lgs -lm
+LDFLAGS:=-L$(GSLIBDIR) -lgs
+TESTLDFLAGS:=-L. -Wl,-rpath=. -l$(TARGET) -L$(GSLIBDIR) -lgs -lm
 
 ifeq ($(MPI),1)
 	CFLAGS+= -DMPI
@@ -65,7 +65,7 @@ all: $(GSLIB) $(TARGET) $(TEST)
 
 .PHONY: $(TARGET)
 $(TARGET): $(SRCOBJS)
-#	$(CC) -shared $(LDFLAGS)
+#	$(CC) $(LDFLAGS) -shared -o $(LIB) $(SRCOBJS)
 	@$(AR) cr $(LIB) $(SRCOBJS)
 	@ranlib $(LIB)
 
@@ -90,7 +90,7 @@ $(TESTFOBJ): %.o: %.f
 
 .PHONY: $(GSLIB)
 $(GSLIB):
-	make CC=$(CC) MPI=$(MPI) -C $(GSDIR)
+	make -C $(GSDIR) && make CC=$(CC) MPI=$(MPI) -C $(GSDIR)
 
 .PHONY: clean
 clean:

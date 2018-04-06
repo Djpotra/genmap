@@ -1,5 +1,8 @@
 #include <genmap-impl.h>
 
+// Urgh ugly
+#include <default.h>
+
 //TODO: Get rid of this
 #include <stdio.h>
 //
@@ -7,13 +10,13 @@
 //
 static struct {
   char name[GENMAP_READER_LEN];
-  int (*Create)(GenmapHandle *h);
+  int (*Create)(GenmapHandle h);
 } GenmapReaders[GENMAP_MAX_READERS];
 
 static size_t GenmapNumReaders = 0;
+static size_t GenmapReadersRegistered = 0;
 
 int GenmapRegisterReader(char *name, int (*Create)(GenmapHandle h)) {
-  printf("Thilina0 is here");
   if(GenmapNumReaders >= sizeof(GenmapReaders) / sizeof(GenmapReaders[0])) {
     //TODO: GenmapError
     printf("Error: Too many readers.\n");
@@ -26,17 +29,28 @@ int GenmapRegisterReader(char *name, int (*Create)(GenmapHandle h)) {
   return 0;
 }
 //
+// GenmapRegister
+//
+int GenmapRegister() {
+  return GenmapRegisterReader("default", GenmapCreateHandle_default);
+}
+//
 // GenmapInit
 //
 int GenmapInit(GenmapHandle *h, GenmapCommExternal ce, char *reader) {
-  char *registeredReader;
-  int matchLen = 0, matchIdx;
+  // TODO: Make this to use __attribute__((constructor))
+  // Needs -fPIC in gslib :(
+  if(!GenmapReadersRegistered) {
+    GenmapRegister();
+    GenmapReadersRegistered = 1;
+  }
 
-  for(int i = 0; i < GenmapNumReaders; i++) {
-    printf("Thilina0 %d\n", i);
+  char *registeredReader;
+  size_t matchLen = 0, matchIdx = 0;
+
+  for(size_t i = 0; i < GenmapNumReaders; i++) {
     registeredReader = GenmapReaders[i].name;
-    for(int j = 0; reader[j] && (reader[j] == registeredReader[j]); j++) {
-      printf("Thilina1 %d\n", i);
+    for(size_t j = 0; reader[j] && (reader[j] == registeredReader[j]); j++) {
       if(j > matchLen) {
         matchLen = j;
         matchIdx = i;
@@ -44,20 +58,18 @@ int GenmapInit(GenmapHandle *h, GenmapCommExternal ce, char *reader) {
     }
   }
 
-  if (!matchLen) {
+  if(!matchLen) {
     //TODO: GenmapError
-    printf("MatchLen = %d\n", matchLen);
     printf("Error: Reader not found.\n");
   }
 
-  GenmapCreateHandle(h);
+  GenmapMalloc(1, h);
+  (*h)->Create = GenmapReaders[matchIdx].Create;
+  (*h)->Create(*h);
 
-  GenmapCreateComm(&(*h)->global, ce);
-
-  (*h)->local = NULL;
-
-  GenmapCreateElements(&(*h)->elements);
-  GenmapCreateHeader(&(*h)->header);
+  GenmapCreateComm(*h, &(*h)->global, ce);
+  GenmapCreateElements(*h, &(*h)->elements);
+  GenmapCreateHeader(*h, &(*h)->header);
 
   return 0;
 }
@@ -66,12 +78,14 @@ int GenmapInit(GenmapHandle *h, GenmapCommExternal ce, char *reader) {
 //
 int GenmapFinalize(GenmapHandle h) {
   if(h->global)
-    GenmapDestroyComm(h->global);
+    GenmapDestroyComm(h, h->global);
   if(h->local)
-    GenmapDestroyComm(h->local);
-  GenmapDestroyElements(h->elements);
-  GenmapDestroyHeader(h->header);
-  GenmapDestroyHandle(h);
+    GenmapDestroyComm(h, h->local);
+  GenmapDestroyElements(h, h->elements);
+  GenmapDestroyHeader(h, h->header);
+
+  free(h);
+  h = NULL;
 
   return 0;
 }

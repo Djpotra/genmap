@@ -46,33 +46,27 @@ typedef int GenmapCommExternal;
 //
 // GenmapComm
 //
-int GenmapCreateComm(GenmapComm *c, GenmapCommExternal ce);
-
-int GenmapDestroyComm(GenmapComm c);
-
+int GenmapCreateComm(GenmapHandle h, GenmapComm *c, GenmapCommExternal ce);
+int GenmapDestroyComm(GenmapHandle h, GenmapComm c);
 // Functions to return size and rank of GenmapComm
 int GenmapNp(GenmapComm c);
-
 int GenmapId(GenmapComm c);
 // Functions to do global operations
-int GenmapGop(GenmapComm c, GenmapScalar *v);
+int GenmapGop(GenmapHandle h, GenmapComm c, GenmapScalar *v);
 //
 // File I/O
 //
 // GenmapHeader: Create, Destroy
-int GenmapCreateHeader(GenmapHeader *h);
-
-int GenmapDestroyHeader(GenmapHeader h);
+int GenmapCreateHeader(GenmapHandle h, GenmapHeader *header);
+int GenmapDestroyHeader(GenmapHandle h, GenmapHeader header);
 // GenmapElements: Create, Destroy
-int GenmapCreateElements(GenmapElements *e);
-
-int GenmapDestroyElements(GenmapElements e);
+int GenmapCreateElements(GenmapHandle h, GenmapElements *e);
+int GenmapDestroyElements(GenmapHandle h, GenmapElements e);
 //
 // GenmapHandle
 //
 // GenmapHandle: Create, Destroy
 int GenmapCreateHandle(GenmapHandle *h);
-
 int GenmapDestroyHandle(GenmapHandle h);
 //
 // Genmap: Init, Finalize
@@ -106,7 +100,7 @@ int GenmapDestroyVector(GenmapVector x);
 int GenmapAxInit(GenmapHandle h, GenmapComm c, GenmapVector weights);
 
 int GenmapAx(GenmapHandle h, GenmapComm c, GenmapVector u,
-                     GenmapVector weights, GenmapVector v);
+             GenmapVector weights, GenmapVector v);
 // Function to read from FILE
 int GenmapRead(GenmapHandle h, char *name);
 //
