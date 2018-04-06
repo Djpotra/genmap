@@ -28,6 +28,14 @@ typedef struct GenmapHeader_private *GenmapHeader;
 //
 #define GENMAP_TOL 1e-12
 //
+// Genmap Readers
+static void Register(void);
+
+#define GENMAP_READER_LEN 256
+#define GENMAP_MAX_READERS 32
+
+int GenmapRegisterReader(char *name, int (*Create)(GenmapHandle h));
+//
 // GenmapCommExternal
 //
 #ifdef MPI
@@ -36,9 +44,40 @@ typedef MPI_Comm GenmapCommExternal;
 typedef int GenmapCommExternal;
 #endif
 //
+// GenmapComm
+//
+int GenmapCreateComm(GenmapComm *c, GenmapCommExternal ce);
+
+int GenmapDestroyComm(GenmapComm c);
+
+// Functions to return size and rank of GenmapComm
+int GenmapNp(GenmapComm c);
+
+int GenmapId(GenmapComm c);
+// Functions to do global operations
+int GenmapGop(GenmapComm c, GenmapScalar *v);
+//
+// File I/O
+//
+// GenmapHeader: Create, Destroy
+int GenmapCreateHeader(GenmapHeader *h);
+
+int GenmapDestroyHeader(GenmapHeader h);
+// GenmapElements: Create, Destroy
+int GenmapCreateElements(GenmapElements *e);
+
+int GenmapDestroyElements(GenmapElements e);
+//
+// GenmapHandle
+//
+// GenmapHandle: Create, Destroy
+int GenmapCreateHandle(GenmapHandle *h);
+
+int GenmapDestroyHandle(GenmapHandle h);
+//
 // Genmap: Init, Finalize
 //
-int GenmapInit(GenmapHandle *h, GenmapCommExternal ce);
+int GenmapInit(GenmapHandle *h, GenmapCommExternal ce, char *reader);
 int GenmapFinalize(GenmapHandle h);
 //
 // GenmapVector operations
@@ -63,6 +102,13 @@ GenmapScalar GenmapNormVector(GenmapVector x, GenmapInt p);
 
 int GenmapPrintVector(GenmapVector x);
 int GenmapDestroyVector(GenmapVector x);
+// Functions to do Laplacian
+int GenmapAxInit(GenmapHandle h, GenmapComm c, GenmapVector weights);
+
+int GenmapAx(GenmapHandle h, GenmapComm c, GenmapVector u,
+                     GenmapVector weights, GenmapVector v);
+// Function to read from FILE
+int GenmapRead(GenmapHandle h, char *name);
 //
 // Linear solve
 //

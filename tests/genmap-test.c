@@ -14,7 +14,7 @@ int main(int argc, char **argv) {
 #endif
 
   GenmapHandle h;
-  GenmapInit(&h, MPI_COMM_WORLD);
+  GenmapInit(&h, MPI_COMM_WORLD, "default");
   GenmapFinalize(h);
 
 #ifdef MPI

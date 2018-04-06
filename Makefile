@@ -12,7 +12,7 @@ VALGRIND ?= 0
 DEBUG ?= 1
 
 CC=mpicc
-CFLAGS=-std=c99 -O2 -Wall -Wextra -Wno-unused-function -Wno-unused-parameter
+CFLAGS= -std=c99 -O2 -Wall -Wextra -Wno-unused-function -Wno-unused-parameter
 FC=mpif77
 FFLAGS=
 CXX=mpic++
@@ -21,29 +21,36 @@ CXXFLAGS=
 SRCROOT =.
 SRCDIR  =$(SRCROOT)/src
 INCDIR  =$(SRCROOT)/inc
-INCFLAGS=-I$(INCDIR) -I$(GSLIBDIR)
 TESTDIR =$(SRCROOT)/tests
+READERSDIR=readers
+DEFAULTDIR=$(READERSDIR)/default
 
-CSRCS:=$(SRCDIR)/genmap-handle.c $(SRCDIR)/genmap-vector.c \
-	$(SRCDIR)/genmap-algo.c $(SRCDIR)/genmap-io.c \
-	$(SRCDIR)/genmap-comm.c $(SRCDIR)/genmap.c
-
+CSRCS:= $(SRCDIR)/genmap-vector.c $(SRCDIR)/genmap-algo.c \
+	$(SRCDIR)/genmap-io.c $(SRCDIR)/genmap-comm.c $(SRCDIR)/genmap.c \
+	$(SRCDIR)/genmap-handle.c
 COBJS:=$(CSRCS:.c=.o)
+
 FSRCS:=
 FOBJS:=$(FSRCS:.f=.o)
-LDFLAGS:=-lm -L$(GSDIR) -lgs
 
-TESTCSRC:=$(TESTDIR)/vector-test.c $(TESTDIR)/algo-test.c \
-	$(TESTDIR)/genmap-test.c $(TESTDIR)/io-test.c $(TESTDIR)/ax-test.c \
-	$(TESTDIR)/lanczos-test.c
+DEFAULTSRCS = $(DEFAULTDIR)/default.c $(DEFAULTDIR)/default-io.c \
+	      $(DEFAULTDIR)/default-io.c
+DEFAULTOBJS = $(DEFAULTSRCS:.c=.o)
 
+TESTCSRC:= $(TESTDIR)/vector-test.c $(TESTDIR)/algo-test.c \
+	   $(TESTDIR)/genmap-test.c $(TESTDIR)/io-test.c $(TESTDIR)/ax-test.c \
+	   $(TESTDIR)/lanczos-test.c
 TESTCOBJ:=$(TESTCSRC:.c=.o)
 TESTFSRC:=
 TESTFOBJ:=$(TESTFSRC:.f=.o)
-TESTLDFLAGS:=-L. -lgenmap -Wl,-rpath=. -L$(GSLIBDIR) -lgs -lm
 
-SRCOBJS :=$(COBJS) $(FOBJS)
+
+SRCOBJS :=$(COBJS) $(FOBJS) $(DEFAULTOBJS)
 TESTOBJS:=$(TESTCOBJ) $(TESTFOBJ)
+
+INCFLAGS=-I$(INCDIR) -I$(GSLIBDIR) -I$(DEFAULTDIR)
+LDFLAGS:=-lm -L$(GSDIR) -lgs
+TESTLDFLAGS:=-L. -Wl,-rpath=. -l$(TARGET) -Wl,-rpath=. -L$(GSLIBDIR) -lgs -lm
 
 ifeq ($(MPI),1)
 	CFLAGS+= -DMPI
@@ -57,7 +64,8 @@ endif
 all: $(GSLIB) $(TARGET) $(TEST)
 
 .PHONY: $(TARGET)
-$(TARGET): $(COBJS) $(FOBJS)
+$(TARGET): $(SRCOBJS)
+#	$(CC) -shared $(LDFLAGS)
 	@$(AR) cr $(LIB) $(SRCOBJS)
 	@ranlib $(LIB)
 
@@ -66,6 +74,9 @@ $(COBJS): %.o: %.c
 
 $(FOBJS): %.o: %.f
 	$(FC) $(FFLAGS) $(INCFLAGS) -c $< -o $@
+
+$(DEFAULTOBJS): %.o: %.c
+	$(CC) $(CFLAGS) $(INCFLAGS) -c $< -o $@
 
 .PHONY: $(TEST)
 $(TEST): $(TESTCOBJ) $(TESTFOBJ)

@@ -4,7 +4,7 @@
 #include <mpi.h>
 #endif
 
-void TestLanczos1() {
+void TestLanczos1(GenmapHandle h) {
 }
 
 int main(int argc, char **argv) {
@@ -15,7 +15,7 @@ int main(int argc, char **argv) {
 #endif
 
   GenmapHandle h;
-  GenmapInit(&h, MPI_COMM_WORLD);
+  GenmapInit(&h, MPI_COMM_WORLD, "default");
   GenmapFinalize(h);
 
 #ifdef MPI

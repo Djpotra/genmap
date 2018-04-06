@@ -14,22 +14,6 @@ struct GenmapComm_private {
   struct gs_data *gsHandle;
   GenmapScalar *laplacianWeights;
 };
-// GenmapComm: Create, Destroy
-int GenmapCreateComm_private(GenmapComm *c, GenmapCommExternal ce);
-
-int GenmapDestroyComm_private(GenmapComm c);
-
-// Functions to return size and rank of GenmapComm
-int GenmapNp_private(GenmapComm c);
-
-int GenmapId_private(GenmapComm c);
-// Functions to do Laplacian
-int GenmapAxInit_private(GenmapHandle h, GenmapComm c, GenmapVector weights);
-
-int GenmapAx_private(GenmapHandle h, GenmapComm c, GenmapVector u,
-                     GenmapVector weights, GenmapVector v);
-// Functions to do global operations
-int GenmapGop_private(GenmapComm c, GenmapScalar *v);
 //
 // File I/O
 //
@@ -45,22 +29,12 @@ struct GenmapHeader_private {
   GenmapInt nc;
   GenmapInt lelt;
 };
-// GenmapHeader: Create, Destroy
-int GenmapCreateHeader_private(GenmapHeader *h);
-
-int GenmapDestroyHeader_private(GenmapHeader h);
-// Genmap Element
+// GenmapElements
 struct GenmapElements_private {
   GenmapScalar *fiedler;
   GenmapInt *globalId;
   GenmapInt *vertices;
 };
-// GenmapElements: Create, Destroy
-int GenmapCreateElements_private(GenmapElements *e);
-
-int GenmapDestroyElements_private(GenmapElements e);
-// Function to read from FILE
-int GenmapRead_private(GenmapHandle h, char *name);
 //
 // Genmap_Handle
 //
@@ -71,17 +45,20 @@ struct GenmapHandle_private {
   GenmapHeader header;
   GenmapElements elements;
   // Function members
+  int (*Create)(GenmapHandle *h);
+  int (*Destroy)(GenmapHandle h);
+
   GenmapInt(*Np)(GenmapComm c);
   GenmapInt(*Id)(GenmapComm c);
+
   int (*Ax)(GenmapHandle h, GenmapComm c, GenmapVector u,
             GenmapVector weights, GenmapVector v);
   int (*AxInit)(GenmapHandle h, GenmapComm c, GenmapVector weights);
-  int (*Gop)(GenmapComm c, GenmapScalar *v);
-};
-// GenmapHandle: Create, Destroy
-int GenmapCreateHandle_private(GenmapHandle *h);
 
-int GenmapDestroyHandle_private(GenmapHandle h);
+  int (*Gop)(GenmapComm c, GenmapScalar *v);
+
+  int (*Read)(GenmapHandle h, char *name);
+};
 //
 // Genmap_Vector
 //

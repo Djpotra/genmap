@@ -1,11 +1,10 @@
 #ifndef _GENMAP_DEFAULT_H_
 #define _GENMAP_DEFAULT_H_
 
-#include <genmap.h>
+#include <genmap-impl.h>
 
 #include <stddef.h>
 #include <stdlib.h>
-#include <assert.h>
 //
 // GenmapComm
 //
@@ -41,6 +40,7 @@ int GenmapRead_default(GenmapHandle h, char *name);
 // GenmapHandle
 //
 // GenmapHandle: Create, Destroy
-int GenmapCreateHandle_default(GenmapHandle *h);
+int GenmapCreateHandle_default(GenmapHandle h);
 
 int GenmapDestroyHandle_default(GenmapHandle h);
+#endif

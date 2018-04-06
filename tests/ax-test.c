@@ -9,7 +9,7 @@
 int TestAx1(GenmapHandle h) {
   char *name = "mesh/box2D_2.bin";
 
-  GenmapRead_private(h, name);
+  GenmapRead(h, name);
 
   GenmapVector weights, u, v, answer;
 
@@ -39,7 +39,7 @@ int main(int argc, char **argv) {
 #endif
 
   GenmapHandle h;
-  GenmapInit(&h, MPI_COMM_WORLD);
+  GenmapInit(&h, MPI_COMM_WORLD, "default");
   TestAx1(h);
   GenmapFinalize(h);
 

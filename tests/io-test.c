@@ -9,7 +9,7 @@
 int TestIO1(GenmapHandle h) {
   char *name = "mesh/box2D_1.bin";
 
-  GenmapRead_private(h, name);
+  GenmapRead(h, name);
 
   assert(h->header->nel == 8);
   assert(h->header->nactive == 15);
@@ -50,7 +50,7 @@ int main(int argc, char **argv) {
 #endif
 
   GenmapHandle h;
-  GenmapInit(&h, MPI_COMM_WORLD);
+  GenmapInit(&h, MPI_COMM_WORLD, "default");
   TestIO1(h);
   GenmapFinalize(h);
 

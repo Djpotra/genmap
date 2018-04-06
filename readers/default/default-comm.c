@@ -1,6 +1,6 @@
 #include <genmap-impl.h>
 
-int GenmapCreateComm(GenmapComm *c, GenmapCommExternal ce) {
+int GenmapCreateComm_default(GenmapComm *c, GenmapCommExternal ce) {
 //  GenmapMalloc(1, c);
 //  comm_init(&(*c)->gsComm, ce);
 //  (*c)->gsHandle = NULL;
@@ -8,7 +8,7 @@ int GenmapCreateComm(GenmapComm *c, GenmapCommExternal ce) {
   return 0;
 }
 
-int GenmapDestroyComm(GenmapComm c) {
+int GenmapDestroyComm_default(GenmapComm c) {
 //  comm_free(&c->gsComm);
 //  if(c->gsHandle)
 //    gs_free(c->gsHandle);
@@ -19,15 +19,15 @@ int GenmapDestroyComm(GenmapComm c) {
   return 0;
 }
 
-int GenmapNp(GenmapComm c) {
+int GenmapNp_default(GenmapComm c) {
   return c->gsComm.np;
 }
 
-int GenmapId(GenmapComm c) {
+int GenmapId_default(GenmapComm c) {
   return c->gsComm.id;
 }
 
-int GenmapAx(GenmapHandle h, GenmapComm c, GenmapVector u,
+int GenmapAx_default(GenmapHandle h, GenmapComm c, GenmapVector u,
                      GenmapVector weights, GenmapVector v) {
 //  assert(u->size == v->size);
 //
@@ -55,7 +55,7 @@ int GenmapAx(GenmapHandle h, GenmapComm c, GenmapVector u,
   return 0;
 }
 
-int GenmapAxInit_private(GenmapHandle h, GenmapComm c, GenmapVector weights) {
+int GenmapAxInit_default(GenmapHandle h, GenmapComm c, GenmapVector weights) {
 //  GenmapInt lelt = h->header->lelt;
 //  GenmapInt nc = h->header->nc;
 //  GenmapInt numPoints = nc * lelt;
@@ -86,7 +86,7 @@ int GenmapAxInit_private(GenmapHandle h, GenmapComm c, GenmapVector weights) {
   return 0;
 }
 
-int GenmapGop(GenmapComm c, GenmapScalar *v) {
+int GenmapGop_default(GenmapComm c, GenmapScalar *v) {
 //  GenmapScalar u;
 //#ifdef MPI
 //  MPI_Allreduce(v, &u, 1, MPI_DOUBLE, MPI_SUM, c->gsComm.c);

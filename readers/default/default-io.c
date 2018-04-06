@@ -1,4 +1,4 @@
-#include <genmap-impl.h>
+#include <default.h>
 
 #include <stdio.h>
 //
@@ -43,7 +43,7 @@ int GenmapDestroyElements_default(GenmapElements e) {
 //
 // Do File I/O in parallel
 //
-int GenmapRead_default(GenmapHandle h, char* name) {
+int GenmapRead_default(GenmapHandle h, char *name) {
 #ifdef MPI
   MPI_File fh;
   MPI_Offset offset;
