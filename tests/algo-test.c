@@ -254,6 +254,7 @@ void TestInvPowerIter2() {
   GenmapDestroyVector(alpha);
   GenmapDestroyVector(beta);
   GenmapDestroyVector(eVector);
+  GenmapDestroyVector(eVectorCorrect);
   GenmapDestroyVector(init);
 }
 

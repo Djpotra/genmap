@@ -48,8 +48,8 @@ int GenmapPowerIter(GenmapVector eVector, GenmapVector alpha,
 }
 
 int GenmapPowerIterNew(GenmapVector eVector, void (*Ax)(GenmapVector ax,
-                       GenmapVector x, void* data), GenmapVector init,
-                       void *data, GenmapInt iter) {
+                       GenmapVector x, void* data), void *data,
+                       GenmapVector init, GenmapInt iter) {
   assert(eVector->size == init->size);
   GenmapInt n = init->size;
 
@@ -147,18 +147,18 @@ int GenmapSymTriDiagSolve(GenmapVector x, GenmapVector b, GenmapVector alpha,
 //
 //
 void GenmapLanczos(GenmapHandle h, GenmapComm c, GenmapVector init,
-                   GenmapVector alpha, GenmapVector beta, GenmapInt iter) {
+                   GenmapInt iter, GenmapVector *q, GenmapVector alpha,
+                   GenmapVector beta) {
   assert(alpha->size == iter);
   assert(alpha->size == beta->size + 1);
   assert(init->size == h->header->lelt);
 
-  GenmapVector q, q0, q1, u;
+  GenmapVector q0, q1, u;
   GenmapScalar normq1, b = 0.;
 
   GenmapInt lelt = h->header->lelt;
 
   // Create vector u and q1
-  GenmapCreateVector(&q, lelt);
   GenmapCreateVector(&q1, lelt);
   GenmapCopyVector(q1, init);
   GenmapCreateVector(&u, lelt);
@@ -167,10 +167,13 @@ void GenmapLanczos(GenmapHandle h, GenmapComm c, GenmapVector init,
   GenmapCreateZerosVector(&q0, lelt);
   beta->data[0] = 0.;
 
+  // Allocate memory for q-vectors
+  GenmapMalloc(iter, &q);
+
   normq1 = GenmapDotVector(q1, q1);
   h->Gop(c, &normq1);
   normq1 = sqrt(normq1);
-  GenmapScaleVector(q, q1, 1. / normq1);
+  GenmapScaleVector(q1, q1, 1. / normq1);
 
   // Store Local Laplacian weights
   GenmapVector weights;
@@ -178,6 +181,10 @@ void GenmapLanczos(GenmapHandle h, GenmapComm c, GenmapVector init,
   h->AxInit(h, c, weights);
 
   for(GenmapInt k = 0; k < iter; k++) {
+    // Store q1
+    GenmapCreateVector(&q[k], lelt);
+    GenmapCopyVector(q[k], q1);
+
     // Multiplication by the laplacian
     h->Ax(h, c, q1, weights, u);
 
@@ -197,17 +204,17 @@ void GenmapLanczos(GenmapHandle h, GenmapComm c, GenmapVector init,
 
     GenmapCopyVector(q0, q1);
 
-    if(abs(beta->data[k]) < GENMAP_TOL) {
-      beta->size = k;
-      alpha->size = k + 1;
-      return;
-    }
+//    if(abs(beta->data[k]) < GENMAP_TOL) {
+//      beta->size = k;
+//      alpha->size = k + 1;
+//      return;
+//    }
 
     GenmapScaleVector(q1, u, 1. / beta->data[k]);
   }
 
-  GenmapDestroyVector(q);
   GenmapDestroyVector(q0);
   GenmapDestroyVector(q1);
   GenmapDestroyVector(u);
+  GenmapDestroyVector(weights);
 }

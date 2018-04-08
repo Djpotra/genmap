@@ -10,13 +10,7 @@ GSLIBDIR=$(GSDIR)/src
 MPI ?= 1
 VALGRIND ?= 0
 DEBUG ?= 1
-
-CC=mpicc
-CFLAGS= -std=c99 -O2 -Wall -Wextra -Wno-unused-function -Wno-unused-parameter
-FC=mpif77
-FFLAGS=
-CXX=mpic++
-CXXFLAGS=
+ASAN ?= 0
 
 SRCROOT =.
 SRCDIR  =$(SRCROOT)/src
@@ -25,6 +19,18 @@ READERSDIR=$(SRCROOT)/readers
 BUILDDIR=$(SRCROOT)/build
 TESTDIR =$(SRCROOT)/tests
 DEFAULTDIR=$(READERSDIR)/default
+
+AFLAGS = -fsanitize=address
+CC=mpicc
+CFLAGS= -std=c99 -O2 -Wall -Wextra -Wno-unused-function -Wno-unused-parameter
+FC=mpif77
+FFLAGS=
+CXX=mpic++
+CXXFLAGS=
+
+INCFLAGS=-I$(INCDIR) -I$(GSLIBDIR) -I$(DEFAULTDIR)
+LDFLAGS:=-L$(GSLIBDIR) -lgs
+TESTLDFLAGS:=-L. -Wl,-rpath=. -l$(TARGET) -L$(GSLIBDIR) -lgs -lm
 
 CSRCS:= $(SRCDIR)/genmap-vector.c $(SRCDIR)/genmap-algo.c \
 	$(SRCDIR)/genmap-io.c $(SRCDIR)/genmap-comm.c $(SRCDIR)/genmap.c
@@ -44,14 +50,15 @@ TESTCOBJ:=$(TESTCSRC:.c=.o)
 TESTFSRC:=
 TESTFOBJ:=$(TESTFSRC:.f=.o)
 
-
 SRCOBJS :=$(COBJS) $(FOBJS) $(DEFAULTOBJS)
 TESTOBJS:=$(TESTCOBJ) $(TESTFOBJ)
 
-INCFLAGS=-I$(INCDIR) -I$(GSLIBDIR) -I$(DEFAULTDIR)
-LDFLAGS:=-L$(GSLIBDIR) -lgs
-TESTLDFLAGS:=-L. -Wl,-rpath=. -l$(TARGET) -L$(GSLIBDIR) -lgs -lm
-
+ifeq ($(ASAN),1)
+	CFLAGS+= $(AFLAGS)
+	FFLAGS+= $(AFLAGS)
+	LDFLAGS+= $(AFLAGS)
+	TESTLDFLAGS+= $(AFLAGS)
+endif
 ifeq ($(MPI),1)
 	CFLAGS+= -DMPI
 endif

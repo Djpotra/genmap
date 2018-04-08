@@ -103,7 +103,8 @@ int GenmapAxInit(GenmapHandle h, GenmapComm c, GenmapVector weights);
 int GenmapAx(GenmapHandle h, GenmapComm c, GenmapVector u,
              GenmapVector weights, GenmapVector v);
 void GenmapLanczos(GenmapHandle h, GenmapComm c, GenmapVector init,
-                   GenmapVector alpha, GenmapVector beta, GenmapInt iter);
+                   GenmapInt iter, GenmapVector *q, GenmapVector alpha,
+                   GenmapVector beta);
 //
 // Linear solve
 //
@@ -114,6 +115,10 @@ int GenmapSymTriDiagSolve(GenmapVector x, GenmapVector b, GenmapVector alpha,
 //
 int GenmapPowerIter(GenmapVector eVector, GenmapVector alpha,
                     GenmapVector beta, GenmapVector init, GenmapInt iter);
+
+int GenmapPowerIterNew(GenmapVector eVector, void (*Ax)(GenmapVector ax,
+                       GenmapVector x, void* data), void *data,
+                       GenmapVector init, GenmapInt iter);
 
 int GenmapInvPowerIter(GenmapVector eVector, GenmapVector alpha,
                        GenmapVector beta, GenmapVector init, GenmapInt iter);
