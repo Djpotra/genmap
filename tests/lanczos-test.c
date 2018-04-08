@@ -17,6 +17,7 @@ void TestLanczos1(GenmapHandle h) {
   GenmapCreateVector(&betaVec, iter - 1);
 
   GenmapLanczos(h, h->global, initVec, alphaVec, betaVec, iter);
+
 }
 
 int main(int argc, char **argv) {

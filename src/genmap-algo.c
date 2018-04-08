@@ -47,6 +47,35 @@ int GenmapPowerIter(GenmapVector eVector, GenmapVector alpha,
   return 0;
 }
 
+int GenmapPowerIterNew(GenmapVector eVector, void (*Ax)(GenmapVector ax,
+                       GenmapVector x, void* data), GenmapVector init,
+                       void *data, GenmapInt iter) {
+  assert(eVector->size == init->size);
+  GenmapInt n = init->size;
+
+  GenmapVector x, y;
+  GenmapCreateVector(&x, n);
+  GenmapCreateVector(&y, n);
+  GenmapCopyVector(x, init);
+
+  for(GenmapInt j = 0; j < iter; j++) {
+    // y = Ax
+    Ax(y, x, data);
+    // Normalize by inf-norm(y)
+    if(j != iter - 1)
+      GenmapScaleVector(y, y, 1.0 / GenmapNormVector(y, -1));
+
+    GenmapCopyVector(x, y);
+  }
+
+  GenmapCopyVector(eVector, y);
+
+  GenmapDestroyVector(x);
+  GenmapDestroyVector(y);
+
+  return 0;
+}
+
 int GenmapInvPowerIter(GenmapVector eVector, GenmapVector alpha,
                        GenmapVector beta, GenmapVector init, GenmapInt iter) {
   assert(alpha->size == beta->size + 1);
@@ -115,7 +144,8 @@ int GenmapSymTriDiagSolve(GenmapVector x, GenmapVector b, GenmapVector alpha,
   GenmapDestroyVector(diag);
   return 0;
 }
-
+//
+//
 void GenmapLanczos(GenmapHandle h, GenmapComm c, GenmapVector init,
                    GenmapVector alpha, GenmapVector beta, GenmapInt iter) {
   assert(alpha->size == iter);
@@ -167,7 +197,7 @@ void GenmapLanczos(GenmapHandle h, GenmapComm c, GenmapVector init,
 
     GenmapCopyVector(q0, q1);
 
-    if (abs(beta->data[k]) < GENMAP_TOL) {
+    if(abs(beta->data[k]) < GENMAP_TOL) {
       beta->size = k;
       alpha->size = k + 1;
       return;
