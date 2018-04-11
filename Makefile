@@ -68,7 +68,7 @@ ifeq ($(DEBUG),1)
 endif
 
 .PHONY: all
-all: $(GSLIB) $(TARGET) $(TEST)
+all: $(TARGET) $(TEST)
 
 .PHONY: $(TARGET)
 $(TARGET): $(SRCOBJS)

@@ -34,6 +34,7 @@ struct GenmapElements_private {
   GenmapScalar *fiedler;
   GenmapInt *globalId;
   GenmapInt *vertices;
+  GenmapInt *edges;
 };
 //
 // Genmap_Handle

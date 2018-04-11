@@ -7,7 +7,7 @@
 // Test IO
 //
 int TestIO1(GenmapHandle h) {
-  char *name = "mesh/box2D_1.bin";
+  char *name = "mesh/box2D_2.bin";
 
   GenmapRead(h, name);
 
@@ -20,22 +20,26 @@ int TestIO1(GenmapHandle h) {
   assert(h->header->noutflow == 0);
   assert(h->header->nc == 4);
 
-  GenmapInt elemFirst[4] = {4, 9, 12, 11};
-  GenmapInt elemLast[4] = {7, 6, 5, 1};
+  int nc = h->header->nc;
+  GenmapInt verticesFirst[4] = {1, 4, 2, 5};
+  GenmapInt edgesFirst[4] = {1, 4, 2, 3};
+  GenmapInt verticesLast[4] = {11, 14, 12, 15};
+  GenmapInt edgesLast[4] = {20, 22, 16, 21};
 
   if(h->Id(h->global) == 0) {
-    assert(h->elements->globalId[0] == 6);
-    for(GenmapInt j = 0; j < h->header->nc; j++) {
-      assert(h->elements->vertices[j] == elemFirst[j]);
+    assert(h->elements->globalId[0] == 1);
+    for(GenmapInt j = 0; j < nc; j++) {
+      assert(h->elements->vertices[j] == verticesFirst[j]);
+      assert(h->elements->edges[j] == edgesFirst[j]);
     }
   }
 
-  int nc = h->header->nc;
   int verticesIndex = nc * (h->header->lelt - 1);
   if(h->Id(h->global) == h->Np(h->global) - 1) {
-    assert(h->elements->globalId[h->header->lelt - 1] == 1);
-    for(GenmapInt j = 0; j < h->header->nc; j++) {
-      assert(h->elements->vertices[verticesIndex + j] == elemLast[j]);
+    assert(h->elements->globalId[h->header->lelt - 1] == 8);
+    for(GenmapInt j = 0; j < nc; j++) {
+      assert(h->elements->vertices[verticesIndex + j] == verticesLast[j]);
+      assert(h->elements->edges[verticesIndex + j] == edgesLast[j]);
     }
   }
 

@@ -11,6 +11,7 @@ typedef long GenmapInt64;
 typedef unsigned long GenmapUInt64;
 
 typedef GenmapInt32 GenmapInt;
+typedef GenmapInt64 GenmapLong;
 
 typedef double GenmapScalar;
 

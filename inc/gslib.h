@@ -1,6 +1,9 @@
 #ifndef _GSLIB_H_
 #define _GSLIB_H_
 
+//#define USE_LONG
+#define UNDERSCORE
+
 #include <stdlib.h>
 #include <stddef.h>
 #include <string.h>

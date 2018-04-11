@@ -52,17 +52,18 @@ void TestLanczos1(GenmapHandle h) {
   GenmapCreateVector(&evOriginal, lelt);
   GenmapCreateVector(&evInit1, lelt);
   for(GenmapInt i = 0; i < lelt; i++) {
-    evInit1->data[i] = i + 1;
+    evInit1->data[i] = i;
   }
 
-  GenmapPowerIterNew(evOriginal, Ax, &axData, evInit1, iter);
+  GenmapPowerIterNew(evOriginal, Ax, &axData, evInit1, 1);
 
-  if(h->Id(h->global) == 0) {
+//  if(h->Id(h->global) == 0) {
 //    GenmapPrintVector(evLanczos);
 //    printf("\n");
-    GenmapPrintVector(evOriginal);
-    printf("\n");
-  }
+//  }
+//  printf("%d\n", h->Id(h->global));
+//  GenmapPrintVector(evOriginal);
+//  printf("\n");
 
 //  assert(GenmapVectorsEqual(evOriginal, evLanczos, GENMAP_TOL) == 1);
 

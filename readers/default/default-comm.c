@@ -47,9 +47,9 @@ int GenmapAx_default(GenmapHandle h, GenmapComm c, GenmapVector u,
   gs(ucv, gs_double, gs_add, 0, c->gsHandle, NULL);
 
   for(GenmapInt i = 0; i < lelt; i++) {
-    v->data[i] = weights->data[i] * u->data[i];
+    v->data[i] = -1 * weights->data[i] * u->data[i];
     for(GenmapInt j = 0; j < nc; j ++) {
-      v->data[i] -= ucv[nc * i + j];
+      v->data[i] += ucv[nc * i + j];
     }
   }
 
@@ -63,22 +63,22 @@ int GenmapAxInit_default(GenmapHandle h, GenmapComm c, GenmapVector weights) {
   GenmapInt nc = h->header->nc;
   GenmapInt numPoints = nc * lelt;
 
-  c->gsHandle = gs_setup(h->elements->globalId, numPoints, &c->gsComm, 0, gs_auto,
-                         0);
+  c->gsHandle = gs_setup(h->elements->vertices, numPoints, &c->gsComm, 0,
+		         gs_auto, 0);
 
   GenmapScalar *u;
   GenmapMalloc(numPoints, &u);
 
   for(GenmapInt i = 0; i < lelt; i++)
     for(GenmapInt j = 0; j < nc; j++)
-      u[nc * i + j] = 1;
+      u[nc * i + j] = 1.;
 
-  gs(u, gs_double, gs_add, 1, c->gsHandle, NULL);
+  gs(u, gs_double, gs_add, 0, c->gsHandle, NULL);
 
   assert(weights->size == lelt);
 
   for(GenmapInt i = 0; i < lelt; i++) {
-    weights->data[i] = 0;
+    weights->data[i] = 0.;
     for(GenmapInt j = 0; j < nc; j++) {
       weights->data[i] += u[nc * i + j];
     }
