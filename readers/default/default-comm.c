@@ -63,7 +63,6 @@ int GenmapAx_default(GenmapHandle h, GenmapComm c, GenmapVector u,
   gs(ucv, gs_double, gs_add, 0, c->edgesHandle, NULL);
 
   for(GenmapInt i = 0; i < lelt; i++) {
-    v->data[i] = weights->data[i] * u->data[i];
     for(GenmapInt j = 0; j < nc; j ++) {
       v->data[i] += ucv[nc * i + j];
     }
@@ -102,6 +101,12 @@ int GenmapAxInit_default(GenmapHandle h, GenmapComm c, GenmapVector weights) {
     }
   }
 
+#ifdef DEBUG
+  printf("proc: %d 1-weights: ", h->Id(h->global));
+  GenmapPrintVector(weights);
+  printf("\n");
+#endif
+
   for(GenmapInt i = 0; i < lelt; i++)
     for(GenmapInt j = 0; j < nc; j++)
       u[nc * i + j] = 1.;
@@ -109,11 +114,16 @@ int GenmapAxInit_default(GenmapHandle h, GenmapComm c, GenmapVector weights) {
   gs(u, gs_double, gs_add, 0, c->edgesHandle, NULL);
 
   for(GenmapInt i = 0; i < lelt; i++) {
-    weights->data[i] = 0.;
     for(GenmapInt j = 0; j < nc; j++) {
       weights->data[i] -= u[nc * i + j];
     }
   }
+
+#ifdef DEBUG
+  printf("proc: %d 2-weights: ", h->Id(h->global));
+  GenmapPrintVector(weights);
+  printf("\n");
+#endif
 
   free(u);
 

@@ -39,22 +39,12 @@ int TestAx2(GenmapHandle h, GenmapVector weights) {
   GenmapCreateOnesVector(&v, lelt);
 
   h->Ax(h, h->global, u, weights, v);
-  printf("Ax2: %d v = ", h->Id(h->global));
+
+  printf("proc: %d v: ", h->Id(h->global));
   GenmapPrintVector(v);
-  printf("\nAx2: %d weights = \n", h->Id(h->global));
-  GenmapPrintVector(weights);
   printf("\n");
 
 //  assert(GenmapVectorsEqual(v, answer, GENMAP_TOL) == 1);
-
-  for(GenmapInt i = 0; i < lelt; i++) {
-    printf("proc  : %d globalId: %d vertices: ", h->Id(h->global),
-           h->elements->globalId[i]);
-    for(GenmapInt j = 0; j < nc; j++) {
-      printf("%d ", h->elements->vertices[i * nc + j]);
-    }
-    printf("\n");
-  }
 
   GenmapDestroyVector(u);
   GenmapDestroyVector(v);
