@@ -87,7 +87,7 @@ int GenmapRead_default(GenmapHandle h, char *name) {
   GenmapInt lelt = nel / h->Np(h->global);
 
 #ifdef MPI
-  GenmapInt start = h->Id(h->global) * lelt * (2*nc + 1);
+  GenmapInt start = h->Id(h->global) * lelt * (2 * nc + 1);
   if(h->Id(h->global) == h->Np(h->global) - 1)
     lelt = nel - h->Id(h->global) * lelt;
 #endif

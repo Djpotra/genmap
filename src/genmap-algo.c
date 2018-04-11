@@ -213,11 +213,17 @@ void GenmapLanczos(GenmapHandle h, GenmapComm c, GenmapVector init,
 //      return;
 //    }
 
-    GenmapScaleVector(q1, u, 1. / beta->data[k]);
+    if(k < iter - 1) {
+      GenmapScaleVector(q1, u, 1. / beta->data[k]);
+    }
   }
 
   GenmapDestroyVector(q0);
   GenmapDestroyVector(q1);
   GenmapDestroyVector(u);
   GenmapDestroyVector(weights);
+  for(GenmapInt i = 0; i < iter; i++) {
+    GenmapDestroyVector(q[i]);
+  }
+  free(q);
 }

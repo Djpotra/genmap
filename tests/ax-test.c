@@ -18,6 +18,12 @@ int TestAx1(GenmapHandle h, GenmapVector weights) {
 
   h->Ax(h, h->global, u, weights, v);
 
+#ifdef DEBUG
+  printf("%s:%d proc: %d v: ", __FILE__, __LINE__, h->Id(h->global));
+  GenmapPrintVector(v);
+  printf("\n");
+#endif
+
   assert(GenmapVectorsEqual(v, answer, GENMAP_TOL) == 1);
 
   GenmapDestroyVector(u);
@@ -30,21 +36,78 @@ int TestAx1(GenmapHandle h, GenmapVector weights) {
 int TestAx2(GenmapHandle h, GenmapVector weights) {
   GenmapVector u, v, answer;
   GenmapInt lelt = h->header->lelt;
-  GenmapInt nc = h->header->nc;
 
   GenmapCreateZerosVector(&u, lelt);
   if(h->Id(h->global) == 0)
     u->data[0] = 1.;
-  GenmapCreateZerosVector(&answer, lelt);
   GenmapCreateOnesVector(&v, lelt);
 
   h->Ax(h, h->global, u, weights, v);
 
-  printf("proc: %d v: ", h->Id(h->global));
+#ifdef DEBUG
+  printf("%s:%d proc: %d v: ", __FILE__, __LINE__, h->Id(h->global));
   GenmapPrintVector(v);
   printf("\n");
+#endif
 
-//  assert(GenmapVectorsEqual(v, answer, GENMAP_TOL) == 1);
+#ifdef MPI
+  assert(h->Np(h->global) == 2);
+#endif
+
+  GenmapCreateZerosVector(&answer, lelt);
+  if(h->Id(h->global) == 0) {
+    answer->data[0] = -3.;
+    answer->data[1] = 1.;
+    answer->data[2] = 1.;
+    answer->data[3] = 1.;
+  }
+
+  assert(GenmapVectorsEqual(v, answer, GENMAP_TOL) == 1);
+
+  GenmapDestroyVector(u);
+  GenmapDestroyVector(v);
+  GenmapDestroyVector(answer);
+
+  return 0;
+}
+
+int TestAx3(GenmapHandle h, GenmapVector weights) {
+  GenmapVector u, v, answer;
+  GenmapInt lelt = h->header->lelt;
+
+  GenmapCreateZerosVector(&u, lelt);
+  if(h->Id(h->global) == 0)
+    u->data[2] = 1.;
+  GenmapCreateOnesVector(&v, lelt);
+
+  h->Ax(h, h->global, u, weights, v);
+
+#ifdef DEBUG
+  printf("%s:%d proc: %d v: ", __FILE__, __LINE__, h->Id(h->global));
+  GenmapPrintVector(v);
+  printf("\n");
+#endif
+
+#ifdef MPI
+  assert(h->Np(h->global) == 2);
+#endif
+
+  GenmapCreateOnesVector(&answer, lelt);
+  if(h->Id(h->global) == 0) {
+    answer->data[2] = -5.;
+  }
+  int index = 4;
+#ifdef MPI
+    index = 0;
+    if(h->Id(h->global) == 1) {
+#endif
+    answer->data[index + 2] = 0.;
+    answer->data[index + 3] = 0.;
+#ifdef MPI
+    }
+#endif
+
+  assert(GenmapVectorsEqual(v, answer, GENMAP_TOL) == 1);
 
   GenmapDestroyVector(u);
   GenmapDestroyVector(v);
@@ -72,6 +135,7 @@ int main(int argc, char **argv) {
 
   TestAx1(h, weights);
   TestAx2(h, weights);
+  TestAx3(h, weights);
 
   GenmapDestroyVector(weights);
 

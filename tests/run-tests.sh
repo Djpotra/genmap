@@ -15,6 +15,7 @@ fi
 
 if [ $test_valgrind -eq 1 ]; then
   VALGRIND_CMD="valgrind --leak-check=full --show-leak-kinds=all"
+  VALGRIND_CMD="valgrind --leak-check=full"
 fi
 if [ $test_mpi -eq 1 ]; then
   MPI_CMD="mpirun -np 2"

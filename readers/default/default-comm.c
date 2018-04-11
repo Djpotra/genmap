@@ -52,7 +52,7 @@ int GenmapAx_default(GenmapHandle h, GenmapComm c, GenmapVector u,
   for(GenmapInt i = 0; i < lelt; i++) {
     v->data[i] = weights->data[i] * u->data[i];
     for(GenmapInt j = 0; j < nc; j ++) {
-      v->data[i] -= ucv[nc * i + j];
+      v->data[i] += ucv[nc * i + j];
     }
   }
 
@@ -64,7 +64,7 @@ int GenmapAx_default(GenmapHandle h, GenmapComm c, GenmapVector u,
 
   for(GenmapInt i = 0; i < lelt; i++) {
     for(GenmapInt j = 0; j < nc; j ++) {
-      v->data[i] += ucv[nc * i + j];
+      v->data[i] -= ucv[nc * i + j];
     }
   }
 
@@ -117,6 +117,7 @@ int GenmapAxInit_default(GenmapHandle h, GenmapComm c, GenmapVector weights) {
     for(GenmapInt j = 0; j < nc; j++) {
       weights->data[i] -= u[nc * i + j];
     }
+    weights->data[i] *= -1;
   }
 
 #ifdef DEBUG
@@ -131,8 +132,8 @@ int GenmapAxInit_default(GenmapHandle h, GenmapComm c, GenmapVector weights) {
 }
 
 int GenmapGop_default(GenmapComm c, GenmapScalar *v) {
-  GenmapScalar u;
 #ifdef MPI
+  GenmapScalar u;
   MPI_Allreduce(v, &u, 1, MPI_DOUBLE, MPI_SUM, c->gsComm.c);
   *v = u;
 #endif
