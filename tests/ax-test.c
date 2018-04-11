@@ -3,8 +3,6 @@
 #ifdef MPI
 #include <mpi.h>
 #endif
-
-#include <stdio.h>
 //
 // Test Ax
 //
@@ -98,13 +96,13 @@ int TestAx3(GenmapHandle h, GenmapVector weights) {
   }
   int index = 4;
 #ifdef MPI
-    index = 0;
-    if(h->Id(h->global) == 1) {
+  index = 0;
+  if(h->Id(h->global) == 1) {
 #endif
     answer->data[index + 2] = 0.;
     answer->data[index + 3] = 0.;
 #ifdef MPI
-    }
+  }
 #endif
 
   assert(GenmapVectorsEqual(v, answer, GENMAP_TOL) == 1);

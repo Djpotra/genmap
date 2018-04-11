@@ -6,6 +6,10 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <assert.h>
+
+#ifdef DEBUG
+#include <stdio.h>
+#endif
 //
 // GenmapComm
 //

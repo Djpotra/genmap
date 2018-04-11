@@ -150,7 +150,7 @@ int GenmapSymTriDiagSolve(GenmapVector x, GenmapVector b, GenmapVector alpha,
 //
 //
 void GenmapLanczos(GenmapHandle h, GenmapComm c, GenmapVector init,
-                   GenmapInt iter, GenmapVector *q, GenmapVector alpha,
+                   GenmapInt iter, GenmapVector **q, GenmapVector alpha,
                    GenmapVector beta) {
   assert(alpha->size == iter);
   assert(alpha->size == beta->size + 1);
@@ -171,7 +171,7 @@ void GenmapLanczos(GenmapHandle h, GenmapComm c, GenmapVector init,
   beta->data[0] = 0.;
 
   // Allocate memory for q-vectors
-  GenmapMalloc(iter, &q);
+  GenmapMalloc(iter, q);
 
   normq1 = GenmapDotVector(q1, q1);
   h->Gop(c, &normq1);
@@ -185,8 +185,8 @@ void GenmapLanczos(GenmapHandle h, GenmapComm c, GenmapVector init,
 
   for(GenmapInt k = 0; k < iter; k++) {
     // Store q1
-    GenmapCreateVector(&q[k], lelt);
-    GenmapCopyVector(q[k], q1);
+    GenmapCreateVector(&(*q)[k], lelt);
+    GenmapCopyVector((*q)[k], q1);
 
     // Multiplication by the laplacian
     h->Ax(h, c, q1, weights, u);
@@ -222,8 +222,4 @@ void GenmapLanczos(GenmapHandle h, GenmapComm c, GenmapVector init,
   GenmapDestroyVector(q1);
   GenmapDestroyVector(u);
   GenmapDestroyVector(weights);
-  for(GenmapInt i = 0; i < iter; i++) {
-    GenmapDestroyVector(q[i]);
-  }
-  free(q);
 }

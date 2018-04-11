@@ -30,7 +30,7 @@ void TestLanczos1(GenmapHandle h) {
   GenmapCreateVector(&betaVec, iter - 1);
 
   GenmapVector *q = NULL;
-  GenmapLanczos(h, h->global, initVec, iter, q, alphaVec, betaVec);
+  GenmapLanczos(h, h->global, initVec, iter, &q, alphaVec, betaVec);
 
   GenmapVector evLanczos, evInit;
   GenmapCreateVector(&evLanczos, iter);
@@ -66,6 +66,10 @@ void TestLanczos1(GenmapHandle h) {
 //  printf("\n");
 
 //  assert(GenmapVectorsEqual(evOriginal, evLanczos, GENMAP_TOL) == 1);
+  for(GenmapInt i = 0; i < 10; i++) {
+    GenmapDestroyVector(q[i]);
+  }
+  free(q);
 
   GenmapDestroyVector(initVec);
   GenmapDestroyVector(alphaVec);
