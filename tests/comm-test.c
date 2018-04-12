@@ -4,6 +4,18 @@
 #include <mpi.h>
 #endif
 //
+// Test Gop
+//
+int TestGop1(GenmapHandle h) {
+  GenmapScalar u = (GenmapScalar) h->Id(h->global);
+  GenmapInt n = h->Np(h->global);
+
+  h->Gop(h->global, &u);
+  assert(abs(u - 0.5*n*(n-1)) < GENMAP_TOL);
+
+  return 0;
+}
+//
 // Test Ax
 //
 int TestAx1(GenmapHandle h, GenmapVector weights) {
@@ -126,6 +138,8 @@ int main(int argc, char **argv) {
 
   char *name = "mesh/box2D_2.bin";
   GenmapRead(h, name);
+
+  TestGop1(h);
 
   GenmapVector weights;
   GenmapCreateVector(&weights, h->header->lelt);
