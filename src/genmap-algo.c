@@ -65,10 +65,7 @@ int GenmapPowerIterNew(GenmapVector eVector, void (*Ax)(GenmapVector ax,
     if(j != iter - 1)
       GenmapScaleVector(y, y, 1.0 / GenmapNormVector(y, -1));
 
-//    printf("Thilina ");
-//    GenmapPrintVector(y);
-//    printf("\n");
-//    GenmapCopyVector(x, y);
+    GenmapCopyVector(x, y);
   }
 
   GenmapCopyVector(eVector, y);
