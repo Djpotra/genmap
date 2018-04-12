@@ -39,10 +39,13 @@ void TestLanczos1(GenmapHandle h) {
     evInit->data[i] = i + 1;
   }
 
-  GenmapScalar dot = GenmapDotVector(q[0], q[1]);
-  h->Gop(h->global, &dot);
-
-  assert(abs(dot) < GENMAP_TOL);
+  for(GenmapInt i = 0; i < iter; i++) {
+    for(GenmapInt j = i + 1; j < iter; j++) {
+      GenmapScalar dot = GenmapDotVector(q[i], q[j]);
+      h->Gop(h->global, &dot);
+      assert(abs(dot) < GENMAP_TOL);
+    }
+  }
 
   GenmapPowerIter(evLanczos, alphaVec, betaVec, evInit, iter);
 
