@@ -19,19 +19,20 @@ void Ax(GenmapVector ax, GenmapVector x, void *data) {
 void TestLanczos1(GenmapHandle h) {
   GenmapRead(h, "mesh/box2D_2.bin");
 
-  GenmapInt iter = 500;
+  GenmapInt iter = 200;
   GenmapInt lelt = h->header->lelt;
   GenmapVector initVec, alphaVec, betaVec;
+
   GenmapCreateVector(&initVec, h->header->lelt);
-  GenmapInt i = 100*h->Id(h->global);
-  for(GenmapInt j = i;  j < i + lelt; j++) {
-    initVec->data[j-i] = j;
+  for(GenmapInt i = 0;  i < lelt; i++) {
+    initVec->data[i] = i + h->Id(h->global);
   }
   GenmapCreateVector(&alphaVec, iter);
   GenmapCreateVector(&betaVec, iter - 1);
 
   GenmapVector *q = NULL;
   GenmapLanczos(h, h->global, initVec, iter, &q, alphaVec, betaVec);
+
   // Make sure that q-vectors are orthogonal
   for(GenmapInt i = 0; i < iter; i++) {
     for(GenmapInt j = i + 1; j < iter; j++) {
@@ -49,14 +50,6 @@ void TestLanczos1(GenmapHandle h) {
   }
 
   GenmapPowerIter(evTriDiag, alphaVec, betaVec, evInit, iter);
-  if(h->Id(h->global) == 0) {
-//    printf("alpha :  ");
-//    GenmapPrintVector(alphaVec);
-//    printf("\nbeta :  ");
-//    GenmapPrintVector(betaVec);
-//    printf("\nevTriDiag :  ");
-//    GenmapPrintVector(evTriDiag);
-  }
 
   // Multiply tri-diagonal matrix by [q1, q2, ...q_{iter}]
   GenmapCreateZerosVector(&evLanczos, lelt);
@@ -77,22 +70,30 @@ void TestLanczos1(GenmapHandle h) {
   GenmapCreateVector(&evOriginal, lelt);
   GenmapCreateVector(&evInit1, lelt);
   for(GenmapInt i = 0; i < lelt; i++) {
-    evInit1->data[i] = i;
+    evInit1->data[i] = 4 * h->Id(h->global) + i + 1;
   }
 
   GenmapPowerIterNew(evOriginal, Ax, &axData, evInit1, iter);
 
+  GenmapScaleVector(evLanczos, evLanczos, 1. / GenmapNormVector(evLanczos, -1));
+  GenmapScaleVector(evOriginal, evOriginal, 1. / GenmapNormVector(evOriginal,
+                    -1));
+#ifdef DEBUG
   printf("proc : %d (lanczos) ", h->Id(h->global));
   GenmapPrintVector(evLanczos);
   printf("\nproc : %d (original) ", h->Id(h->global));
   GenmapPrintVector(evOriginal);
   printf("\n");
-  for(GenmapInt i = 0; i < lelt; i++) {
-    printf("ratio: %lf\n",evLanczos->data[i]/evOriginal->data[i]);
-  }
 
-//  assert(GenmapVectorsEqual(evOriginal, evLanczos, GENMAP_TOL) == 1);
-  for(GenmapInt i = 0; i < 10; i++) {
+  for(GenmapInt i = 0; i < lelt; i++) {
+    printf("ratio: %lf\n", evLanczos->data[i] / evOriginal->data[i]);
+  }
+#endif
+
+  for(GenmapInt i = 0; i < lelt; i++) {
+    assert((abs(evLanczos->data[i] / evOriginal->data[i]) - 1.0) < GENMAP_TOL);
+  }
+  for(GenmapInt i = 0; i < iter; i++) {
     GenmapDestroyVector(q[i]);
   }
   free(q);
@@ -101,6 +102,7 @@ void TestLanczos1(GenmapHandle h) {
   GenmapDestroyVector(alphaVec);
   GenmapDestroyVector(betaVec);
   GenmapDestroyVector(evLanczos);
+  GenmapDestroyVector(evTriDiag);
   GenmapDestroyVector(evInit);
   GenmapDestroyVector(evOriginal);
   GenmapDestroyVector(weights);
