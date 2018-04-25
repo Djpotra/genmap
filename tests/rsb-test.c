@@ -15,6 +15,8 @@ int main(int argc, char **argv) {
   GenmapHandle h;
   GenmapInit(&h, MPI_COMM_WORLD, "default");
 
+  GenmapRead(h, "mesh/box2D_2.bin");
+
   GenmapFinalize(h);
 
 #ifdef MPI

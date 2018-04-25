@@ -17,9 +17,9 @@ void TestLanczos1(GenmapHandle h) {
   for(GenmapInt i = 0;  i < lelt; i++) {
     initVec->data[i] = offset + i + 1;
   }
+
   GenmapCreateVector(&alphaVec, iter);
   GenmapCreateVector(&betaVec, iter - 1);
-
   GenmapVector *q = NULL;
   GenmapLanczos(h, h->global, initVec, iter, &q, alphaVec, betaVec);
   iter = alphaVec->size;
@@ -37,7 +37,7 @@ void TestLanczos1(GenmapHandle h) {
   GenmapCreateVector(&evTriDiag, iter);
   GenmapCreateVector(&evInit, iter);
   for(GenmapInt i = 0; i < iter; i++) {
-    evInit->data[i] = offset + i + 1;
+    evInit->data[i] = i + 1;
   }
 
   GenmapPowerIter(evTriDiag, alphaVec, betaVec, evInit, iter * 20);
@@ -51,7 +51,7 @@ void TestLanczos1(GenmapHandle h) {
   }
 
 #ifdef DEBUG
-  printf("proc : %d (lanczos) ", h->Id(h->global));
+  printf("proc : %d (lanczos power) ", h->Id(h->global));
   GenmapPrintVector(evLanczos);
   printf("\n");
 #endif
@@ -69,6 +69,170 @@ void TestLanczos1(GenmapHandle h) {
   GenmapDestroyVector(evInit);
 }
 
+void TestLanczos2(GenmapHandle h) {
+  GenmapRead(h, "mesh/box2D_2.bin");
+
+  GenmapInt iter = 10;
+  GenmapInt lelt = h->header->lelt;
+  GenmapVector initVec, alphaVec, betaVec;
+  GenmapInt offset = h->Id(h->global) * h->header->lelt;
+
+  GenmapCreateVector(&initVec, h->header->lelt);
+  for(GenmapInt i = 0;  i < lelt; i++) {
+    initVec->data[i] = offset + i + 1;
+  }
+
+  GenmapCreateVector(&alphaVec, iter);
+  GenmapCreateVector(&betaVec, iter - 1);
+  GenmapVector *q = NULL;
+  GenmapLanczos(h, h->global, initVec, iter, &q, alphaVec, betaVec);
+  iter = alphaVec->size;
+
+  // Make sure that q-vectors are orthogonal
+  for(GenmapInt i = 0; i < iter; i++) {
+    for(GenmapInt j = i + 1; j < iter; j++) {
+      GenmapScalar dot = GenmapDotVector(q[i], q[j]);
+      h->Gop(h->global, &dot);
+      assert(fabs(dot - 0) < GENMAP_TOL);
+    }
+  }
+
+  GenmapVector evLanczos, evTriDiag, evInit;
+  GenmapCreateVector(&evTriDiag, iter);
+  GenmapCreateVector(&evInit, iter);
+  for(GenmapInt i = 0; i < iter; i++) {
+    evInit->data[i] = i + 1;
+  }
+
+  GenmapInvPowerIter(evTriDiag, alphaVec, betaVec, evInit, iter * 10);
+
+  // Multiply tri-diagonal matrix by [q1, q2, ...q_{iter}]
+  GenmapCreateZerosVector(&evLanczos, lelt);
+  for(GenmapInt i = 0; i < lelt; i++) {
+    for(GenmapInt j = 0; j < iter; j++) {
+      evLanczos->data[i] += q[j]->data[i] * evTriDiag->data[j];
+    }
+  }
+
+  GenmapScaleVector(evLanczos, evLanczos, 1.0 / GenmapNormVector(evLanczos, 2));
+
+#ifdef DEBUG
+  printf("proc : %d (lanczos invpower) ", h->Id(h->global));
+  GenmapPrintVector(evLanczos);
+  printf("\n");
+#endif
+
+  for(GenmapInt i = 0; i < iter; i++) {
+    GenmapDestroyVector(q[i]);
+  }
+  free(q);
+
+  GenmapDestroyVector(initVec);
+  GenmapDestroyVector(alphaVec);
+  GenmapDestroyVector(betaVec);
+  GenmapDestroyVector(evLanczos);
+  GenmapDestroyVector(evTriDiag);
+  GenmapDestroyVector(evInit);
+}
+
+void TestLanczos3(GenmapHandle h) {
+  GenmapRead(h, "mesh/box2D_2.bin");
+
+  GenmapInt iter = 10;
+  GenmapInt lelt = h->header->lelt;
+  GenmapVector initVec, alphaVec, betaVec;
+  GenmapInt offset = h->Id(h->global) * h->header->lelt;
+
+  GenmapCreateVector(&initVec, h->header->lelt);
+  GenmapScalar sum = 0.0;
+  for(GenmapInt i = 0; i < lelt; i++) {
+    initVec->data[i] = offset + i + 1;
+    sum += initVec->data[i];
+  }
+
+  h->Gop(h->global, &sum);
+
+  for(GenmapInt i = 0;  i < lelt; i++) {
+    initVec->data[i] -= sum / h->header->nel;
+  }
+
+  GenmapCreateVector(&alphaVec, iter);
+  GenmapCreateVector(&betaVec, iter - 1);
+  GenmapVector *q = NULL;
+  GenmapLanczos(h, h->global, initVec, iter, &q, alphaVec, betaVec);
+  iter = alphaVec->size;
+
+  // Make sure that q-vectors are orthogonal
+  for(GenmapInt i = 0; i < iter; i++) {
+    for(GenmapInt j = i + 1; j < iter; j++) {
+      GenmapScalar dot = GenmapDotVector(q[i], q[j]);
+      h->Gop(h->global, &dot);
+      assert(fabs(dot - 0) < GENMAP_TOL);
+    }
+  }
+
+  GenmapVector evLanczos, evTriDiag, evInit;
+  GenmapCreateVector(&evTriDiag, iter);
+  GenmapCreateVector(&evInit, iter);
+  sum = 0.0;
+  for(GenmapInt i = 0; i < iter; i++) {
+    evInit->data[i] = i + 1;
+    sum += evInit->data[i];
+  }
+
+  for(GenmapInt i = 0;  i < iter; i++) {
+    evInit->data[i] -= sum / iter;
+  }
+
+//  if(h->Id(h->local) == 0) {
+//    printf("evInit = ");
+//    GenmapPrintVector(evInit);
+//    printf("\n");
+//  }
+//  if(h->Id(h->local) == 0) {
+//    printf("alphaVec = ");
+//    GenmapPrintVector(alphaVec);
+//    printf("\n");
+//  }
+//  if(h->Id(h->local) == 0) {
+//    printf("betaVec = ");
+//    GenmapPrintVector(betaVec);
+//    printf("\n");
+//  }
+
+  GenmapInvPowerIter(evTriDiag, alphaVec, betaVec, evInit, iter * 10);
+
+//  if(h->Id(h->local) == 0) {
+//    printf("evTriDiag = ");
+//    GenmapPrintVector(evTriDiag);
+//    printf("\n");
+//  }
+
+  // Multiply tri-diagonal matrix by [q1, q2, ...q_{iter}]
+  GenmapCreateZerosVector(&evLanczos, lelt);
+  for(GenmapInt i = 0; i < lelt; i++) {
+    for(GenmapInt j = 0; j < iter; j++) {
+      evLanczos->data[i] += q[j]->data[i] * evTriDiag->data[j];
+    }
+  }
+
+  GenmapScaleVector(evLanczos, evLanczos, 1.0 / GenmapNormVector(evLanczos, 2));
+  printf("proc : %d (lanczos fiedler) ", h->Id(h->global));
+  GenmapPrintVector(evLanczos);
+  printf("\n");
+
+  for(GenmapInt i = 0; i < iter; i++) {
+    GenmapDestroyVector(q[i]);
+  }
+  free(q);
+
+  GenmapDestroyVector(initVec);
+  GenmapDestroyVector(alphaVec);
+  GenmapDestroyVector(betaVec);
+  GenmapDestroyVector(evLanczos);
+  GenmapDestroyVector(evTriDiag);
+  GenmapDestroyVector(evInit);
+}
 int main(int argc, char **argv) {
 #ifdef MPI
   MPI_Init(&argc, &argv);
@@ -80,6 +244,8 @@ int main(int argc, char **argv) {
   GenmapInit(&h, MPI_COMM_WORLD, "default");
 
   TestLanczos1(h);
+  TestLanczos2(h);
+  TestLanczos3(h);
 
   GenmapFinalize(h);
 

@@ -209,6 +209,10 @@ void GenmapLanczos(GenmapHandle h, GenmapComm c, GenmapVector init,
     if(fabs(beta->data[k]) < GENMAP_TOL) {
       beta->size = k;
       alpha->size = k + 1;
+      GenmapDestroyVector(q0);
+      GenmapDestroyVector(q1);
+      GenmapDestroyVector(u);
+      GenmapDestroyVector(weights);
       return;
     }
 
@@ -223,8 +227,59 @@ void GenmapLanczos(GenmapHandle h, GenmapComm c, GenmapVector init,
   GenmapDestroyVector(weights);
 }
 
-void GenmapRQI() {
+void GenmapPrimeFactors(GenmapInt n, GenmapInt *primes) {
 }
 
-void GenmapRSB() {
+void GenmapRQI(GenmapHandle h) {
+}
+
+void GenmapRSB(GenmapHandle h) {
+  // Assume that global and local communicators are
+  // initialized correctly.
+
+  // 1. Do lanczos in local communicator.
+  GenmapInt lelt = h->header->lelt;
+  GenmapInt iter = 10;
+  GenmapVector initVec, alphaVec, betaVec;
+  GenmapInt offset = h->Id(h->local) * h->header->lelt;
+
+  GenmapCreateVector(&initVec, h->header->lelt);
+  for(GenmapInt i = 0;  i < lelt; i++) {
+    initVec->data[i] = offset + i + 1;
+  }
+
+  GenmapCreateVector(&alphaVec, iter);
+  GenmapCreateVector(&betaVec, iter - 1);
+  GenmapVector *q = NULL;
+  GenmapLanczos(h, h->local, initVec, iter, &q, alphaVec, betaVec);
+  iter = alphaVec->size;
+
+  // 2. Do inverse power iteration on local communicator.
+  // Initialize data to remove the components of 1-vector.
+  GenmapVector evLanczos, evTriDiag, evInit;
+  GenmapCreateVector(&evTriDiag, iter);
+  GenmapCreateVector(&evInit, iter);
+  GenmapScalar sum = 0.0;
+  for(GenmapInt i = 0; i < iter; i++) {
+    evInit->data[i] = i + 1;
+    sum += evInit->data[i];
+  }
+
+  for(GenmapInt i = 0;  i < lelt; i++) {
+    evInit->data[i] -= sum / sqrt(h->header->nel);
+  }
+
+  // Create the init vector removing the components of 1-vector
+  // from initial guess
+  GenmapInvPowerIter(evTriDiag, alphaVec, betaVec, evInit, iter * 20);
+
+  // Multiply tri-diagonal matrix by [q1, q2, ...q_{iter}]
+  GenmapCreateZerosVector(&evLanczos, lelt);
+  for(GenmapInt i = 0; i < lelt; i++) {
+    for(GenmapInt j = 0; j < iter; j++) {
+      evLanczos->data[i] += q[j]->data[i] * evTriDiag->data[j];
+    }
+  }
+
+  // Project the local Fiedler vector to global space
 }
