@@ -68,7 +68,7 @@ void lanczos(Vector *alpha, Vector *beta, Vector **q, struct comm *c,
 
     copy_vector(&q0, &q1);
 
-//    if (abs(beta->vv[k]) < DBL_EPSILON) {
+//    if (fabs(beta->vv[k]) < DBL_EPSILON) {
 //      beta->size = k;
 //      alpha->size = k + 1;
 //      return;
@@ -142,7 +142,7 @@ void lanczos_old(Vector *alpha, Vector *beta, Vector **q, struct comm *c,
 
     copy_vector(&q0, &q1);
 
-//    if (abs(beta->vv[k]) < DBL_EPSILON) {
+//    if (fabs(beta->vv[k]) < DBL_EPSILON) {
 //      beta->size = k;
 //      alpha->size = k + 1;
 //      return;

@@ -114,11 +114,11 @@ void TestPowerIter1() {
   GenmapScalar eValCorrect = 4.60555127546399;
   GenmapScalar eVal = 0;
   for(GenmapInt i = 0; i < n; i++) {
-    if(abs(eVector->data[i]) > eVal)
+    if(fabs(eVector->data[i]) > eVal)
       eVal = eVector->data[i];
   }
 
-  assert(abs(eVal - eValCorrect) < GENMAP_TOL);
+  assert(fabs(eVal - eValCorrect) < GENMAP_TOL);
 
   GenmapScaleVector(eVector, eVector, 1.0 / GenmapNormVector(eVector, 2));
 
@@ -154,11 +154,11 @@ void TestPowerIter2() {
   GenmapScalar eValCorrect = 5.745281240174139;
   GenmapScalar eVal = 0;
   for(GenmapInt i = 0; i < n; i++) {
-    if(abs(eVector->data[i]) > eVal)
+    if(fabs(eVector->data[i]) > eVal)
       eVal = eVector->data[i];
   }
 
-  assert(abs(eVal - eValCorrect) < GENMAP_TOL);
+  assert(fabs(eVal - eValCorrect) < GENMAP_TOL);
 
   GenmapScaleVector(eVector, eVector, 1.0 / GenmapNormVector(eVector, 2));
 
@@ -193,11 +193,11 @@ void TestInvPowerIter1() {
   GenmapScalar eValCorrect = 1.0;
   GenmapScalar eVal = 0;
   for(GenmapInt i = 0; i < n; i++) {
-    if(abs(eVector->data[i]) > eVal)
+    if(fabs(eVector->data[i]) > eVal)
       eVal = eVector->data[i];
   }
 
-  assert(abs(eVal - eValCorrect) < GENMAP_TOL);
+  assert(fabs(eVal - eValCorrect) < GENMAP_TOL);
 
   GenmapScaleVector(eVector, eVector, 1.0 / GenmapNormVector(eVector, 2));
 
@@ -234,11 +234,11 @@ void TestInvPowerIter2() {
   GenmapScalar eValCorrect = 0.796991351383626;
   GenmapScalar eVal = 0;
   for(GenmapInt i = 0; i < n; i++) {
-    if(abs(eVector->data[i]) > eVal)
+    if(fabs(eVector->data[i]) > eVal)
       eVal = eVector->data[i];
   }
 
-  assert(abs(eVal - eValCorrect) < GENMAP_TOL);
+  assert(fabs(eVal - eValCorrect) < GENMAP_TOL);
 
   GenmapScaleVector(eVector, eVector, 1.0 / GenmapNormVector(eVector, 2));
 

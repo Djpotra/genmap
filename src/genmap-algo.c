@@ -32,8 +32,10 @@ int GenmapPowerIter(GenmapVector eVector, GenmapVector alpha,
                        x->data[n - 1];
 
       // Normalize by inf-norm(y)
-      if(j != iter - 1)
-        GenmapScaleVector(y, y, 1.0 / GenmapNormVector(y, -1));
+      if(j != iter - 1) {
+        GenmapScalar norm = GenmapNormVector(y, -1);
+        GenmapScaleVector(y, y, 1.0 / norm);
+      }
 
       GenmapCopyVector(x, y);
     }
@@ -189,7 +191,7 @@ void GenmapLanczos(GenmapHandle h, GenmapComm c, GenmapVector init,
     h->Ax(h, c, q1, weights, u);
 
     alpha->data[k] = GenmapDotVector(q1, u);
-    h->Gop(h->local, &alpha->data[k]);
+    h->Gop(c, &alpha->data[k]);
 
     GenmapAxpbyVector(u, u, 1., q0, -b);
     GenmapAxpbyVector(u, u, 1., q1, -alpha->data[k]);
@@ -204,11 +206,11 @@ void GenmapLanczos(GenmapHandle h, GenmapComm c, GenmapVector init,
 
     GenmapCopyVector(q0, q1);
 
-//    if(abs(beta->data[k]) < GENMAP_TOL) {
-//      beta->size = k;
-//      alpha->size = k + 1;
-//      return;
-//    }
+    if(fabs(beta->data[k]) < GENMAP_TOL) {
+      beta->size = k;
+      alpha->size = k + 1;
+      return;
+    }
 
     if(k < iter - 1) {
       GenmapScaleVector(q1, u, 1. / beta->data[k]);
@@ -219,4 +221,10 @@ void GenmapLanczos(GenmapHandle h, GenmapComm c, GenmapVector init,
   GenmapDestroyVector(q1);
   GenmapDestroyVector(u);
   GenmapDestroyVector(weights);
+}
+
+void GenmapRQI() {
+}
+
+void GenmapRSB() {
 }
