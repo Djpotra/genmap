@@ -27,7 +27,7 @@ fi
 echo "MPI_CMD = ${MPI_CMD}"
 echo "VALGRIND_CMD = ${VALGRIND_CMD}"
 
-for np in 2; do
+for np in 2 4; do
   for i in *-test.o; do
     $MPI_CMD $np $VALGRIND_CMD ./$i
   done

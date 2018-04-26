@@ -141,12 +141,11 @@ void TestLanczos3(GenmapHandle h) {
   GenmapInt iter = 10;
   GenmapInt lelt = h->header->lelt;
   GenmapVector initVec, alphaVec, betaVec;
-  GenmapInt offset = h->Id(h->global) * h->header->lelt;
 
   GenmapCreateVector(&initVec, h->header->lelt);
   GenmapScalar sum = 0.0;
   for(GenmapInt i = 0; i < lelt; i++) {
-    initVec->data[i] = offset + i + 1;
+    initVec->data[i] = h->elements->globalId[i];
     sum += initVec->data[i];
   }
 
@@ -174,39 +173,11 @@ void TestLanczos3(GenmapHandle h) {
   GenmapVector evLanczos, evTriDiag, evInit;
   GenmapCreateVector(&evTriDiag, iter);
   GenmapCreateVector(&evInit, iter);
-//  sum = 0.0;
   for(GenmapInt i = 0; i < iter; i++) {
-    evInit->data[i] = 2*i;
-//    sum += evInit->data[i];
-  }
-
-//  for(GenmapInt i = 0;  i < iter; i++) {
-//    evInit->data[i] -= sum / iter;
-//  }
-
-//  if(h->Id(h->local) == 0) {
-//    printf("evInit = ");
-//    GenmapPrintVector(evInit);
-//    printf("\n");
-//  }
-  if(h->Id(h->local) == 0) {
-    printf("alphaVec = ");
-    GenmapPrintVector(alphaVec);
-    printf("\n");
-  }
-  if(h->Id(h->local) == 0) {
-    printf("betaVec = ");
-    GenmapPrintVector(betaVec);
-    printf("\n");
+    evInit->data[i] = i + 1;
   }
 
   GenmapInvPowerIter(evTriDiag, alphaVec, betaVec, evInit, iter * 10);
-
-  if(h->Id(h->local) == 0) {
-    printf("evTriDiag = ");
-    GenmapPrintVector(evTriDiag);
-    printf("\n");
-  }
 
   // Multiply tri-diagonal matrix by [q1, q2, ...q_{iter}]
   GenmapCreateZerosVector(&evLanczos, lelt);
@@ -216,10 +187,11 @@ void TestLanczos3(GenmapHandle h) {
     }
   }
 
-  GenmapScaleVector(evLanczos, evLanczos, 1.0 / GenmapNormVector(evLanczos, 2));
+#ifdef DEBUG
   printf("proc : %d (lanczos fiedler) ", h->Id(h->global));
   GenmapPrintVector(evLanczos);
   printf("\n");
+#endif
 
   for(GenmapInt i = 0; i < iter; i++) {
     GenmapDestroyVector(q[i]);

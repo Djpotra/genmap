@@ -9,7 +9,7 @@ GSLIBDIR=$(GSDIR)/src
 
 MPI ?= 1
 VALGRIND ?= 0
-DEBUG ?= 1
+DEBUG ?= 0
 ASAN ?= 0
 
 SRCROOT =.
