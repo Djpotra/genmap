@@ -50,6 +50,10 @@ void TestLanczos1(GenmapHandle h) {
     }
   }
 
+  GenmapScalar lNorm = GenmapNormVector(evLanczos, 2);
+  lNorm = lNorm*lNorm;
+  h->Gop(h->global, &lNorm);
+  GenmapScaleVector(evLanczos, evLanczos, 1. / sqrt(lNorm));
 #ifdef DEBUG
   printf("proc : %d (lanczos power) ", h->Id(h->global));
   GenmapPrintVector(evLanczos);
@@ -114,8 +118,10 @@ void TestLanczos2(GenmapHandle h) {
     }
   }
 
-  GenmapScaleVector(evLanczos, evLanczos, 1.0 / GenmapNormVector(evLanczos, 2));
-
+  GenmapScalar lNorm = GenmapNormVector(evLanczos, 2);
+  lNorm = lNorm*lNorm;
+  h->Gop(h->global, &lNorm);
+  GenmapScaleVector(evLanczos, evLanczos, 1. / sqrt(lNorm));
 #ifdef DEBUG
   printf("proc : %d (lanczos invpower) ", h->Id(h->global));
   GenmapPrintVector(evLanczos);
@@ -187,6 +193,9 @@ void TestLanczos3(GenmapHandle h) {
     }
   }
 
+  GenmapScalar lNorm = GenmapNormVector(evLanczos, 2);
+  lNorm = lNorm*lNorm;
+  h->Gop(h->global, &lNorm);
 #ifdef DEBUG
   printf("proc : %d (lanczos fiedler) ", h->Id(h->global));
   GenmapPrintVector(evLanczos);
