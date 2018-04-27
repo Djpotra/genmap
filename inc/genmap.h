@@ -117,6 +117,7 @@ int GenmapAx(GenmapHandle h, GenmapComm c, GenmapVector u,
 void GenmapLanczos(GenmapHandle h, GenmapComm c, GenmapVector init,
                    GenmapInt iter, GenmapVector **q, GenmapVector alpha,
                    GenmapVector beta);
+void GenmapRSB(GenmapHandle h);
 //
 // Linear solve
 //

@@ -1,6 +1,8 @@
 #include <genmap-impl.h>
 
 #include <math.h>
+#include <stdio.h>
+
 //
 // Algorithms
 //
@@ -290,9 +292,12 @@ void GenmapRSB(GenmapHandle h) {
   GenmapScaleVector(evLanczos, evLanczos, 1. / sqrt(lNorm));
 
   // 3. Do Rayleigh Quotient Iteration on the combination of local
-  // fiedler vectors. Just do Lanczos for now.
+  // fiedler vectors. Just do Lanczos for now. We get the global
+  // fiedler vector.
   GenmapLanczos(h, h->global, evLanczos, iter, &q, alphaVec, betaVec);
   iter = alphaVec->size;
+  evInit->size = iter;
+  evTriDiag->size = iter;
 
   GenmapInvPowerIter(evTriDiag, alphaVec, betaVec, evInit, iter * 30);
 
@@ -303,6 +308,19 @@ void GenmapRSB(GenmapHandle h) {
       evLanczos->data[i] += q[j]->data[i] * evTriDiag->data[j];
     }
   }
+
+  lNorm = 0;
+  for(GenmapInt i = 0; i < lelt; i++) {
+    lNorm += evLanczos->data[i] * evLanczos->data[i];
+  }
+  h->Gop(h->global, &lNorm);
+  GenmapScaleVector(evLanczos, evLanczos, 1. / sqrt(lNorm));
+
+//#ifdef DEBUG
+  printf("proc : %d (lanczos fiedler) ", h->Id(h->global));
+  GenmapPrintVector(evLanczos);
+  printf("\n");
+//#endif
 
   // 4. Exchange elements based on global Fiedler vector
 

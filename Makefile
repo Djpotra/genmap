@@ -45,7 +45,9 @@ DEFAULTOBJS = $(DEFAULTSRCS:.c=.o)
 
 TESTCSRC:= $(TESTDIR)/vector-test.c $(TESTDIR)/algo-test.c \
 	   $(TESTDIR)/genmap-test.c $(TESTDIR)/io-test.c \
-	   $(TESTDIR)/comm-test.c $(TESTDIR)/lanczos-test.c
+	   $(TESTDIR)/comm-test.c $(TESTDIR)/lanczos-test.c \
+	   $(TESTDIR)/rsb-test.c
+
 TESTCOBJ:=$(TESTCSRC:.c=.o)
 TESTFSRC:=
 TESTFOBJ:=$(TESTFSRC:.f=.o)
