@@ -1,68 +1,78 @@
 TARGET=genmap
-LIB=lib$(TARGET).a
-TESTS=tests
-
+TEST=test
 GSLIB=gslib
-GSDIR ?= $(SRCROOT)/../gslib/src
-MPI ?= 1
-DEBUG ?= 1
 
+LIB=lib$(TARGET).a
+
+GSDIR ?= $(SRCROOT)/../$(GSLIB)
+GSLIBDIR=$(GSDIR)/src
+
+MPI ?= 1
+VALGRIND ?= 0
+DEBUG ?= 0
+ASAN ?= 0
+
+SRCROOT =.
+SRCDIR  =$(SRCROOT)/src
+INCDIR  =$(SRCROOT)/inc
+READERSDIR=$(SRCROOT)/readers
+BUILDDIR=$(SRCROOT)/build
+TESTDIR =$(SRCROOT)/tests
+DEFAULTDIR=$(READERSDIR)/default
+
+AFLAGS = -fsanitize=address
 CC=mpicc
-CFLAGS=-std=c99 -O2 -Wall -Wextra -g -Wno-unused-function -Wno-unused-parameter
+CFLAGS= -std=c99 -O2 -Wall -Wextra -Wno-unused-function -Wno-unused-parameter
 FC=mpif77
 FFLAGS=
 CXX=mpic++
 CXXFLAGS=
 
-SRCROOT =.
-SRCDIR  =$(SRCROOT)/src
-INCDIR  =$(SRCROOT)/inc
-INCFLAGS=-I$(INCDIR) -I$(GSDIR)
-TESTDIR =$(SRCROOT)/tests
+INCFLAGS=-I$(INCDIR) -I$(GSLIBDIR) -I$(DEFAULTDIR)
+LDFLAGS:=-L$(GSLIBDIR) -lgs
+TESTLDFLAGS:=-L. -Wl,-rpath=. -l$(TARGET) -L$(GSLIBDIR) -lgs -lm
 
-CSRCS:=$(SRCDIR)/io.c $(SRCDIR)/lanczos.c $(SRCDIR)/linalg.c \
-    $(SRCDIR)/csr.c $(SRCDIR)/test.c $(SRCDIR)/laplacian.c  \
-    $(SRCDIR)/gswrapper.c $(SRCDIR)/power.c
-
+CSRCS:= $(SRCDIR)/genmap-vector.c $(SRCDIR)/genmap-algo.c \
+	$(SRCDIR)/genmap-io.c $(SRCDIR)/genmap-comm.c $(SRCDIR)/genmap.c
 COBJS:=$(CSRCS:.c=.o)
+
 FSRCS:=
 FOBJS:=$(FSRCS:.f=.o)
-LDFLAGS:=-lm -L$(GSDIR) -lgs
 
-TESTCSRC:=$(TESTDIR)/readmap_test.c $(TESTDIR)/csr_test.c \
-    $(TESTDIR)/vector_test.c $(TESTDIR)/lanczos_serial_test.c   \
-    $(TESTDIR)/gs_test.c $(TESTDIR)/laplacian_test.c     \
-    $(TESTDIR)/gop_test.c $(TESTDIR)/lanczos_parallel_test.c \
-    $(TESTDIR)/mpiio_test.c $(TESTDIR)/power_test.c \
-    $(TESTDIR)/symtridiag_solve_test.c $(TESTDIR)/rsb_test.c \
-    $(TESTDIR)/rsb1_test.c
+DEFAULTSRCS = $(DEFAULTDIR)/default.c $(DEFAULTDIR)/default-comm.c \
+	      $(DEFAULTDIR)/default-io.c
+DEFAULTOBJS = $(DEFAULTSRCS:.c=.o)
 
+TESTCSRC:= $(TESTDIR)/vector-test.c $(TESTDIR)/algo-test.c \
+	   $(TESTDIR)/genmap-test.c $(TESTDIR)/io-test.c \
+	   $(TESTDIR)/comm-test.c $(TESTDIR)/lanczos-test.c
 TESTCOBJ:=$(TESTCSRC:.c=.o)
 TESTFSRC:=
 TESTFOBJ:=$(TESTFSRC:.f=.o)
-TESTLDFLAGS:=-L. -lgenmap -Wl,-rpath=. -L$(GSDIR) -lgs -lm
 
-SRCOBJS :=$(COBJS) $(FOBJS)
+SRCOBJS :=$(COBJS) $(FOBJS) $(DEFAULTOBJS)
 TESTOBJS:=$(TESTCOBJ) $(TESTFOBJ)
 
+ifeq ($(ASAN),1)
+	CFLAGS+= $(AFLAGS)
+	FFLAGS+= $(AFLAGS)
+	LDFLAGS+= $(AFLAGS)
+	TESTLDFLAGS+= $(AFLAGS)
+endif
 ifeq ($(MPI),1)
 	CFLAGS+= -DMPI
 endif
 ifeq ($(DEBUG),1)
 	CFLAGS+= -DDEBUG
+	CFLAGS+= -g3
 endif
 
 .PHONY: all
-all: $(TARGET) $(TESTS)
-
-#.PHONY: $(GSLIB)
-#$(GSLIB): $(GSDIR)
-#    cd $(GSDIR) && $(MAKE) -j -B
-#MPI=1
-#CC=$(CC) CFLAGS=$(CFLAGS) ADDUS=0 lib
+all: $(TARGET) $(TEST)
 
 .PHONY: $(TARGET)
-$(TARGET): $(COBJS) $(FOBJS)
+$(TARGET): $(SRCOBJS)
+#	$(CC) $(LDFLAGS) -shared -o $(LIB) $(SRCOBJS)
 	@$(AR) cr $(LIB) $(SRCOBJS)
 	@ranlib $(LIB)
 
@@ -72,8 +82,12 @@ $(COBJS): %.o: %.c
 $(FOBJS): %.o: %.f
 	$(FC) $(FFLAGS) $(INCFLAGS) -c $< -o $@
 
-.PHONY: $(TESTS)
-$(TESTS): $(TESTCOBJ) $(TESTFOBJ)
+$(DEFAULTOBJS): %.o: %.c
+	$(CC) $(CFLAGS) $(INCFLAGS) -c $< -o $@
+
+.PHONY: $(TEST)
+$(TEST): $(TESTCOBJ) $(TESTFOBJ)
+	@cd $(TESTDIR) && ./run-tests.sh $(MPI) $(VALGRIND)
 
 $(TESTCOBJ): %.o: %.c
 	$(CC) $(CFLAGS) $(INCFLAGS) $< -o $@ $(TESTLDFLAGS)
@@ -81,9 +95,13 @@ $(TESTCOBJ): %.o: %.c
 $(TESTFOBJ): %.o: %.f
 	$(FC) $(FFLAGS) $(INCFLAGS) $< -o $@ $(TESTLDFLAGS)
 
+.PHONY: $(GSLIB)
+$(GSLIB):
+	make CC=$(CC) MPI=$(MPI) -C $(GSDIR)
+
 .PHONY: clean
 clean:
-	rm -f $(SRCOBJS) $(TESTOBJS) $(TARGET)
+	@rm -f $(SRCOBJS) $(TESTOBJS) $(TARGET)
 
 .PHONY: astyle
 astyle:

@@ -143,7 +143,6 @@ int32 main(int32 argc, char** argv) {
 
   // Set number of partitions to number of MPI ranks
   int32 np = global.np; int32 global_id = global.id;
-  int32 npartn = np;
   // Partition id
   int32 partn_id = global_id;
 
@@ -199,7 +198,7 @@ int32 main(int32 argc, char** argv) {
       for(int32 j = 0; j < n; j++) {
         fiedler.vv[i] += q[j].vv[i] * eVector.vv[j];
       }
-      fiedler.vv[i] = fabs(fiedler.vv[i]);
+      fiedler.vv[i] = ffabs(fiedler.vv[i]);
       if(partn_max < fiedler.vv[i]) {
         partn_max = fiedler.vv[i];
       }
@@ -274,7 +273,6 @@ int32 main(int32 argc, char** argv) {
     printf("(%lf, %d), ", elements[i].fiedler, elements[i].globalId);
   }
   printf("], %d\n", global.id);
-
 #endif
 
   finalize_genmap(&global);
