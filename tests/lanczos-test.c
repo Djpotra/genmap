@@ -148,6 +148,7 @@ void TestLanczos2(GenmapHandle h) {
 
   GenmapInt n = 8;
   GenmapVector answer;
+  // Numpy gives the negative of this vector
   GenmapScalar d[8] = {0.3535533905932737, 0.3535533905932736, 0.3535533905932737,
                        0.3535533905932737, 0.3535533905932737, 0.3535533905932737,
                        0.353553390593274,  0.353553390593274
