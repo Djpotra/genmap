@@ -238,14 +238,21 @@ void GenmapRSB(GenmapHandle h) {
   // initialized correctly.
 
   // 1. Do lanczos in local communicator.
-  GenmapInt lelt = h->header->lelt;
   GenmapInt iter = 10;
+  GenmapInt lelt = h->header->lelt;
   GenmapVector initVec, alphaVec, betaVec;
-  GenmapInt offset = h->Id(h->local) * h->header->lelt;
 
   GenmapCreateVector(&initVec, h->header->lelt);
+  GenmapScalar sum = 0.0;
   for(GenmapInt i = 0;  i < lelt; i++) {
-    initVec->data[i] = offset + i + 1;
+    initVec->data[i] = h->elements->globalId[i];
+    sum += initVec->data[i];
+  }
+
+  h->Gop(h->global, &sum);
+
+  for(GenmapInt i = 0;  i < lelt; i++) {
+    initVec->data[i] -= sum / h->header->nel;
   }
 
   GenmapCreateVector(&alphaVec, iter);
@@ -254,24 +261,16 @@ void GenmapRSB(GenmapHandle h) {
   GenmapLanczos(h, h->local, initVec, iter, &q, alphaVec, betaVec);
   iter = alphaVec->size;
 
-  // 2. Do inverse power iteration on local communicator.
-  // Initialize data to remove the components of 1-vector.
+  // 2. Do inverse power iteration on local communicator and find
+  // local Fiedler vector.
   GenmapVector evLanczos, evTriDiag, evInit;
   GenmapCreateVector(&evTriDiag, iter);
   GenmapCreateVector(&evInit, iter);
-  GenmapScalar sum = 0.0;
   for(GenmapInt i = 0; i < iter; i++) {
     evInit->data[i] = i + 1;
-    sum += evInit->data[i];
   }
 
-  for(GenmapInt i = 0;  i < lelt; i++) {
-    evInit->data[i] -= sum / sqrt(h->header->nel);
-  }
-
-  // Create the init vector removing the components of 1-vector
-  // from initial guess
-  GenmapInvPowerIter(evTriDiag, alphaVec, betaVec, evInit, iter * 20);
+  GenmapInvPowerIter(evTriDiag, alphaVec, betaVec, evInit, iter * 30);
 
   // Multiply tri-diagonal matrix by [q1, q2, ...q_{iter}]
   GenmapCreateZerosVector(&evLanczos, lelt);
@@ -281,5 +280,26 @@ void GenmapRSB(GenmapHandle h) {
     }
   }
 
-  // Project the local Fiedler vector to global space
+  GenmapScalar lNorm = 0;
+  for(GenmapInt i = 0; i < lelt; i++) {
+    lNorm += evLanczos->data[i] * evLanczos->data[i];
+  }
+  h->Gop(h->local, &lNorm);
+  GenmapScaleVector(evLanczos, evLanczos, 1. / sqrt(lNorm));
+  
+  // 3. Project the local Fiedler vector to global space
+  // dddd
+
+  // n. Destory the data structures
+  for(GenmapInt i = 0; i < iter; i++) {
+    GenmapDestroyVector(q[i]);
+  }
+  free(q);
+
+  GenmapDestroyVector(initVec);
+  GenmapDestroyVector(alphaVec);
+  GenmapDestroyVector(betaVec);
+  GenmapDestroyVector(evLanczos);
+  GenmapDestroyVector(evTriDiag);
+  GenmapDestroyVector(evInit);
 }
