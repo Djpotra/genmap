@@ -79,7 +79,7 @@ void TestLanczos1(GenmapHandle h) {
   for(GenmapInt i = 0; i < iter; i++) {
     GenmapDestroyVector(q[i]);
   }
-  free(q);
+  GenmapFree(q);
 
   GenmapDestroyVector(initVec);
   GenmapDestroyVector(alphaVec);
@@ -164,7 +164,7 @@ void TestLanczos2(GenmapHandle h) {
   for(GenmapInt i = 0; i < iter; i++) {
     GenmapDestroyVector(q[i]);
   }
-  free(q);
+  GenmapFree(q);
 
   GenmapDestroyVector(initVec);
   GenmapDestroyVector(alphaVec);
@@ -255,7 +255,7 @@ void TestLanczos3(GenmapHandle h) {
   for(GenmapInt i = 0; i < iter; i++) {
     GenmapDestroyVector(q[i]);
   }
-  free(q);
+  GenmapFree(q);
 
   GenmapDestroyVector(initVec);
   GenmapDestroyVector(alphaVec);

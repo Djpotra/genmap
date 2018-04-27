@@ -55,13 +55,11 @@ int GenmapSetVector(GenmapVector x, GenmapScalar *array) {
 
 int GenmapDestroyVector(GenmapVector x) {
   if(x->data) {
-    free(x->data);
-    x->data = NULL;
+    GenmapFree(x->data);
   }
 
   if(x) {
-    free(x);
-    x = NULL;
+    GenmapFree(x);
   }
 
   return 0;

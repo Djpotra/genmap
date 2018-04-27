@@ -85,8 +85,7 @@ int GenmapFinalize(GenmapHandle h) {
   GenmapDestroyElements(h, h->elements);
   GenmapDestroyHeader(h, h->header);
 
-  free(h);
-  h = NULL;
+  GenmapFree(h);
 
   return 0;
 }
@@ -96,4 +95,9 @@ int GenmapFinalize(GenmapHandle h) {
 int GenmapMallocArray();
 int GenmapCallocArray();
 int GenmapReallocArray();
-int GenmapFree();
+
+int GenmapFree(void *p) {
+  free(p);
+  p = NULL;
+  return 0;
+}

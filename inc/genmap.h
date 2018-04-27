@@ -57,6 +57,16 @@ int GenmapGop(GenmapHandle h, GenmapComm c, GenmapScalar *v);
 //
 // File I/O
 //
+#define GENMAP_HEADER_SIZE 7
+#define GENMAP_NEL      0
+#define GENMAP_NACTIVE  1
+#define GENMAP_DEPTH    2
+#define GENMAP_D2       3
+#define GENMAP_NPTS     4
+#define GENMAP_NRANK    5
+#define GENMAP_NOUTFLOW 6
+#define GENMAP_NC       7
+#define GENMAP_LELT     8
 // GenmapHeader: Create, Destroy
 int GenmapCreateHeader(GenmapHandle h, GenmapHeader *header);
 int GenmapDestroyHeader(GenmapHandle h, GenmapHeader header);
@@ -125,19 +135,7 @@ int GenmapPowerIterNew(GenmapVector eVector, void (*Ax)(GenmapVector ax,
 int GenmapInvPowerIter(GenmapVector eVector, GenmapVector alpha,
                        GenmapVector beta, GenmapVector init, GenmapInt iter);
 //
-// Genmap I/O
+// Memory Allocation and Free
 //
-#define GENMAP_HEADER_SIZE 7
-#define GENMAP_NEL      0
-#define GENMAP_NACTIVE  1
-#define GENMAP_DEPTH    2
-#define GENMAP_D2       3
-#define GENMAP_NPTS     4
-#define GENMAP_NRANK    5
-#define GENMAP_NOUTFLOW 6
-#define GENMAP_NC       7
-#define GENMAP_LELT     8
-//
-// Compute Laplacain times vector
-//
+int GenmapFree(void *p);
 #endif

@@ -230,7 +230,8 @@ void GenmapLanczos(GenmapHandle h, GenmapComm c, GenmapVector init,
 void GenmapPrimeFactors(GenmapInt n, GenmapInt *primes) {
 }
 
-void GenmapRQI(GenmapHandle h) {
+void GenmapRQI(GenmapHandle h, GenmapVector v) {
+  // Calculate Lv, v^T(Lv)
 }
 
 void GenmapRSB(GenmapHandle h) {
@@ -286,15 +287,18 @@ void GenmapRSB(GenmapHandle h) {
   }
   h->Gop(h->local, &lNorm);
   GenmapScaleVector(evLanczos, evLanczos, 1. / sqrt(lNorm));
-  
-  // 3. Project the local Fiedler vector to global space
-  // dddd
+
+  // 3. Do Rayleigh Quotient Iteration on the combination of local
+  // fiedler vectors. Just do Lanczos for now.
+  GenmapLanczos(h, h->global, evLanczos, iter, &q, alphaVec, betaVec);
+
+  // 4. Exchange elements based on global Fiedler vector
 
   // n. Destory the data structures
   for(GenmapInt i = 0; i < iter; i++) {
     GenmapDestroyVector(q[i]);
   }
-  free(q);
+  GenmapFree(q);
 
   GenmapDestroyVector(initVec);
   GenmapDestroyVector(alphaVec);

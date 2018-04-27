@@ -18,9 +18,8 @@ int GenmapDestroyComm_default(GenmapComm c) {
   if(c->verticesHandle)
     gs_free(c->edgesHandle);
   if(c->laplacianWeights)
-    free(c->laplacianWeights);
-  free(c);
-  c = NULL;
+    GenmapFree(c->laplacianWeights);
+  GenmapFree(c);
 
   return 0;
 }
@@ -68,7 +67,7 @@ int GenmapAx_default(GenmapHandle h, GenmapComm c, GenmapVector u,
     }
   }
 
-  free(ucv);
+  GenmapFree(ucv);
 
   return 0;
 }
@@ -126,7 +125,7 @@ int GenmapAxInit_default(GenmapHandle h, GenmapComm c, GenmapVector weights) {
   printf("\n");
 #endif
 
-  free(u);
+  GenmapFree(u);
 
   return 0;
 }

@@ -11,9 +11,7 @@ int GenmapCreateHeader_default(GenmapHeader *h) {
 }
 
 int GenmapDestroyHeader_default(GenmapHeader h) {
-  free(h);
-  h = NULL;
-
+  GenmapFree(h);
   return 0;
 }
 //
@@ -32,15 +30,14 @@ int GenmapCreateElements_default(GenmapElements *e) {
 
 int GenmapDestroyElements_default(GenmapElements e) {
   if(e->globalId)
-    free(e->globalId);
+    GenmapFree(e->globalId);
   if(e->vertices)
-    free(e->vertices);
+    GenmapFree(e->vertices);
   if(e->edges)
-    free(e->edges);
+    GenmapFree(e->edges);
   if(e->fiedler)
-    free(e->fiedler);
-  free(e);
-  e = NULL;
+    GenmapFree(e->fiedler);
+  GenmapFree(e);
   return 0;
 }
 //
@@ -122,7 +119,7 @@ int GenmapRead_default(GenmapHandle h, char *name) {
   fclose(fp);
 #endif
 
-  free(headerArray);
+  GenmapFree(headerArray);
 
   return 0;
 }

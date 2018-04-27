@@ -81,7 +81,7 @@ struct GenmapVector_private {
   GenmapScalar *data;
 };
 //
-// Malloc and Free
+// Malloc
 //
 #define GenmapMalloc(n, p) *(p) = malloc(sizeof(**(p))*(n))
 #endif
