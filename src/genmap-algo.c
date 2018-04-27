@@ -170,7 +170,8 @@ void GenmapLanczos(GenmapHandle h, GenmapComm c, GenmapVector init,
   beta->data[0] = 0.;
 
   // Allocate memory for q-vectors
-  GenmapMalloc(iter, q);
+  if(*q == NULL)
+    GenmapMalloc(iter, q);
 
   normq1 = GenmapDotVector(q1, q1);
   h->Gop(c, &normq1);
@@ -291,6 +292,17 @@ void GenmapRSB(GenmapHandle h) {
   // 3. Do Rayleigh Quotient Iteration on the combination of local
   // fiedler vectors. Just do Lanczos for now.
   GenmapLanczos(h, h->global, evLanczos, iter, &q, alphaVec, betaVec);
+  iter = alphaVec->size;
+
+  GenmapInvPowerIter(evTriDiag, alphaVec, betaVec, evInit, iter * 30);
+
+  // Multiply tri-diagonal matrix by [q1, q2, ...q_{iter}]
+  for(GenmapInt i = 0; i < lelt; i++) {
+    evLanczos->data[i] = 0.0;
+    for(GenmapInt j = 0; j < iter; j++) {
+      evLanczos->data[i] += q[j]->data[i] * evTriDiag->data[j];
+    }
+  }
 
   // 4. Exchange elements based on global Fiedler vector
 
