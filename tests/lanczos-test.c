@@ -40,7 +40,7 @@ void TestLanczos1(GenmapHandle h) {
     evInit->data[i] = i + 1;
   }
 
-  GenmapPowerIter(evTriDiag, alphaVec, betaVec, evInit, iter * 20);
+  GenmapPowerIter(evTriDiag, alphaVec, betaVec, evInit, iter * 30);
 
   // Multiply tri-diagonal matrix by [q1, q2, ...q_{iter}]
   GenmapCreateZerosVector(&evLanczos, lelt);
@@ -50,8 +50,10 @@ void TestLanczos1(GenmapHandle h) {
     }
   }
 
-  GenmapScalar lNorm = GenmapNormVector(evLanczos, 2);
-  lNorm = lNorm*lNorm;
+  GenmapScalar lNorm = 0;
+  for(GenmapInt i = 0; i < lelt; i++) {
+    lNorm += evLanczos->data[i] * evLanczos->data[i];
+  }
   h->Gop(h->global, &lNorm);
   GenmapScaleVector(evLanczos, evLanczos, 1. / sqrt(lNorm));
 #ifdef DEBUG
@@ -59,6 +61,20 @@ void TestLanczos1(GenmapHandle h) {
   GenmapPrintVector(evLanczos);
   printf("\n");
 #endif
+
+  GenmapInt n = 8;
+  GenmapVector answer;
+  GenmapScalar d[8] = {-0.1913417161825456, -0.1913417161825448, 0.4619397662556435,
+                       0.4619397662556433, -0.4619397662556433, -0.4619397662556433,
+                       0.1913417161825447, 0.1913417161825447
+                      };
+  GenmapCreateVector(&answer, n);
+  GenmapSetVector(answer, d);
+
+  GenmapInt start = h->Id(h->global) * lelt;
+  for(GenmapInt i = start; i < start + lelt; i++) {
+    assert(fabs(answer->data[i] - evLanczos->data[i - start]) < GENMAP_SP_TOL);
+  }
 
   for(GenmapInt i = 0; i < iter; i++) {
     GenmapDestroyVector(q[i]);
@@ -108,7 +124,7 @@ void TestLanczos2(GenmapHandle h) {
     evInit->data[i] = i + 1;
   }
 
-  GenmapInvPowerIter(evTriDiag, alphaVec, betaVec, evInit, iter * 10);
+  GenmapInvPowerIter(evTriDiag, alphaVec, betaVec, evInit, iter * 30);
 
   // Multiply tri-diagonal matrix by [q1, q2, ...q_{iter}]
   GenmapCreateZerosVector(&evLanczos, lelt);
@@ -118,8 +134,10 @@ void TestLanczos2(GenmapHandle h) {
     }
   }
 
-  GenmapScalar lNorm = GenmapNormVector(evLanczos, 2);
-  lNorm = lNorm*lNorm;
+  GenmapScalar lNorm = 0;
+  for(GenmapInt i = 0; i < lelt; i++) {
+    lNorm += evLanczos->data[i] * evLanczos->data[i];
+  }
   h->Gop(h->global, &lNorm);
   GenmapScaleVector(evLanczos, evLanczos, 1. / sqrt(lNorm));
 #ifdef DEBUG
@@ -127,6 +145,20 @@ void TestLanczos2(GenmapHandle h) {
   GenmapPrintVector(evLanczos);
   printf("\n");
 #endif
+
+  GenmapInt n = 8;
+  GenmapVector answer;
+  GenmapScalar d[8] = {0.3535533905932737, 0.3535533905932736, 0.3535533905932737,
+                       0.3535533905932737, 0.3535533905932737, 0.3535533905932737,
+                       0.353553390593274,  0.353553390593274
+                      };
+  GenmapCreateVector(&answer, n);
+  GenmapSetVector(answer, d);
+
+  GenmapInt start = h->Id(h->global) * lelt;
+  for(GenmapInt i = start; i < start + lelt; i++) {
+    assert(fabs(answer->data[i] - evLanczos->data[i - start]) < GENMAP_SP_TOL);
+  }
 
   for(GenmapInt i = 0; i < iter; i++) {
     GenmapDestroyVector(q[i]);
@@ -183,7 +215,7 @@ void TestLanczos3(GenmapHandle h) {
     evInit->data[i] = i + 1;
   }
 
-  GenmapInvPowerIter(evTriDiag, alphaVec, betaVec, evInit, iter * 10);
+  GenmapInvPowerIter(evTriDiag, alphaVec, betaVec, evInit, iter * 30);
 
   // Multiply tri-diagonal matrix by [q1, q2, ...q_{iter}]
   GenmapCreateZerosVector(&evLanczos, lelt);
@@ -193,14 +225,31 @@ void TestLanczos3(GenmapHandle h) {
     }
   }
 
-  GenmapScalar lNorm = GenmapNormVector(evLanczos, 2);
-  lNorm = lNorm*lNorm;
+  GenmapScalar lNorm = 0;
+  for(GenmapInt i = 0; i < lelt; i++) {
+    lNorm += evLanczos->data[i] * evLanczos->data[i];
+  }
   h->Gop(h->global, &lNorm);
+  GenmapScaleVector(evLanczos, evLanczos, 1. / sqrt(lNorm));
 #ifdef DEBUG
   printf("proc : %d (lanczos fiedler) ", h->Id(h->global));
   GenmapPrintVector(evLanczos);
   printf("\n");
 #endif
+
+  GenmapInt n = 8;
+  GenmapVector answer;
+  GenmapScalar d[8] = {-0.4619397662556433, -0.4619397662556434, -0.1913417161825449,
+                       -0.1913417161825449,  0.1913417161825448,  0.1913417161825448,
+                       0.4619397662556433,  0.4619397662556433
+                      };
+  GenmapCreateVector(&answer, n);
+  GenmapSetVector(answer, d);
+
+  GenmapInt start = h->Id(h->global) * lelt;
+  for(GenmapInt i = start; i < start + lelt; i++) {
+    assert(fabs(answer->data[i] - evLanczos->data[i - start]) < GENMAP_SP_TOL);
+  }
 
   for(GenmapInt i = 0; i < iter; i++) {
     GenmapDestroyVector(q[i]);

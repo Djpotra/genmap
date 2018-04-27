@@ -28,6 +28,7 @@ typedef struct GenmapHeader_private *GenmapHeader;
 // Genmap tolerances
 //
 #define GENMAP_TOL 1e-12
+#define GENMAP_SP_TOL 1e-8
 //
 // Genmap Readers
 //
