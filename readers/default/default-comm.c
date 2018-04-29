@@ -77,9 +77,21 @@ int GenmapAxInit_default(GenmapHandle h, GenmapComm c, GenmapVector weights) {
   GenmapInt nc = h->header->nc;
   GenmapInt numPoints = nc * lelt;
 
-  c->verticesHandle = gs_setup(h->elements->vertices, numPoints, &c->gsComm, 0,
+  GenmapInt *vertices, *edges;
+  GenmapMalloc(numPoints, &vertices);
+  // For 2D only, for 3D this is different
+  GenmapMalloc(numPoints, &edges);
+
+  for(GenmapInt i = 0; i < lelt; i++) {
+    for(int j = 0; j < nc; j++) {
+      vertices[i*nc+j] = h->elements[i].vertices[j];
+      edges[i*nc+j] = h->elements[i].edges[j];
+    }
+  }
+
+  c->verticesHandle = gs_setup(vertices, numPoints, &c->gsComm, 0,
 		         gs_auto, 0);
-  c->edgesHandle = gs_setup(h->elements->edges, numPoints, &c->gsComm, 0,
+  c->edgesHandle = gs_setup(edges, numPoints, &c->gsComm, 0,
 		         gs_auto, 0);
 
   GenmapScalar *u;
@@ -126,6 +138,8 @@ int GenmapAxInit_default(GenmapHandle h, GenmapComm c, GenmapVector weights) {
 #endif
 
   GenmapFree(u);
+  GenmapFree(vertices);
+  GenmapFree(edges);
 
   return 0;
 }

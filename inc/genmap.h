@@ -21,7 +21,7 @@ typedef struct GenmapHandle_private *GenmapHandle;
 
 typedef struct GenmapVector_private *GenmapVector;
 
-typedef struct GenmapElements_private *GenmapElements;
+typedef struct GenmapElement_private *GenmapElements;
 
 typedef struct GenmapHeader_private *GenmapHeader;
 //

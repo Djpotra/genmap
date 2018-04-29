@@ -3,6 +3,7 @@
 #ifdef MPI
 #include <mpi.h>
 #endif
+#include <stdio.h>
 //
 // Test IO
 //
@@ -27,19 +28,19 @@ int TestIO1(GenmapHandle h) {
   GenmapInt edgesLast[4] = {20, 22, 16, 21};
 
   if(h->Id(h->global) == 0) {
-    assert(h->elements->globalId[0] == 1);
+    assert(h->elements[0].globalId == 1);
     for(GenmapInt j = 0; j < nc; j++) {
-      assert(h->elements->vertices[j] == verticesFirst[j]);
-      assert(h->elements->edges[j] == edgesFirst[j]);
+      assert(h->elements[0].vertices[j] == verticesFirst[j]);
+      assert(h->elements[0].edges[j] == edgesFirst[j]);
     }
   }
 
-  int verticesIndex = nc * (h->header->lelt - 1);
+  int lelt = h->header->lelt - 1;
   if(h->Id(h->global) == h->Np(h->global) - 1) {
-    assert(h->elements->globalId[h->header->lelt - 1] == 8);
+    assert(h->elements[lelt].globalId == 8);
     for(GenmapInt j = 0; j < nc; j++) {
-      assert(h->elements->vertices[verticesIndex + j] == verticesLast[j]);
-      assert(h->elements->edges[verticesIndex + j] == edgesLast[j]);
+      assert(h->elements[lelt].vertices[j] == verticesLast[j]);
+      assert(h->elements[lelt].edges[j] == edgesLast[j]);
     }
   }
 

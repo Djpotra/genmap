@@ -249,7 +249,7 @@ void GenmapRSB(GenmapHandle h) {
   GenmapCreateVector(&initVec, h->header->lelt);
   GenmapScalar sum = 0.0;
   for(GenmapInt i = 0;  i < lelt; i++) {
-    initVec->data[i] = h->elements->globalId[i];
+    initVec->data[i] = h->elements[i].globalId;
     sum += initVec->data[i];
   }
 

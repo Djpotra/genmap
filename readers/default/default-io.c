@@ -19,24 +19,10 @@ int GenmapDestroyHeader_default(GenmapHeader h) {
 //
 int GenmapCreateElements_default(GenmapElements *e) {
   GenmapMalloc(1, e);
-
-  (*e)->globalId = NULL;
-  (*e)->vertices = NULL;
-  (*e)->edges = NULL;
-  (*e)->fiedler = NULL;
-
   return 0;
 }
 
 int GenmapDestroyElements_default(GenmapElements e) {
-  if(e->globalId)
-    GenmapFree(e->globalId);
-  if(e->vertices)
-    GenmapFree(e->vertices);
-  if(e->edges)
-    GenmapFree(e->edges);
-  if(e->fiedler)
-    GenmapFree(e->fiedler);
   GenmapFree(e);
   return 0;
 }
@@ -92,10 +78,7 @@ int GenmapRead_default(GenmapHandle h, char *name) {
   h->header->nc = nc;
   h->header->lelt = lelt;
 
-  GenmapMalloc(lelt, &(h->elements->globalId));
-  GenmapMalloc(lelt, &(h->elements->fiedler));
-  GenmapMalloc(lelt * nc, &(h->elements->vertices));
-  GenmapMalloc(lelt * nc, &(h->elements->edges));
+  GenmapMalloc(lelt, &(h->elements));
 #ifdef MPI
   MPI_File_seek(fh, (GENMAP_HEADER_SIZE + start)*sizeof(GenmapInt),
                 MPI_SEEK_SET);
@@ -103,13 +86,13 @@ int GenmapRead_default(GenmapHandle h, char *name) {
 
   for(GenmapInt i = 0; i < lelt; i++) {
 #ifdef MPI
-    MPI_File_read(fh, h->elements->globalId + i,  1, MPI_INT, &st);
-    MPI_File_read(fh, h->elements->vertices + i * nc, nc, MPI_INT, &st);
-    MPI_File_read(fh, h->elements->edges + i * nc, nc, MPI_INT, &st);
+    MPI_File_read(fh, &(h->elements[i].globalId), 1, MPI_INT, &st);
+    MPI_File_read(fh, h->elements[i].vertices, nc, MPI_INT, &st);
+    MPI_File_read(fh, h->elements[i].edges, nc, MPI_INT, &st);
 #else
-    result += fread(h->elements->globalId + i, sizeof(GenmapInt), 1, fp);
-    result += fread(h->elements->vertices + i * nc, sizeof(GenmapInt), nc, fp);
-    result += fread(h->elements->edges + i * nc, sizeof(GenmapInt), nc, fp);
+    result += fread(&(h->elements[i].globalId), sizeof(GenmapInt), 1, fp);
+    result += fread(h->elements[i].vertices, sizeof(GenmapInt), nc, fp);
+    result += fread(h->elements[i].edges, sizeof(GenmapInt), nc, fp);
 #endif
   }
 
