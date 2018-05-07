@@ -18,5 +18,7 @@
 #include "gs.h"
 #include "sort.h"
 #include "sarray_sort.h"
+#include "crystal.h"
+#include "sarray_transfer.h"
 
 #endif

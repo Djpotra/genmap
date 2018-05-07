@@ -42,6 +42,7 @@ struct GenmapElement_private {
   GenmapInt globalId;
   GenmapInt vertices[8];
   GenmapInt edges[12];
+  GenmapUInt proc;
 };
 //
 // Genmap_Handle

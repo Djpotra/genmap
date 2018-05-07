@@ -328,6 +328,31 @@ void GenmapRSB(GenmapHandle h) {
 #endif
 
   // 4. Exchange elements based on global Fiedler vector
+  GenmapInt nbins = h->Np(h->global);
+  GenmapInt id = h->Id(h->global);
+  GenmapScalar min = -1.0, max = 1.0;
+  GenmapScalar range = max - min;
+  GenmapScalar start = min + (range * id) / nbins;
+  GenmapScalar end = min + (range * (id + 1)) / nbins;
+
+  struct array A = null_array;
+  GenmapElements p = array_reserve(struct GenmapElement_private, &A, 16);
+  A.max = 16;
+  A.n = lelt;
+  memcpy(A.ptr, h->elements, sizeof(struct GenmapElement_private)*lelt);
+  for(GenmapElements p = A.ptr, e = p + A.n; p != e; p++) {
+    p->proc = 0;
+  }
+
+  struct crystal cr;
+  crystal_init(&cr, &h->global->gsComm);
+
+  sarray_transfer(struct GenmapElement_private, &A, proc, 1, &cr);
+  p = (GenmapElements)A.ptr;
+  for(GenmapInt i = 0; i < A.n; i++) {
+    printf("proc = %d id = %d fiedler = %lf\n", h->Id(h->global),
+           p[i].globalId, p[i].fiedler);
+  }
 
   // n. Destory the data structures
   for(GenmapInt i = 0; i < iter; i++) {

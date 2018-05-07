@@ -9,16 +9,16 @@ void TestRSB1(GenmapHandle h) {
   GenmapRead(h, "mesh/box2D_2.bin");
 
   GenmapRSB(h);
-  buffer buf = null_array;
-  for(GenmapInt i = 0; i < h->header->lelt; i++) {
-    h->elements[i].fiedler *= -1;
-  }
-  sarray_sort(struct GenmapElement_private, h->elements, h->header->lelt,
-              fiedler, 3, &buf);
-  for(GenmapInt i = 0; i < h->header->lelt; i++) {
-    printf("proc = %d id = %d fiedler = %lf\n", h->Id(h->global),
-           h->elements[i].globalId, h->elements[i].fiedler);
-  }
+//  buffer buf = null_array;
+//  for(GenmapInt i = 0; i < h->header->lelt; i++) {
+//    h->elements[i].fiedler *= -1;
+//  }
+//  sarray_sort(struct GenmapElement_private, h->elements, h->header->lelt,
+//              fiedler, 3, &buf);
+//  for(GenmapInt i = 0; i < h->header->lelt; i++) {
+//    printf("proc = %d id = %d fiedler = %lf\n", h->Id(h->global),
+//           h->elements[i].globalId, h->elements[i].fiedler);
+//  }
 //  GenmapInt iter = 10;
 //  GenmapInt lelt = h->header->lelt;
 //  GenmapVector initVec, alphaVec, betaVec;
