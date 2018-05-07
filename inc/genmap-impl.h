@@ -70,7 +70,7 @@ struct GenmapHandle_private {
             GenmapVector weights, GenmapVector v);
   int (*AxInit)(GenmapHandle h, GenmapComm c, GenmapVector weights);
 
-  int (*Gop)(GenmapComm c, GenmapScalar *v);
+  int (*Gop)(GenmapComm c, GenmapScalar *v, GenmapInt size, GenmapInt op);
 
   int (*Read)(GenmapHandle h, char *name);
 };

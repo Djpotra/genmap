@@ -26,6 +26,7 @@ int GenmapAxInit(GenmapHandle h, GenmapComm c, GenmapVector weights) {
   return h->AxInit(h, c, weights);
 }
 
-int GenmapGop(GenmapHandle h, GenmapComm c, GenmapScalar *v) {
-  return h->Gop(c, v);
+int GenmapGop(GenmapHandle h, GenmapComm c, GenmapScalar *v,
+              GenmapInt size, GenmapInt op) {
+  return h->Gop(c, v, size, op);
 }

@@ -28,7 +28,7 @@ void TestLanczos1(GenmapHandle h) {
   for(GenmapInt i = 0; i < iter; i++) {
     for(GenmapInt j = i + 1; j < iter; j++) {
       GenmapScalar dot = GenmapDotVector(q[i], q[j]);
-      h->Gop(h->global, &dot);
+      h->Gop(h->global, &dot, 1, GENMAP_SUM);
       assert(fabs(dot - 0) < GENMAP_TOL);
     }
   }
@@ -54,7 +54,7 @@ void TestLanczos1(GenmapHandle h) {
   for(GenmapInt i = 0; i < lelt; i++) {
     lNorm += evLanczos->data[i] * evLanczos->data[i];
   }
-  h->Gop(h->global, &lNorm);
+  h->Gop(h->global, &lNorm, 1, GENMAP_SUM);
   GenmapScaleVector(evLanczos, evLanczos, 1. / sqrt(lNorm));
 #ifdef DEBUG
   printf("proc : %d (lanczos power) ", h->Id(h->global));
@@ -113,7 +113,7 @@ void TestLanczos2(GenmapHandle h) {
   for(GenmapInt i = 0; i < iter; i++) {
     for(GenmapInt j = i + 1; j < iter; j++) {
       GenmapScalar dot = GenmapDotVector(q[i], q[j]);
-      h->Gop(h->global, &dot);
+      h->Gop(h->global, &dot, 1, GENMAP_SUM);
       assert(fabs(dot - 0) < GENMAP_TOL);
     }
   }
@@ -139,7 +139,7 @@ void TestLanczos2(GenmapHandle h) {
   for(GenmapInt i = 0; i < lelt; i++) {
     lNorm += evLanczos->data[i] * evLanczos->data[i];
   }
-  h->Gop(h->global, &lNorm);
+  h->Gop(h->global, &lNorm, 1, GENMAP_SUM);
   GenmapScaleVector(evLanczos, evLanczos, 1. / sqrt(lNorm));
 #ifdef DEBUG
   printf("proc : %d (lanczos invpower) ", h->Id(h->global));
@@ -190,7 +190,7 @@ void TestLanczos3(GenmapHandle h) {
     sum += initVec->data[i];
   }
 
-  h->Gop(h->global, &sum);
+  h->Gop(h->global, &sum, 1, GENMAP_SUM);
 
   for(GenmapInt i = 0;  i < lelt; i++) {
     initVec->data[i] -= sum / h->header->nel;
@@ -206,7 +206,7 @@ void TestLanczos3(GenmapHandle h) {
   for(GenmapInt i = 0; i < iter; i++) {
     for(GenmapInt j = i + 1; j < iter; j++) {
       GenmapScalar dot = GenmapDotVector(q[i], q[j]);
-      h->Gop(h->global, &dot);
+      h->Gop(h->global, &dot, 1, GENMAP_SUM);
       assert(fabs(dot - 0) < GENMAP_TOL);
     }
   }
@@ -232,7 +232,7 @@ void TestLanczos3(GenmapHandle h) {
   for(GenmapInt i = 0; i < lelt; i++) {
     lNorm += evLanczos->data[i] * evLanczos->data[i];
   }
-  h->Gop(h->global, &lNorm);
+  h->Gop(h->global, &lNorm, 1, GENMAP_SUM);
   GenmapScaleVector(evLanczos, evLanczos, 1. / sqrt(lNorm));
 #ifdef DEBUG
   printf("proc : %d (lanczos fiedler) ", h->Id(h->global));

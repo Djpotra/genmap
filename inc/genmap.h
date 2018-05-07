@@ -3,6 +3,13 @@
 
 #include <gslib.h>
 //
+// Genmap Operators
+//
+#define GENMAP_SUM 0
+#define GENAMP_MAX 1
+#define GENMAP_MIN 2
+#define GENMAP_MUL 3
+//
 // Genmap types
 //
 typedef int GenmapInt32;
@@ -54,7 +61,8 @@ int GenmapDestroyComm(GenmapHandle h, GenmapComm c);
 int GenmapNp(GenmapComm c);
 int GenmapId(GenmapComm c);
 // Functions to do global operations
-int GenmapGop(GenmapHandle h, GenmapComm c, GenmapScalar *v);
+int GenmapGop(GenmapHandle h, GenmapComm c, GenmapScalar *v,
+              GenmapInt size, GenmapInt op);
 //
 // File I/O
 //

@@ -23,7 +23,8 @@ int GenmapAxInit_default(GenmapHandle h, GenmapComm c,
 int GenmapAx_default(GenmapHandle h, GenmapComm c, GenmapVector u,
                      GenmapVector weights, GenmapVector v);
 // Functions to do global operations
-int GenmapGop_default(GenmapComm c, GenmapScalar *v);
+int GenmapGop_default(GenmapComm c, GenmapScalar *v, GenmapInt size,
+                      GenmapInt op);
 //
 // File I/O
 //

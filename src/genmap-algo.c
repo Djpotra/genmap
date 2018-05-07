@@ -179,7 +179,7 @@ void GenmapLanczos(GenmapHandle h, GenmapComm c, GenmapVector init,
     GenmapMalloc(iter, q);
 
   normq1 = GenmapDotVector(q1, q1);
-  h->Gop(c, &normq1);
+  h->Gop(c, &normq1, 1, GENMAP_SUM);
   normq1 = sqrt(normq1);
   GenmapScaleVector(q1, q1, 1. / normq1);
 
@@ -197,13 +197,13 @@ void GenmapLanczos(GenmapHandle h, GenmapComm c, GenmapVector init,
     h->Ax(h, c, q1, weights, u);
 
     alpha->data[k] = GenmapDotVector(q1, u);
-    h->Gop(c, &alpha->data[k]);
+    h->Gop(c, &alpha->data[k], 1, GENMAP_SUM);
 
     GenmapAxpbyVector(u, u, 1., q0, -b);
     GenmapAxpbyVector(u, u, 1., q1, -alpha->data[k]);
 
     b = GenmapDotVector(u, u);
-    h->Gop(c, &b);
+    h->Gop(c, &b, 1, GENMAP_SUM);
     b = sqrt(b);
 
     if(k < iter - 1) {
@@ -256,7 +256,7 @@ void GenmapRSB(GenmapHandle h) {
     sum += initVec->data[i];
   }
 
-  h->Gop(h->global, &sum);
+  h->Gop(h->local, &sum, 1, GENMAP_SUM);
 
   for(GenmapInt i = 0;  i < lelt; i++) {
     initVec->data[i] -= sum / h->header->nel;
@@ -291,7 +291,7 @@ void GenmapRSB(GenmapHandle h) {
   for(GenmapInt i = 0; i < lelt; i++) {
     lNorm += evLanczos->data[i] * evLanczos->data[i];
   }
-  h->Gop(h->local, &lNorm);
+  h->Gop(h->local, &lNorm, 1, GENMAP_SUM);
   GenmapScaleVector(evLanczos, evLanczos, 1. / sqrt(lNorm));
   for(GenmapInt i = 0; i < lelt; i++)
     h->elements[i].fiedler = evLanczos->data[i];

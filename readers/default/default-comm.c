@@ -145,11 +145,12 @@ int GenmapAxInit_default(GenmapHandle h, GenmapComm c,
   return 0;
 }
 
-int GenmapGop_default(GenmapComm c, GenmapScalar *v) {
+int GenmapGop_default(GenmapComm c, GenmapScalar *v, GenmapInt size,
+                      GenmapInt op) {
 #ifdef MPI
-  GenmapScalar u;
-  MPI_Allreduce(v, &u, 1, MPI_DOUBLE, MPI_SUM, c->gsComm.c);
-  *v = u;
+  if(op == 0) {
+    MPI_Allreduce(MPI_IN_PLACE, v, size, MPI_DOUBLE, MPI_SUM, c->gsComm.c);
+  }
 #endif
 
   return 0;
