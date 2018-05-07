@@ -1,6 +1,7 @@
 #include <genmap-impl.h>
 
-int GenmapCreateComm(GenmapHandle h, GenmapComm *c, GenmapCommExternal ce) {
+int GenmapCreateComm(GenmapHandle h, GenmapComm *c,
+                     GenmapCommExternal ce) {
   return h->CreateComm(c, ce);
 }
 

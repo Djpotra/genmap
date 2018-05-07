@@ -47,7 +47,8 @@ typedef int GenmapCommExternal;
 //
 // GenmapComm
 //
-int GenmapCreateComm(GenmapHandle h, GenmapComm *c, GenmapCommExternal ce);
+int GenmapCreateComm(GenmapHandle h, GenmapComm *c,
+                     GenmapCommExternal ce);
 int GenmapDestroyComm(GenmapHandle h, GenmapComm c);
 // Functions to return size and rank of GenmapComm
 int GenmapNp(GenmapComm c);
@@ -98,11 +99,14 @@ int GenmapCreateRandomVector(GenmapVector *x, GenmapInt size,
 int GenmapCreateOnesVector(GenmapVector *x, GenmapInt size);
 int GenmapCreateZerosVector(GenmapVector *x, GenmapInt size);
 
-int GenmapScaleVector(GenmapVector y, GenmapVector x, GenmapScalar alpha);
-int GenmapAxpbyVector(GenmapVector z, GenmapVector x, GenmapScalar alpha,
+int GenmapScaleVector(GenmapVector y, GenmapVector x,
+                      GenmapScalar alpha);
+int GenmapAxpbyVector(GenmapVector z, GenmapVector x,
+                      GenmapScalar alpha,
                       GenmapVector y, GenmapScalar beta);
 
-int GenmapVectorsEqual(GenmapVector x, GenmapVector y, GenmapScalar tol);
+int GenmapVectorsEqual(GenmapVector x, GenmapVector y,
+                       GenmapScalar tol);
 int GenmapCopyVector(GenmapVector x, GenmapVector y);
 GenmapScalar GenmapDotVector(GenmapVector x, GenmapVector y);
 GenmapScalar GenmapNormVector(GenmapVector x, GenmapInt p);
@@ -121,7 +125,8 @@ void GenmapRSB(GenmapHandle h);
 //
 // Linear solve
 //
-int GenmapSymTriDiagSolve(GenmapVector x, GenmapVector b, GenmapVector alpha,
+int GenmapSymTriDiagSolve(GenmapVector x, GenmapVector b,
+                          GenmapVector alpha,
                           GenmapVector beta);
 //
 // Power and inverse power iterations

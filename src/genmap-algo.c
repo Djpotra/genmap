@@ -2,7 +2,6 @@
 
 #include <math.h>
 #include <stdio.h>
-
 //
 // Algorithms
 //
@@ -27,10 +26,12 @@ int GenmapPowerIter(GenmapVector eVector, GenmapVector alpha,
       // y = Ax
       y->data[0] = alpha->data[0] * x->data[0] + beta->data[0] * x->data[1];
       for(GenmapInt i = 1; i < n - 1; i++) {
-        y->data[i] = beta->data[i - 1] * x->data[i - 1] + alpha->data[i] * x->data[i] +
+        y->data[i] = beta->data[i - 1] * x->data[i - 1] + alpha->data[i] *
+                     x->data[i] +
                      beta->data[i] * x->data[i + 1];
       }
-      y->data[n - 1] = beta->data[n - 2] * x->data[n - 2] + alpha->data[n - 1] *
+      y->data[n - 1] = beta->data[n - 2] * x->data[n - 2] + alpha->data[n - 1]
+                       *
                        x->data[n - 1];
 
       // Normalize by inf-norm(y)
@@ -119,7 +120,8 @@ int GenmapInvPowerIter(GenmapVector eVector, GenmapVector alpha,
 //
 // Linear solve for Symmetric Tridiagonal Matrix
 //
-int GenmapSymTriDiagSolve(GenmapVector x, GenmapVector b, GenmapVector alpha,
+int GenmapSymTriDiagSolve(GenmapVector x, GenmapVector b,
+                          GenmapVector alpha,
                           GenmapVector beta) {
   assert((x->size == b->size) && (x->size == alpha->size));
   assert(alpha->size == beta->size + 1);
@@ -142,7 +144,8 @@ int GenmapSymTriDiagSolve(GenmapVector x, GenmapVector b, GenmapVector alpha,
   x->data[n - 1] = x->data[n - 1] / diag->data[n - 1];
 
   for(GenmapInt i = n - 2; i >= 0; i--) {
-    x->data[i] = (x->data[i] - beta->data[i] * x->data[i + 1]) / diag->data[i];
+    x->data[i] = (x->data[i] - beta->data[i] * x->data[i + 1]) /
+                 diag->data[i];
   }
 
   GenmapDestroyVector(diag);
@@ -290,37 +293,39 @@ void GenmapRSB(GenmapHandle h) {
   }
   h->Gop(h->local, &lNorm);
   GenmapScaleVector(evLanczos, evLanczos, 1. / sqrt(lNorm));
+  for(GenmapInt i = 0; i < lelt; i++)
+    h->elements[i].fiedler = evLanczos->data[i];
 
   // 3. Do Rayleigh Quotient Iteration on the combination of local
   // fiedler vectors. Just do Lanczos for now. We get the global
   // fiedler vector.
-  GenmapLanczos(h, h->global, evLanczos, iter, &q, alphaVec, betaVec);
-  iter = alphaVec->size;
-  evInit->size = iter;
-  evTriDiag->size = iter;
+  //GenmapLanczos(h, h->global, evLanczos, iter, &q, alphaVec, betaVec);
+  //iter = alphaVec->size;
+  //evInit->size = iter;
+  //evTriDiag->size = iter;
 
-  GenmapInvPowerIter(evTriDiag, alphaVec, betaVec, evInit, iter * 30);
+  //GenmapInvPowerIter(evTriDiag, alphaVec, betaVec, evInit, iter * 30);
 
-  // Multiply tri-diagonal matrix by [q1, q2, ...q_{iter}]
-  for(GenmapInt i = 0; i < lelt; i++) {
-    evLanczos->data[i] = 0.0;
-    for(GenmapInt j = 0; j < iter; j++) {
-      evLanczos->data[i] += q[j]->data[i] * evTriDiag->data[j];
-    }
-  }
+  //// Multiply tri-diagonal matrix by [q1, q2, ...q_{iter}]
+  //for(GenmapInt i = 0; i < lelt; i++) {
+  //  evLanczos->data[i] = 0.0;
+  //  for(GenmapInt j = 0; j < iter; j++) {
+  //    evLanczos->data[i] += q[j]->data[i] * evTriDiag->data[j];
+  //  }
+  //}
 
-  lNorm = 0;
-  for(GenmapInt i = 0; i < lelt; i++) {
-    lNorm += evLanczos->data[i] * evLanczos->data[i];
-  }
-  h->Gop(h->global, &lNorm);
-  GenmapScaleVector(evLanczos, evLanczos, 1. / sqrt(lNorm));
+  //lNorm = 0;
+  //for(GenmapInt i = 0; i < lelt; i++) {
+  //  lNorm += evLanczos->data[i] * evLanczos->data[i];
+  //}
+  //h->Gop(h->global, &lNorm);
+  //GenmapScaleVector(evLanczos, evLanczos, 1. / sqrt(lNorm));
 
-//#ifdef DEBUG
+#ifdef DEBUG
   printf("proc : %d (lanczos fiedler) ", h->Id(h->global));
   GenmapPrintVector(evLanczos);
   printf("\n");
-//#endif
+#endif
 
   // 4. Exchange elements based on global Fiedler vector
 

@@ -16,5 +16,7 @@
 #include "gs_defs.h"
 #include "comm.h"
 #include "gs.h"
+#include "sort.h"
+#include "sarray_sort.h"
 
 #endif

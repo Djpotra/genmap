@@ -4,7 +4,7 @@ GSLIB=gslib
 
 LIB=lib$(TARGET).a
 
-GSDIR ?= $(SRCROOT)/../$(GSLIB)
+GSDIR ?= $(SRCROOT)/../../$(GSLIB)/$(GSLIB)
 GSLIBDIR=$(GSDIR)/src
 
 MPI ?= 1
@@ -107,7 +107,7 @@ clean:
 
 .PHONY: astyle
 astyle:
-	astyle --style=google --indent=spaces=2 --max-code-length=80 \
+	astyle --style=google --indent=spaces=2 --max-code-length=72 \
 	    --keep-one-line-statements --keep-one-line-blocks --lineend=linux \
             --suffix=none --preserve-date --formatted --pad-oper \
-	    --unpad-paren tests/*.[ch] src/*.[ch] inc/*.[ch]
+	    --unpad-paren tests/*.[ch] src/*.[ch] inc/*.[ch] readers/*/*.[ch]

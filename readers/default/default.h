@@ -17,7 +17,8 @@ int GenmapNp_default(GenmapComm c);
 
 int GenmapId_default(GenmapComm c);
 // Functions to do Laplacian
-int GenmapAxInit_default(GenmapHandle h, GenmapComm c, GenmapVector weights);
+int GenmapAxInit_default(GenmapHandle h, GenmapComm c,
+                         GenmapVector weights);
 
 int GenmapAx_default(GenmapHandle h, GenmapComm c, GenmapVector u,
                      GenmapVector weights, GenmapVector v);

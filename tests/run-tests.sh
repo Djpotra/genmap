@@ -18,7 +18,7 @@ if [ $test_valgrind -eq 1 ]; then
   VALGRIND_CMD="valgrind --leak-check=full"
 fi
 if [ $test_mpi -eq 1 ]; then
-  NP_LIST="2 4"
+  NP_LIST="3"
   MPI_CMD="mpirun -np"
   if [ $test_valgrind -eq 1 ]; then
     VALGRIND_CMD="${VALGRIND_CMD} --suppressions=/usr/share/openmpi/openmpi-valgrind.supp"
@@ -30,12 +30,12 @@ echo "VALGRIND_CMD = ${VALGRIND_CMD}"
 
 if [ $test_mpi -eq 1 ]; then
   for np in $NP_LIST; do
-    for i in *-test.o; do
+    for i in rsb-test.o; do
       $MPI_CMD $np $VALGRIND_CMD ./$i
     done
   done
 else
-  for i in *-test.o; do
+  for i in rsb-test.o; do
     $VALGRIND_CMD ./$i
   done
 fi

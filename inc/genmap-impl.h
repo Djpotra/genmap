@@ -34,6 +34,7 @@ struct GenmapHeader_private {
   GenmapInt noutflow;
   GenmapInt nc;
   GenmapInt lelt;
+  GenmapInt start;
 };
 // GenmapElements
 struct GenmapElement_private {

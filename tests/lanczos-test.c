@@ -73,7 +73,8 @@ void TestLanczos1(GenmapHandle h) {
 
   GenmapInt start = h->Id(h->global) * lelt;
   for(GenmapInt i = start; i < start + lelt; i++) {
-    assert(fabs(answer->data[i] - evLanczos->data[i - start]) < GENMAP_SP_TOL);
+    assert(fabs(answer->data[i] - evLanczos->data[i - start]) <
+           GENMAP_SP_TOL);
   }
 
   for(GenmapInt i = 0; i < iter; i++) {
@@ -158,7 +159,8 @@ void TestLanczos2(GenmapHandle h) {
 
   GenmapInt start = h->Id(h->global) * lelt;
   for(GenmapInt i = start; i < start + lelt; i++) {
-    assert(fabs(answer->data[i] - evLanczos->data[i - start]) < GENMAP_SP_TOL);
+    assert(fabs(answer->data[i] - evLanczos->data[i - start]) <
+           GENMAP_SP_TOL);
   }
 
   for(GenmapInt i = 0; i < iter; i++) {
@@ -249,7 +251,8 @@ void TestLanczos3(GenmapHandle h) {
 
   GenmapInt start = h->Id(h->global) * lelt;
   for(GenmapInt i = start; i < start + lelt; i++) {
-    assert(fabs(answer->data[i] - evLanczos->data[i - start]) < GENMAP_SP_TOL);
+    assert(fabs(answer->data[i] - evLanczos->data[i - start]) <
+           GENMAP_SP_TOL);
   }
 
   for(GenmapInt i = 0; i < iter; i++) {

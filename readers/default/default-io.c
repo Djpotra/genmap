@@ -35,7 +35,8 @@ int GenmapRead_default(GenmapHandle h, char *name) {
   MPI_Offset offset;
   MPI_Status st;
 
-  MPI_File_open(MPI_COMM_WORLD, name, MPI_MODE_RDONLY, MPI_INFO_NULL, &fh);
+  MPI_File_open(h->global->gsComm.c, name, MPI_MODE_RDONLY, MPI_INFO_NULL,
+                &fh);
 
   MPI_File_seek(fh, 0, MPI_SEEK_SET);
   MPI_File_get_size(fh, &offset);
@@ -52,7 +53,8 @@ int GenmapRead_default(GenmapHandle h, char *name) {
 #ifdef MPI
   MPI_File_read(fh, headerArray, GENMAP_HEADER_SIZE, MPI_INT, &st);
 #else
-  GenmapInt result = fread(headerArray, sizeof(GenmapInt), GENMAP_HEADER_SIZE,
+  GenmapInt result = fread(headerArray, sizeof(GenmapInt),
+                           GENMAP_HEADER_SIZE,
                            fp);
 #endif
 
@@ -75,8 +77,12 @@ int GenmapRead_default(GenmapHandle h, char *name) {
     lelt = nel - h->Id(h->global) * lelt;
 #endif
 
+  GenmapInt out[2][1], buf[2][1];
+  comm_scan(out, &(h->global->gsComm), gs_int, gs_add, &lelt, 1, buf);
+
   h->header->nc = nc;
   h->header->lelt = lelt;
+  h->header->start = out[0][0];
 
   GenmapMalloc(lelt, &(h->elements));
 #ifdef MPI
