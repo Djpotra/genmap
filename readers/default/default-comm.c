@@ -83,10 +83,11 @@ int GenmapAxInit_default(GenmapHandle h, GenmapComm c,
   // For 2D only, for 3D this is different
   GenmapMalloc(numPoints, &edges);
 
+  GenmapElements elements = GenmapGetElements(h);
   for(GenmapInt i = 0; i < lelt; i++) {
     for(int j = 0; j < nc; j++) {
-      vertices[i * nc + j] = h->elements[i].vertices[j];
-      edges[i * nc + j] = h->elements[i].edges[j];
+      vertices[i * nc + j] = elements[i].vertices[j];
+      edges[i * nc + j] = elements[i].edges[j];
     }
   }
 

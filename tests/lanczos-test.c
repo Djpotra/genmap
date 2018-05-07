@@ -185,8 +185,9 @@ void TestLanczos3(GenmapHandle h) {
 
   GenmapCreateVector(&initVec, h->header->lelt);
   GenmapScalar sum = 0.0;
+  GenmapElements elements = GenmapGetElements(h);
   for(GenmapInt i = 0; i < lelt; i++) {
-    initVec->data[i] = h->elements[i].globalId;
+    initVec->data[i] = elements[i].globalId;
     sum += initVec->data[i];
   }
 

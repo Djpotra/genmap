@@ -14,7 +14,9 @@ int GenmapCreateHandle_default(GenmapHandle h) {
   h->CreateHeader = GenmapCreateHeader_default;
   h->DestroyHeader = GenmapDestroyHeader_default;
 
-  h->elements = NULL;
+  h->elementArray.ptr = NULL;
+  h->elementArray.n = h->elementArray.max = 0;
+  h->GetElements = GenmapGetElements_default;
   h->CreateElements = GenmapCreateElements_default;
   h->DestroyElements = GenmapDestroyElements_default;
 

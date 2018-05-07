@@ -251,8 +251,9 @@ void GenmapRSB(GenmapHandle h) {
 
   GenmapCreateVector(&initVec, h->header->lelt);
   GenmapScalar sum = 0.0;
+  GenmapElements elements = GenmapGetElements(h);
   for(GenmapInt i = 0;  i < lelt; i++) {
-    initVec->data[i] = h->elements[i].globalId;
+    initVec->data[i] = elements[i].globalId;
     sum += initVec->data[i];
   }
 
@@ -294,7 +295,7 @@ void GenmapRSB(GenmapHandle h) {
   h->Gop(h->local, &lNorm, 1, GENMAP_SUM);
   GenmapScaleVector(evLanczos, evLanczos, 1. / sqrt(lNorm));
   for(GenmapInt i = 0; i < lelt; i++)
-    h->elements[i].fiedler = evLanczos->data[i];
+    elements[i].fiedler = evLanczos->data[i];
 
   // 3. Do Rayleigh Quotient Iteration on the combination of local
   // fiedler vectors. Just do Lanczos for now. We get the global
@@ -335,23 +336,19 @@ void GenmapRSB(GenmapHandle h) {
   GenmapScalar start = min + (range * id) / nbins;
   GenmapScalar end = min + (range * (id + 1)) / nbins;
 
-  struct array A = null_array;
-  GenmapElements p = array_reserve(struct GenmapElement_private, &A, 16);
-  A.max = 16;
-  A.n = lelt;
-  memcpy(A.ptr, h->elements, sizeof(struct GenmapElement_private)*lelt);
-  for(GenmapElements p = A.ptr, e = p + A.n; p != e; p++) {
+  for(GenmapElements p = elements, e = p + lelt; p != e; p++) {
     p->proc = 0;
   }
 
   struct crystal cr;
-  crystal_init(&cr, &h->global->gsComm);
+  crystal_init(&cr, &(h->global->gsComm));
 
-  sarray_transfer(struct GenmapElement_private, &A, proc, 1, &cr);
-  p = (GenmapElements)A.ptr;
-  for(GenmapInt i = 0; i < A.n; i++) {
+  sarray_transfer(struct GenmapElement_private, &(h->elementArray), proc,
+                  1, &cr);
+  elements = GenmapGetElements(h);
+  for(GenmapInt i = 0; i < h->elementArray.n; i++) {
     printf("proc = %d id = %d fiedler = %lf\n", h->Id(h->global),
-           p[i].globalId, p[i].fiedler);
+           elements[i].globalId, elements[i].fiedler);
   }
 
   // n. Destory the data structures

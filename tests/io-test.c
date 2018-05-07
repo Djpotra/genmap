@@ -11,6 +11,7 @@ int TestIO1(GenmapHandle h) {
   char *name = "mesh/box2D_2.bin";
 
   GenmapRead(h, name);
+  GenmapElements elements = GenmapGetElements(h);
 
   assert(h->header->nel == 8);
   assert(h->header->nactive == 15);
@@ -28,19 +29,19 @@ int TestIO1(GenmapHandle h) {
   GenmapInt edgesLast[4] = {20, 22, 16, 21};
 
   if(h->Id(h->global) == 0) {
-    assert(h->elements[0].globalId == 1);
+    assert(elements[0].globalId == 1);
     for(GenmapInt j = 0; j < nc; j++) {
-      assert(h->elements[0].vertices[j] == verticesFirst[j]);
-      assert(h->elements[0].edges[j] == edgesFirst[j]);
+      assert(elements[0].vertices[j] == verticesFirst[j]);
+      assert(elements[0].edges[j] == edgesFirst[j]);
     }
   }
 
   int lelt = h->header->lelt - 1;
   if(h->Id(h->global) == h->Np(h->global) - 1) {
-    assert(h->elements[lelt].globalId == 8);
+    assert(elements[lelt].globalId == 8);
     for(GenmapInt j = 0; j < nc; j++) {
-      assert(h->elements[lelt].vertices[j] == verticesLast[j]);
-      assert(h->elements[lelt].edges[j] == edgesLast[j]);
+      assert(elements[lelt].vertices[j] == verticesLast[j]);
+      assert(elements[lelt].edges[j] == edgesLast[j]);
     }
   }
 

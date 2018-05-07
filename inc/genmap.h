@@ -84,6 +84,7 @@ int GenmapDestroyHeader(GenmapHandle h, GenmapHeader header);
 // GenmapElements: Create, Destroy
 int GenmapCreateElements(GenmapHandle h, GenmapElements *e);
 int GenmapDestroyElements(GenmapHandle h, GenmapElements e);
+GenmapElements GenmapGetElements(GenmapHandle h);
 // Function to read from FILE
 int GenmapRead(GenmapHandle h, char *name);
 //

@@ -60,7 +60,8 @@ struct GenmapHandle_private {
   int (*CreateHeader)(GenmapHeader *h);
   int (*DestroyHeader)(GenmapHeader h);
 
-  GenmapElements elements;
+  struct array elementArray;
+  GenmapElements(*GetElements)(GenmapHandle h);
   int (*CreateElements)(GenmapElements *e);
   int (*DestroyElements)(GenmapElements e);
 
