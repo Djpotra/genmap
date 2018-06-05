@@ -28,7 +28,8 @@ int GenmapCreateVector(GenmapVector *x, GenmapInt size) {
   return 0;
 }
 
-int GenmapVectorsEqual(GenmapVector x, GenmapVector y, GenmapScalar tol) {
+int GenmapVectorsEqual(GenmapVector x, GenmapVector y,
+                       GenmapScalar tol) {
   /* Asserts:
        - size of y == size of x
   */
@@ -105,7 +106,8 @@ GenmapScalar GenmapNormVector(GenmapVector x, GenmapInt p) {
   return norm;
 }
 
-int GenmapScaleVector(GenmapVector y, GenmapVector x,  GenmapScalar alpha) {
+int GenmapScaleVector(GenmapVector y, GenmapVector x,
+                      GenmapScalar alpha) {
   /* asserts:
        - size x = size y
   */
@@ -153,7 +155,8 @@ GenmapScalar GenmapDotVector(GenmapVector y, GenmapVector x) {
   return result;
 }
 
-int GenmapAxpbyVector(GenmapVector z, GenmapVector x, GenmapScalar alpha,
+int GenmapAxpbyVector(GenmapVector z, GenmapVector x,
+                      GenmapScalar alpha,
                       GenmapVector y, GenmapScalar beta) {
   assert(z->size == x->size);
   assert(z->size == y->size);

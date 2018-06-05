@@ -34,13 +34,15 @@ struct GenmapHeader_private {
   GenmapInt noutflow;
   GenmapInt nc;
   GenmapInt lelt;
+  GenmapInt start;
 };
 // GenmapElements
-struct GenmapElements_private {
-  GenmapScalar *fiedler;
-  GenmapInt *globalId;
-  GenmapInt *vertices;
-  GenmapInt *edges;
+struct GenmapElement_private {
+  GenmapScalar fiedler;
+  GenmapInt globalId;
+  GenmapInt vertices[8];
+  GenmapInt edges[12];
+  GenmapUInt proc;
 };
 //
 // Genmap_Handle
@@ -58,7 +60,8 @@ struct GenmapHandle_private {
   int (*CreateHeader)(GenmapHeader *h);
   int (*DestroyHeader)(GenmapHeader h);
 
-  GenmapElements elements;
+  struct array elementArray;
+  GenmapElements(*GetElements)(GenmapHandle h);
   int (*CreateElements)(GenmapElements *e);
   int (*DestroyElements)(GenmapElements e);
 
@@ -69,7 +72,7 @@ struct GenmapHandle_private {
             GenmapVector weights, GenmapVector v);
   int (*AxInit)(GenmapHandle h, GenmapComm c, GenmapVector weights);
 
-  int (*Gop)(GenmapComm c, GenmapScalar *v);
+  int (*Gop)(GenmapComm c, GenmapScalar *v, GenmapInt size, GenmapInt op);
 
   int (*Read)(GenmapHandle h, char *name);
 };

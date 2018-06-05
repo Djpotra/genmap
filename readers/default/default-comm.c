@@ -72,15 +72,29 @@ int GenmapAx_default(GenmapHandle h, GenmapComm c, GenmapVector u,
   return 0;
 }
 
-int GenmapAxInit_default(GenmapHandle h, GenmapComm c, GenmapVector weights) {
+int GenmapAxInit_default(GenmapHandle h, GenmapComm c,
+                         GenmapVector weights) {
   GenmapInt lelt = h->header->lelt;
   GenmapInt nc = h->header->nc;
   GenmapInt numPoints = nc * lelt;
 
-  c->verticesHandle = gs_setup(h->elements->vertices, numPoints, &c->gsComm, 0,
-		         gs_auto, 0);
-  c->edgesHandle = gs_setup(h->elements->edges, numPoints, &c->gsComm, 0,
-		         gs_auto, 0);
+  GenmapInt *vertices, *edges;
+  GenmapMalloc(numPoints, &vertices);
+  // For 2D only, for 3D this is different
+  GenmapMalloc(numPoints, &edges);
+
+  GenmapElements elements = GenmapGetElements(h);
+  for(GenmapInt i = 0; i < lelt; i++) {
+    for(int j = 0; j < nc; j++) {
+      vertices[i * nc + j] = elements[i].vertices[j];
+      edges[i * nc + j] = elements[i].edges[j];
+    }
+  }
+
+  c->verticesHandle = gs_setup(vertices, numPoints, &c->gsComm, 0,
+                               gs_auto, 0);
+  c->edgesHandle = gs_setup(edges, numPoints, &c->gsComm, 0,
+                            gs_auto, 0);
 
   GenmapScalar *u;
   GenmapMalloc(numPoints, &u);
@@ -126,15 +140,18 @@ int GenmapAxInit_default(GenmapHandle h, GenmapComm c, GenmapVector weights) {
 #endif
 
   GenmapFree(u);
+  GenmapFree(vertices);
+  GenmapFree(edges);
 
   return 0;
 }
 
-int GenmapGop_default(GenmapComm c, GenmapScalar *v) {
+int GenmapGop_default(GenmapComm c, GenmapScalar *v, GenmapInt size,
+                      GenmapInt op) {
 #ifdef MPI
-  GenmapScalar u;
-  MPI_Allreduce(v, &u, 1, MPI_DOUBLE, MPI_SUM, c->gsComm.c);
-  *v = u;
+  if(op == 0) {
+    MPI_Allreduce(MPI_IN_PLACE, v, size, MPI_DOUBLE, MPI_SUM, c->gsComm.c);
+  }
 #endif
 
   return 0;

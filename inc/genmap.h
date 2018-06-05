@@ -3,6 +3,13 @@
 
 #include <gslib.h>
 //
+// Genmap Operators
+//
+#define GENMAP_SUM 0
+#define GENAMP_MAX 1
+#define GENMAP_MIN 2
+#define GENMAP_MUL 3
+//
 // Genmap types
 //
 typedef int GenmapInt32;
@@ -12,6 +19,8 @@ typedef unsigned long GenmapUInt64;
 
 typedef GenmapInt32 GenmapInt;
 typedef GenmapInt64 GenmapLong;
+typedef GenmapUInt32 GenmapUInt;
+typedef GenmapUInt64 GenmapULong;
 
 typedef double GenmapScalar;
 
@@ -21,7 +30,7 @@ typedef struct GenmapHandle_private *GenmapHandle;
 
 typedef struct GenmapVector_private *GenmapVector;
 
-typedef struct GenmapElements_private *GenmapElements;
+typedef struct GenmapElement_private *GenmapElements;
 
 typedef struct GenmapHeader_private *GenmapHeader;
 //
@@ -47,13 +56,15 @@ typedef int GenmapCommExternal;
 //
 // GenmapComm
 //
-int GenmapCreateComm(GenmapHandle h, GenmapComm *c, GenmapCommExternal ce);
+int GenmapCreateComm(GenmapHandle h, GenmapComm *c,
+                     GenmapCommExternal ce);
 int GenmapDestroyComm(GenmapHandle h, GenmapComm c);
 // Functions to return size and rank of GenmapComm
 int GenmapNp(GenmapComm c);
 int GenmapId(GenmapComm c);
 // Functions to do global operations
-int GenmapGop(GenmapHandle h, GenmapComm c, GenmapScalar *v);
+int GenmapGop(GenmapHandle h, GenmapComm c, GenmapScalar *v,
+              GenmapInt size, GenmapInt op);
 //
 // File I/O
 //
@@ -73,6 +84,7 @@ int GenmapDestroyHeader(GenmapHandle h, GenmapHeader header);
 // GenmapElements: Create, Destroy
 int GenmapCreateElements(GenmapHandle h, GenmapElements *e);
 int GenmapDestroyElements(GenmapHandle h, GenmapElements e);
+GenmapElements GenmapGetElements(GenmapHandle h);
 // Function to read from FILE
 int GenmapRead(GenmapHandle h, char *name);
 //
@@ -98,11 +110,14 @@ int GenmapCreateRandomVector(GenmapVector *x, GenmapInt size,
 int GenmapCreateOnesVector(GenmapVector *x, GenmapInt size);
 int GenmapCreateZerosVector(GenmapVector *x, GenmapInt size);
 
-int GenmapScaleVector(GenmapVector y, GenmapVector x, GenmapScalar alpha);
-int GenmapAxpbyVector(GenmapVector z, GenmapVector x, GenmapScalar alpha,
+int GenmapScaleVector(GenmapVector y, GenmapVector x,
+                      GenmapScalar alpha);
+int GenmapAxpbyVector(GenmapVector z, GenmapVector x,
+                      GenmapScalar alpha,
                       GenmapVector y, GenmapScalar beta);
 
-int GenmapVectorsEqual(GenmapVector x, GenmapVector y, GenmapScalar tol);
+int GenmapVectorsEqual(GenmapVector x, GenmapVector y,
+                       GenmapScalar tol);
 int GenmapCopyVector(GenmapVector x, GenmapVector y);
 GenmapScalar GenmapDotVector(GenmapVector x, GenmapVector y);
 GenmapScalar GenmapNormVector(GenmapVector x, GenmapInt p);
@@ -117,10 +132,12 @@ int GenmapAx(GenmapHandle h, GenmapComm c, GenmapVector u,
 void GenmapLanczos(GenmapHandle h, GenmapComm c, GenmapVector init,
                    GenmapInt iter, GenmapVector **q, GenmapVector alpha,
                    GenmapVector beta);
+void GenmapRSB(GenmapHandle h);
 //
 // Linear solve
 //
-int GenmapSymTriDiagSolve(GenmapVector x, GenmapVector b, GenmapVector alpha,
+int GenmapSymTriDiagSolve(GenmapVector x, GenmapVector b,
+                          GenmapVector alpha,
                           GenmapVector beta);
 //
 // Power and inverse power iterations

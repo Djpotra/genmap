@@ -4,12 +4,12 @@ GSLIB=gslib
 
 LIB=lib$(TARGET).a
 
-GSDIR ?= $(SRCROOT)/../$(GSLIB)
+GSDIR ?= $(SRCROOT)/../../$(GSLIB)/$(GSLIB)
 GSLIBDIR=$(GSDIR)/src
 
 MPI ?= 1
 VALGRIND ?= 0
-DEBUG ?= 0
+DEBUG ?= 1
 ASAN ?= 0
 
 SRCROOT =.
@@ -45,7 +45,9 @@ DEFAULTOBJS = $(DEFAULTSRCS:.c=.o)
 
 TESTCSRC:= $(TESTDIR)/vector-test.c $(TESTDIR)/algo-test.c \
 	   $(TESTDIR)/genmap-test.c $(TESTDIR)/io-test.c \
-	   $(TESTDIR)/comm-test.c $(TESTDIR)/lanczos-test.c
+	   $(TESTDIR)/comm-test.c $(TESTDIR)/lanczos-test.c \
+	   $(TESTDIR)/rsb-test.c
+
 TESTCOBJ:=$(TESTCSRC:.c=.o)
 TESTFSRC:=
 TESTFOBJ:=$(TESTFSRC:.f=.o)
@@ -105,7 +107,7 @@ clean:
 
 .PHONY: astyle
 astyle:
-	astyle --style=google --indent=spaces=2 --max-code-length=80 \
+	astyle --style=google --indent=spaces=2 --max-code-length=72 \
 	    --keep-one-line-statements --keep-one-line-blocks --lineend=linux \
             --suffix=none --preserve-date --formatted --pad-oper \
-	    --unpad-paren tests/*.[ch] src/*.[ch] inc/*.[ch]
+	    --unpad-paren tests/*.[ch] src/*.[ch] inc/*.[ch] readers/*/*.[ch]

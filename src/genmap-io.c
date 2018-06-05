@@ -21,6 +21,10 @@ int GenmapCreateElements(GenmapHandle h, GenmapElements *e) {
 int GenmapDestroyElements(GenmapHandle h, GenmapElements e) {
   return h->DestroyElements(e);
 }
+
+GenmapElements GenmapGetElements(GenmapHandle h) {
+  return h->GetElements(h);
+}
 //
 // Do File I/O in parallel
 //

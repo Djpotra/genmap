@@ -18,7 +18,8 @@ int comp_element(const void *a, const void *b) {
 }
 
 //------------------------------------------------------------------------------
-void scatter_by_max(struct element *elements, int32 lelt, struct comm *c) {
+void scatter_by_max(struct element *elements, int32 lelt,
+                    struct comm *c) {
 
   int32 id, np; np = c->np; id = c->id;
   MPI_Comm global = c->c;

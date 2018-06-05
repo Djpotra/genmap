@@ -1,6 +1,7 @@
 #include <genmap-impl.h>
 
 #include <math.h>
+#include <stdio.h>
 //
 // Algorithms
 //
@@ -25,10 +26,12 @@ int GenmapPowerIter(GenmapVector eVector, GenmapVector alpha,
       // y = Ax
       y->data[0] = alpha->data[0] * x->data[0] + beta->data[0] * x->data[1];
       for(GenmapInt i = 1; i < n - 1; i++) {
-        y->data[i] = beta->data[i - 1] * x->data[i - 1] + alpha->data[i] * x->data[i] +
+        y->data[i] = beta->data[i - 1] * x->data[i - 1] + alpha->data[i] *
+                     x->data[i] +
                      beta->data[i] * x->data[i + 1];
       }
-      y->data[n - 1] = beta->data[n - 2] * x->data[n - 2] + alpha->data[n - 1] *
+      y->data[n - 1] = beta->data[n - 2] * x->data[n - 2] + alpha->data[n - 1]
+                       *
                        x->data[n - 1];
 
       // Normalize by inf-norm(y)
@@ -117,7 +120,8 @@ int GenmapInvPowerIter(GenmapVector eVector, GenmapVector alpha,
 //
 // Linear solve for Symmetric Tridiagonal Matrix
 //
-int GenmapSymTriDiagSolve(GenmapVector x, GenmapVector b, GenmapVector alpha,
+int GenmapSymTriDiagSolve(GenmapVector x, GenmapVector b,
+                          GenmapVector alpha,
                           GenmapVector beta) {
   assert((x->size == b->size) && (x->size == alpha->size));
   assert(alpha->size == beta->size + 1);
@@ -140,7 +144,8 @@ int GenmapSymTriDiagSolve(GenmapVector x, GenmapVector b, GenmapVector alpha,
   x->data[n - 1] = x->data[n - 1] / diag->data[n - 1];
 
   for(GenmapInt i = n - 2; i >= 0; i--) {
-    x->data[i] = (x->data[i] - beta->data[i] * x->data[i + 1]) / diag->data[i];
+    x->data[i] = (x->data[i] - beta->data[i] * x->data[i + 1]) /
+                 diag->data[i];
   }
 
   GenmapDestroyVector(diag);
@@ -170,10 +175,11 @@ void GenmapLanczos(GenmapHandle h, GenmapComm c, GenmapVector init,
   beta->data[0] = 0.;
 
   // Allocate memory for q-vectors
-  GenmapMalloc(iter, q);
+  if(*q == NULL)
+    GenmapMalloc(iter, q);
 
   normq1 = GenmapDotVector(q1, q1);
-  h->Gop(c, &normq1);
+  h->Gop(c, &normq1, 1, GENMAP_SUM);
   normq1 = sqrt(normq1);
   GenmapScaleVector(q1, q1, 1. / normq1);
 
@@ -191,13 +197,13 @@ void GenmapLanczos(GenmapHandle h, GenmapComm c, GenmapVector init,
     h->Ax(h, c, q1, weights, u);
 
     alpha->data[k] = GenmapDotVector(q1, u);
-    h->Gop(c, &alpha->data[k]);
+    h->Gop(c, &alpha->data[k], 1, GENMAP_SUM);
 
     GenmapAxpbyVector(u, u, 1., q0, -b);
     GenmapAxpbyVector(u, u, 1., q1, -alpha->data[k]);
 
     b = GenmapDotVector(u, u);
-    h->Gop(c, &b);
+    h->Gop(c, &b, 1, GENMAP_SUM);
     b = sqrt(b);
 
     if(k < iter - 1) {
@@ -234,23 +240,39 @@ void GenmapRQI(GenmapHandle h, GenmapVector v) {
   // Calculate Lv, v^T(Lv)
 }
 
-void GenmapRSB(GenmapHandle h) {
-  // Assume that global and local communicators are
-  // initialized correctly.
+GenmapInt GetProcessorId(GenmapScalar fiedler, GenmapInt np) {
+  GenmapScalar min = -1.0, max = 1.0;
+  GenmapScalar range = max - min;
+  GenmapInt nbins = np;
+  for(GenmapInt id = 0; id < np; id++) {
+    GenmapScalar start = min + (range * id) / nbins;
+    GenmapScalar end = min + (range * (id + 1)) / nbins;
+    if(start <= fiedler && fiedler < end)
+      return id;
+  }
+  return 0;
+}
 
+void GenmapFiedler(GenmapHandle h, GenmapComm c, int global) {
   // 1. Do lanczos in local communicator.
   GenmapInt iter = 10;
   GenmapInt lelt = h->header->lelt;
   GenmapVector initVec, alphaVec, betaVec;
 
+  if (lelt == 0) return;
+
   GenmapCreateVector(&initVec, h->header->lelt);
   GenmapScalar sum = 0.0;
+  GenmapElements elements = GenmapGetElements(h);
   for(GenmapInt i = 0;  i < lelt; i++) {
-    initVec->data[i] = h->elements->globalId[i];
+    if(global)
+      initVec->data[i] = elements[i].globalId;
+    else
+      initVec->data[i] = elements[i].fiedler;
     sum += initVec->data[i];
   }
 
-  h->Gop(h->global, &sum);
+  h->Gop(c, &sum, 1, GENMAP_SUM);
 
   for(GenmapInt i = 0;  i < lelt; i++) {
     initVec->data[i] -= sum / h->header->nel;
@@ -259,7 +281,7 @@ void GenmapRSB(GenmapHandle h) {
   GenmapCreateVector(&alphaVec, iter);
   GenmapCreateVector(&betaVec, iter - 1);
   GenmapVector *q = NULL;
-  GenmapLanczos(h, h->local, initVec, iter, &q, alphaVec, betaVec);
+  GenmapLanczos(h, c, initVec, iter, &q, alphaVec, betaVec);
   iter = alphaVec->size;
 
   // 2. Do inverse power iteration on local communicator and find
@@ -285,25 +307,65 @@ void GenmapRSB(GenmapHandle h) {
   for(GenmapInt i = 0; i < lelt; i++) {
     lNorm += evLanczos->data[i] * evLanczos->data[i];
   }
-  h->Gop(h->local, &lNorm);
+
+  h->Gop(c, &lNorm, 1, GENMAP_SUM);
   GenmapScaleVector(evLanczos, evLanczos, 1. / sqrt(lNorm));
-
-  // 3. Do Rayleigh Quotient Iteration on the combination of local
-  // fiedler vectors. Just do Lanczos for now.
-  GenmapLanczos(h, h->global, evLanczos, iter, &q, alphaVec, betaVec);
-
-  // 4. Exchange elements based on global Fiedler vector
+  for(GenmapInt i = 0; i < lelt; i++) {
+    elements[i].fiedler = evLanczos->data[i];
+  }
 
   // n. Destory the data structures
-  for(GenmapInt i = 0; i < iter; i++) {
-    GenmapDestroyVector(q[i]);
-  }
-  GenmapFree(q);
-
   GenmapDestroyVector(initVec);
   GenmapDestroyVector(alphaVec);
   GenmapDestroyVector(betaVec);
   GenmapDestroyVector(evLanczos);
   GenmapDestroyVector(evTriDiag);
   GenmapDestroyVector(evInit);
+  for(GenmapInt i = 0; i < iter; i++) {
+    GenmapDestroyVector(q[i]);
+  }
+  GenmapFree(q);
+}
+
+void GenmapRSB(GenmapHandle h) {
+  int done = 0;
+  // Calculate the global Fiedler vector, local communicator
+  // must be initialized using the global communicator
+  GenmapFiedler(h, h->local, 1);
+  do {
+    GenmapInt nbins = h->Np(h->local);
+    GenmapInt id = h->Id(h->local);
+    printf("Nbins=%d, Id=%d\n",nbins,id);
+
+    GenmapElements elements = GenmapGetElements(h);
+    GenmapInt lelt = h->header->lelt;
+    for(GenmapElements p = elements, e = p + lelt; p != e; p++) {
+      p->proc = GetProcessorId(p->fiedler, nbins);
+    }
+
+    struct crystal cr;
+    crystal_init(&cr, &(h->local->gsComm));
+    sarray_transfer(struct GenmapElement_private, &(h->elementArray), proc,
+                    1, &cr);
+    elements = GenmapGetElements(h);
+    h->header->lelt = h->elementArray.n;
+
+    for(GenmapInt i = 0; i < h->header->lelt; i++) {
+      printf("proc = %d id = %d fiedler = %lf\n", h->Id(h->local),
+             elements[i].globalId, elements[i].fiedler);
+    }
+
+    GenmapCommExternal local;
+#ifdef MPI
+    int partition = 0;
+    if (id >= nbins/2) partition = 1;
+    MPI_Comm_split(h->local->gsComm.c, partition, id, &local);
+    if (nbins == 1) done = 1;
+#else
+    local=0
+    done=1;
+#endif
+    GenmapCreateComm(h, &h->local, local);
+    GenmapFiedler(h, h->local, 0);
+  } while(!done);
 }

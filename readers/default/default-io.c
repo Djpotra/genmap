@@ -18,27 +18,17 @@ int GenmapDestroyHeader_default(GenmapHeader h) {
 // GenmapElements: Create, Destroy
 //
 int GenmapCreateElements_default(GenmapElements *e) {
-  GenmapMalloc(1, e);
-
-  (*e)->globalId = NULL;
-  (*e)->vertices = NULL;
-  (*e)->edges = NULL;
-  (*e)->fiedler = NULL;
-
+//  GenmapMalloc(1, e);
   return 0;
 }
 
 int GenmapDestroyElements_default(GenmapElements e) {
-  if(e->globalId)
-    GenmapFree(e->globalId);
-  if(e->vertices)
-    GenmapFree(e->vertices);
-  if(e->edges)
-    GenmapFree(e->edges);
-  if(e->fiedler)
-    GenmapFree(e->fiedler);
-  GenmapFree(e);
+//  GenmapFree(e);
+//  array_free(e);
   return 0;
+}
+GenmapElements GenmapGetElements_default(GenmapHandle h) {
+  return (GenmapElements) h->elementArray.ptr;
 }
 //
 // Do File I/O in parallel
@@ -49,7 +39,8 @@ int GenmapRead_default(GenmapHandle h, char *name) {
   MPI_Offset offset;
   MPI_Status st;
 
-  MPI_File_open(MPI_COMM_WORLD, name, MPI_MODE_RDONLY, MPI_INFO_NULL, &fh);
+  MPI_File_open(h->global->gsComm.c, name, MPI_MODE_RDONLY, MPI_INFO_NULL,
+                &fh);
 
   MPI_File_seek(fh, 0, MPI_SEEK_SET);
   MPI_File_get_size(fh, &offset);
@@ -66,7 +57,8 @@ int GenmapRead_default(GenmapHandle h, char *name) {
 #ifdef MPI
   MPI_File_read(fh, headerArray, GENMAP_HEADER_SIZE, MPI_INT, &st);
 #else
-  GenmapInt result = fread(headerArray, sizeof(GenmapInt), GENMAP_HEADER_SIZE,
+  GenmapInt result = fread(headerArray, sizeof(GenmapInt),
+                           GENMAP_HEADER_SIZE,
                            fp);
 #endif
 
@@ -89,13 +81,17 @@ int GenmapRead_default(GenmapHandle h, char *name) {
     lelt = nel - h->Id(h->global) * lelt;
 #endif
 
+  GenmapInt out[2][1], buf[2][1];
+  comm_scan(out, &(h->global->gsComm), gs_int, gs_add, &lelt, 1, buf);
+
   h->header->nc = nc;
   h->header->lelt = lelt;
+  h->header->start = out[0][0];
 
-  GenmapMalloc(lelt, &(h->elements->globalId));
-  GenmapMalloc(lelt, &(h->elements->fiedler));
-  GenmapMalloc(lelt * nc, &(h->elements->vertices));
-  GenmapMalloc(lelt * nc, &(h->elements->edges));
+  array_reserve(struct GenmapElement_private, &(h->elementArray), lelt);
+  h->elementArray.n = lelt;
+  GenmapElements elements = GenmapGetElements(h);
+
 #ifdef MPI
   MPI_File_seek(fh, (GENMAP_HEADER_SIZE + start)*sizeof(GenmapInt),
                 MPI_SEEK_SET);
@@ -103,13 +99,13 @@ int GenmapRead_default(GenmapHandle h, char *name) {
 
   for(GenmapInt i = 0; i < lelt; i++) {
 #ifdef MPI
-    MPI_File_read(fh, h->elements->globalId + i,  1, MPI_INT, &st);
-    MPI_File_read(fh, h->elements->vertices + i * nc, nc, MPI_INT, &st);
-    MPI_File_read(fh, h->elements->edges + i * nc, nc, MPI_INT, &st);
+    MPI_File_read(fh, &(elements[i].globalId), 1, MPI_INT, &st);
+    MPI_File_read(fh, elements[i].vertices, nc, MPI_INT, &st);
+    MPI_File_read(fh, elements[i].edges, nc, MPI_INT, &st);
 #else
-    result += fread(h->elements->globalId + i, sizeof(GenmapInt), 1, fp);
-    result += fread(h->elements->vertices + i * nc, sizeof(GenmapInt), nc, fp);
-    result += fread(h->elements->edges + i * nc, sizeof(GenmapInt), nc, fp);
+    result += fread(&(elements[i].globalId), sizeof(GenmapInt), 1, fp);
+    result += fread(elements[i].vertices, sizeof(GenmapInt), nc, fp);
+    result += fread(elements[i].edges, sizeof(GenmapInt), nc, fp);
 #endif
   }
 

@@ -10,7 +10,7 @@ int TestGop1(GenmapHandle h) {
   GenmapScalar u = (GenmapScalar) h->Id(h->global);
   GenmapInt n = h->Np(h->global);
 
-  h->Gop(h->global, &u);
+  h->Gop(h->global, &u, 1, GENMAP_SUM);
   assert(fabs(u - 0.5 * n * (n - 1)) < GENMAP_TOL);
 
   return 0;

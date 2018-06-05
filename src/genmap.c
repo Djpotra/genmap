@@ -17,7 +17,8 @@ static size_t GenmapNumReaders = 0;
 static size_t GenmapReadersRegistered = 0;
 
 int GenmapRegisterReader(char *name, int (*Create)(GenmapHandle h)) {
-  if(GenmapNumReaders >= sizeof(GenmapReaders) / sizeof(GenmapReaders[0])) {
+  if(GenmapNumReaders >= sizeof(GenmapReaders) / sizeof(
+        GenmapReaders[0])) {
     //TODO: GenmapError
     printf("Error: Too many readers.\n");
   }
@@ -50,7 +51,8 @@ int GenmapInit(GenmapHandle *h, GenmapCommExternal ce, char *reader) {
 
   for(size_t i = 0; i < GenmapNumReaders; i++) {
     registeredReader = GenmapReaders[i].name;
-    for(size_t j = 0; reader[j] && (reader[j] == registeredReader[j]); j++) {
+    for(size_t j = 0; reader[j]
+        && (reader[j] == registeredReader[j]); j++) {
       if(j > matchLen) {
         matchLen = j;
         matchIdx = i;
@@ -68,8 +70,7 @@ int GenmapInit(GenmapHandle *h, GenmapCommExternal ce, char *reader) {
   (*h)->Create(*h);
 
   GenmapCreateComm(*h, &(*h)->global, ce);
-  GenmapCreateComm(*h, &(*h)->local, ce);
-  GenmapCreateElements(*h, &(*h)->elements);
+//  GenmapCreateElements(*h, &(*h)->elements);
   GenmapCreateHeader(*h, &(*h)->header);
 
   return 0;
@@ -82,7 +83,7 @@ int GenmapFinalize(GenmapHandle h) {
     GenmapDestroyComm(h, h->global);
   if(h->local)
     GenmapDestroyComm(h, h->local);
-  GenmapDestroyElements(h, h->elements);
+//  GenmapDestroyElements(h, h->elements);
   GenmapDestroyHeader(h, h->header);
 
   GenmapFree(h);
