@@ -259,7 +259,7 @@ void GenmapFiedler(GenmapHandle h, GenmapComm c, int global) {
   GenmapInt lelt = h->header->lelt;
   GenmapVector initVec, alphaVec, betaVec;
 
-  if (lelt == 0) return;
+  if(lelt == 0) return;
 
   GenmapCreateVector(&initVec, h->header->lelt);
   GenmapScalar sum = 0.0;
@@ -335,7 +335,7 @@ void GenmapRSB(GenmapHandle h) {
   do {
     GenmapInt nbins = h->Np(h->local);
     GenmapInt id = h->Id(h->local);
-    printf("Nbins=%d, Id=%d\n",nbins,id);
+    printf("Nbins=%d, Id=%d\n", nbins, id);
 
     GenmapElements elements = GenmapGetElements(h);
     GenmapInt lelt = h->header->lelt;
@@ -358,12 +358,12 @@ void GenmapRSB(GenmapHandle h) {
     GenmapCommExternal local;
 #ifdef MPI
     int partition = 0;
-    if (id >= nbins/2) partition = 1;
+    if(id >= nbins / 2) partition = 1;
     MPI_Comm_split(h->local->gsComm.c, partition, id, &local);
-    if (nbins == 1) done = 1;
+    if(nbins == 1) done = 1;
 #else
-    local=0
-    done=1;
+    local = 0;
+    done = 1;
 #endif
     GenmapCreateComm(h, &h->local, local);
     GenmapFiedler(h, h->local, 0);
