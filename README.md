@@ -33,7 +33,6 @@ To run the tests, just do:
 
 ```sh
 make test
-./tests/ax_test.o
 ```
 
 This will run the tests for various algorithms.
