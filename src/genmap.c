@@ -70,7 +70,7 @@ int GenmapInit(GenmapHandle *h, GenmapCommExternal ce, char *reader) {
   (*h)->Create(*h);
 
   GenmapCreateComm(*h, &(*h)->global, ce);
-//  GenmapCreateElements(*h, &(*h)->elements);
+  GenmapCreateComm(*h, &(*h)->local, ce);
   GenmapCreateHeader(*h, &(*h)->header);
 
   return 0;
@@ -83,8 +83,10 @@ int GenmapFinalize(GenmapHandle h) {
     GenmapDestroyComm(h, h->global);
   if(h->local)
     GenmapDestroyComm(h, h->local);
-//  GenmapDestroyElements(h, h->elements);
+
   GenmapDestroyHeader(h, h->header);
+
+  array_free(&(h->elementArray));
 
   GenmapFree(h);
 

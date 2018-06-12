@@ -89,15 +89,15 @@ int GenmapInvPowerIter(GenmapVector eVector, GenmapVector alpha,
   GenmapInt n = alpha->size;
 
   GenmapVector x, y;
-  GenmapCreateVector(&x, n);
-  GenmapCreateVector(&y, n);
-
-  GenmapCopyVector(x, init);
 
   if(n == 1) {
     eVector->data[0] = alpha->data[0];
     return 0;
   } else {
+    GenmapCreateVector(&x, n);
+    GenmapCreateVector(&y, n);
+
+    GenmapCopyVector(x, init);
     for(GenmapInt j = 0; j < iter; j++) {
       // Ay = x
       GenmapSymTriDiagSolve(y, x, alpha, beta);
@@ -329,6 +329,7 @@ void GenmapFiedler(GenmapHandle h, GenmapComm c, int global) {
 
 void GenmapRSB(GenmapHandle h) {
   int done = 0;
+  struct crystal cr;
   // Calculate the global Fiedler vector, local communicator
   // must be initialized using the global communicator
   GenmapFiedler(h, h->local, 1);
@@ -343,7 +344,6 @@ void GenmapRSB(GenmapHandle h) {
       p->proc = GetProcessorId(p->fiedler, nbins);
     }
 
-    struct crystal cr;
     crystal_init(&cr, &(h->local->gsComm));
     sarray_transfer(struct GenmapElement_private, &(h->elementArray), proc,
                     1, &cr);
@@ -365,7 +365,10 @@ void GenmapRSB(GenmapHandle h) {
     local = 0;
     done = 1;
 #endif
+    GenmapDestroyComm(h, h->local);
     GenmapCreateComm(h, &h->local, local);
     GenmapFiedler(h, h->local, 0);
   } while(!done);
+
+  crystal_free(&cr);
 }
