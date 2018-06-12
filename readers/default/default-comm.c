@@ -11,14 +11,13 @@ int GenmapCreateComm_default(GenmapComm *c, GenmapCommExternal ce) {
 }
 
 int GenmapDestroyComm_default(GenmapComm c) {
-  comm_free(&c->gsComm);
-
   if(c->verticesHandle)
     gs_free(c->verticesHandle);
-  if(c->verticesHandle)
+  if(c->edgesHandle)
     gs_free(c->edgesHandle);
   if(c->laplacianWeights)
     GenmapFree(c->laplacianWeights);
+  comm_free(&c->gsComm);
   GenmapFree(c);
 
   return 0;
@@ -91,6 +90,10 @@ int GenmapAxInit_default(GenmapHandle h, GenmapComm c,
     }
   }
 
+  if(c->verticesHandle)
+    gs_free(c->verticesHandle);
+  if(c->edgesHandle)
+    gs_free(c->edgesHandle);
   c->verticesHandle = gs_setup(vertices, numPoints, &c->gsComm, 0,
                                gs_auto, 0);
   c->edgesHandle = gs_setup(edges, numPoints, &c->gsComm, 0,

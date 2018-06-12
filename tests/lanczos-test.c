@@ -88,6 +88,7 @@ void TestLanczos1(GenmapHandle h) {
   GenmapDestroyVector(evLanczos);
   GenmapDestroyVector(evTriDiag);
   GenmapDestroyVector(evInit);
+  GenmapDestroyVector(answer);
 }
 
 void TestLanczos2(GenmapHandle h) {
@@ -174,6 +175,7 @@ void TestLanczos2(GenmapHandle h) {
   GenmapDestroyVector(evLanczos);
   GenmapDestroyVector(evTriDiag);
   GenmapDestroyVector(evInit);
+  GenmapDestroyVector(answer);
 }
 
 void TestLanczos3(GenmapHandle h) {
@@ -267,6 +269,7 @@ void TestLanczos3(GenmapHandle h) {
   GenmapDestroyVector(evLanczos);
   GenmapDestroyVector(evTriDiag);
   GenmapDestroyVector(evInit);
+  GenmapDestroyVector(answer);
 }
 
 int main(int argc, char **argv) {
