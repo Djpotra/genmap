@@ -10,6 +10,10 @@
 #define GENMAP_MIN 2
 #define GENMAP_MUL 3
 //
+// Genmap Memory Align
+//
+#define GENMAP_ALIGN 64
+//
 // Genmap types
 //
 typedef int GenmapInt32;
@@ -152,7 +156,11 @@ int GenmapPowerIterNew(GenmapVector eVector, void (*Ax)(GenmapVector ax,
 int GenmapInvPowerIter(GenmapVector eVector, GenmapVector alpha,
                        GenmapVector beta, GenmapVector init, GenmapInt iter);
 //
-// Memory Allocation and Free
+// GenmapMalloc, Realloc, Calloc and Free
 //
+int GenmapMallocArray(size_t n, size_t unit, void *p);
+int GenmapCallocArray(size_t n, size_t unit, void *p);
+int GenmapReallocArray(size_t n, size_t unit, void *p);
 int GenmapFree(void *p);
+
 #endif

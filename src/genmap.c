@@ -1,10 +1,12 @@
+#define _POSIX_C_SOURCE 200112
 #include <genmap-impl.h>
 
-// Urgh ugly
+#include <stdlib.h>
+#include <stdarg.h>
+#include <stdio.h>
+// TODO: Urgh ugly
 #include <default.h>
 
-//TODO: Get rid of this
-#include <stdio.h>
 //
 // Genmap Readers (FEM meshes, .map files, etc.)
 //
@@ -93,11 +95,34 @@ int GenmapFinalize(GenmapHandle h) {
   return 0;
 }
 //
-// TODO Malloc and Free
+// GenmapMalloc, Realloc, Calloc and Free
 //
-int GenmapMallocArray();
-int GenmapCallocArray();
-int GenmapReallocArray();
+int GenmapMallocArray(size_t n, size_t unit, void *p) {
+  int ierr = posix_memalign((void **)p, GENMAP_ALIGN, n*unit);
+  if(ierr)
+    printf("GenmapMallocArray Failed: %s:%d\n",__FILE__,__LINE__);
+  return ierr;
+}
+
+int GenmapCallocArray(size_t n, size_t unit, void *p) {
+  int ierr = 0;
+  *(void **)p = calloc(n, unit);
+  if(n && unit && !*(void **)p) {
+    ierr = 1;
+    printf("GenmapCallocArray Failed: %s:%d\n",__FILE__,__LINE__);
+  }
+  return ierr;
+}
+
+int GenmapReallocArray(size_t n, size_t unit, void *p) {
+  int ierr=0;
+  *(void **)p = realloc(*(void **)p, n*unit);
+  if(n && unit && !*(void **)p) {
+    ierr = 1;
+    printf("GenmapReallocArray Failed: %s:%d\n",__FILE__,__LINE__);
+  }
+  return ierr;
+}
 
 int GenmapFree(void *p) {
   free(p);
