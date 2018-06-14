@@ -84,7 +84,10 @@ struct GenmapVector_private {
   GenmapScalar *data;
 };
 //
-// Malloc
+// Memory management routines
 //
-#define GenmapMalloc(n, p) *(p) = malloc(sizeof(**(p))*(n))
+#define GenmapMalloc(n, p) GenmapMallocArray ((n), sizeof(**(p)), p)
+#define GenmapCalloc(n, p) GenmapCallocArray ((n), sizeof(**(p)), p)
+#define GenmapRealloc(n, p) GenmapReallocArray((n), sizeof(**(p)), p)
+
 #endif
