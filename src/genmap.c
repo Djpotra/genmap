@@ -1,12 +1,10 @@
 #define _POSIX_C_SOURCE 200112
 #include <genmap-impl.h>
+#include <genmap-default-reader.h>
 
 #include <stdlib.h>
 #include <stdarg.h>
 #include <stdio.h>
-// TODO: Urgh ugly
-#include <default.h>
-
 //
 // Genmap Readers (FEM meshes, .map files, etc.)
 //

@@ -15,10 +15,10 @@ ASAN ?= 0
 SRCROOT =.
 SRCDIR  =$(SRCROOT)/src
 INCDIR  =$(SRCROOT)/inc
-READERSDIR=$(SRCROOT)/readers
 BUILDDIR=$(SRCROOT)/build
 TESTDIR =$(SRCROOT)/tests
-DEFAULTDIR=$(READERSDIR)/default
+READERDIR=$(SRCROOT)/readers
+DEFAULTDIR=$(READERDIR)/default
 
 AFLAGS = -fsanitize=address
 CC=mpicc
@@ -32,29 +32,31 @@ INCFLAGS=-I$(INCDIR) -I$(GSLIBDIR) -I$(DEFAULTDIR)
 LDFLAGS:=-L$(GSLIBDIR) -lgs
 TESTLDFLAGS:=-L. -Wl,-rpath=. -l$(TARGET) -L$(GSLIBDIR) -lgs -lm
 
+# Main source and readers #
 CSRCS:= $(SRCDIR)/genmap-vector.c $(SRCDIR)/genmap-algo.c \
 	$(SRCDIR)/genmap-io.c $(SRCDIR)/genmap-comm.c $(SRCDIR)/genmap.c \
 	$(SRCDIR)/genmap-fortran.c
-
 COBJS:=$(CSRCS:.c=.o)
 
 FSRCS:=
 FOBJS:=$(FSRCS:.f=.o)
 
-DEFAULTSRCS = $(DEFAULTDIR)/default.c $(DEFAULTDIR)/default-comm.c \
-	      $(DEFAULTDIR)/default-io.c
-DEFAULTOBJS = $(DEFAULTSRCS:.c=.o)
+READERSRCS = $(DEFAULTDIR)/genmap-default.c $(DEFAULTDIR)/genmap-default-comm.c \
+             $(DEFAULTDIR)/genmap-default-io.c
+READEROBJS = $(READERSRCS:.c=.o)
 
+# Tests #
 TESTCSRC:= $(TESTDIR)/vector-test.c $(TESTDIR)/algo-test.c \
 	   $(TESTDIR)/genmap-test.c $(TESTDIR)/io-test.c \
 	   $(TESTDIR)/comm-test.c $(TESTDIR)/lanczos-test.c \
 	   $(TESTDIR)/rsb-test.c
-
 TESTCOBJ:=$(TESTCSRC:.c=.o)
+
 TESTFSRC:=
 TESTFOBJ:=$(TESTFSRC:.f=.o)
 
-SRCOBJS :=$(COBJS) $(FOBJS) $(DEFAULTOBJS)
+# Build #
+SRCOBJS :=$(COBJS) $(FOBJS) $(READEROBJS)
 TESTOBJS:=$(TESTCOBJ) $(TESTFOBJ)
 
 ifeq ($(ASAN),1)
@@ -86,7 +88,7 @@ $(COBJS): %.o: %.c
 $(FOBJS): %.o: %.f
 	$(FC) $(FFLAGS) $(INCFLAGS) -c $< -o $@
 
-$(DEFAULTOBJS): %.o: %.c
+$(READEROBJS): %.o: %.c
 	$(CC) $(CFLAGS) $(INCFLAGS) -c $< -o $@
 
 .PHONY: $(TEST)
