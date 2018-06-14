@@ -1,5 +1,5 @@
-#ifndef _GENMAP_FORTRAN_NAME_H
-#define _GENMAP_FORTRAN_NAME_H
+#ifndef _GENMAP_FORTRAN_NAME_H_
+#define _GENMAP_FORTRAN_NAME_H_
 
 /* establishes some macros to establish
    * the FORTRAN naming convention
