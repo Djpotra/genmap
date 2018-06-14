@@ -1,6 +1,6 @@
 #define _POSIX_C_SOURCE 200112
 #include <genmap-impl.h>
-#include <genmap-default-reader.h>
+#include <genmap-readers.h>
 
 #include <stdlib.h>
 #include <stdarg.h>

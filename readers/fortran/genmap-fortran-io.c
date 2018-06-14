@@ -4,36 +4,36 @@
 //
 // GenmapHeader: Create, Destroy
 //
-int GenmapCreateHeader_default(GenmapHeader *h) {
+int GenmapCreateHeader_fortran(GenmapHeader *h) {
   GenmapMalloc(1, h);
 
   return 0;
 }
 
-int GenmapDestroyHeader_default(GenmapHeader h) {
+int GenmapDestroyHeader_fortran(GenmapHeader h) {
   GenmapFree(h);
   return 0;
 }
 //
 // GenmapElements: Create, Destroy
 //
-int GenmapCreateElements_default(GenmapElements *e) {
+int GenmapCreateElements_fortran(GenmapElements *e) {
 //  GenmapMalloc(1, e);
   return 0;
 }
 
-int GenmapDestroyElements_default(GenmapElements e) {
+int GenmapDestroyElements_fortran(GenmapElements e) {
 //  GenmapFree(e);
 //  array_free(e);
   return 0;
 }
-GenmapElements GenmapGetElements_default(GenmapHandle h) {
+GenmapElements GenmapGetElements_fortran(GenmapHandle h) {
   return (GenmapElements) h->elementArray.ptr;
 }
 //
 // Do File I/O in parallel
 //
-int GenmapRead_default(GenmapHandle h, char *name) {
+int GenmapRead_fortran(GenmapHandle h, char *name) {
 #ifdef MPI
   MPI_File fh;
   MPI_Offset offset;

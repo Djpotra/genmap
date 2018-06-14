@@ -17,8 +17,10 @@ SRCDIR  =$(SRCROOT)/src
 INCDIR  =$(SRCROOT)/inc
 BUILDDIR=$(SRCROOT)/build
 TESTDIR =$(SRCROOT)/tests
+
 READERDIR=$(SRCROOT)/readers
 DEFAULTDIR=$(READERDIR)/default
+FORTRANDIR=$(READERDIR)/fortran
 
 AFLAGS = -fsanitize=address
 CC=mpicc
@@ -28,7 +30,7 @@ FFLAGS=
 CXX=mpic++
 CXXFLAGS=
 
-INCFLAGS=-I$(INCDIR) -I$(GSLIBDIR) -I$(DEFAULTDIR)
+INCFLAGS=-I$(INCDIR) -I$(GSLIBDIR) -I$(READERDIR)
 LDFLAGS:=-L$(GSLIBDIR) -lgs
 TESTLDFLAGS:=-L. -Wl,-rpath=. -l$(TARGET) -L$(GSLIBDIR) -lgs -lm
 
@@ -42,7 +44,9 @@ FSRCS:=
 FOBJS:=$(FSRCS:.f=.o)
 
 READERSRCS = $(DEFAULTDIR)/genmap-default.c $(DEFAULTDIR)/genmap-default-comm.c \
-             $(DEFAULTDIR)/genmap-default-io.c
+             $(DEFAULTDIR)/genmap-default-io.c \
+             $(FORTRANDIR)/genmap-fortran.c $(FORTRANDIR)/genmap-fortran-comm.c \
+             $(FORTRANDIR)/genmap-fortran-io.c
 READEROBJS = $(READERSRCS:.c=.o)
 
 # Tests #

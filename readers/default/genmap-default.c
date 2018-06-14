@@ -1,4 +1,4 @@
-#include <genmap-default-reader.h>
+#include <genmap-readers.h>
 
 #include <stdio.h>
 //
