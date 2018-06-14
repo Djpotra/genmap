@@ -33,7 +33,9 @@ LDFLAGS:=-L$(GSLIBDIR) -lgs
 TESTLDFLAGS:=-L. -Wl,-rpath=. -l$(TARGET) -L$(GSLIBDIR) -lgs -lm
 
 CSRCS:= $(SRCDIR)/genmap-vector.c $(SRCDIR)/genmap-algo.c \
-	$(SRCDIR)/genmap-io.c $(SRCDIR)/genmap-comm.c $(SRCDIR)/genmap.c
+	$(SRCDIR)/genmap-io.c $(SRCDIR)/genmap-comm.c $(SRCDIR)/genmap.c \
+	$(SRCDIR)/genmap-fortran.c
+
 COBJS:=$(CSRCS:.c=.o)
 
 FSRCS:=
