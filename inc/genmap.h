@@ -10,6 +10,10 @@
 #define GENMAP_MIN 2
 #define GENMAP_MUL 3
 //
+// Genmap Memory Align
+//
+#define GENMAP_ALIGN 64
+//
 // Genmap types
 //
 typedef int GenmapInt32;
