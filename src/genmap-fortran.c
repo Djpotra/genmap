@@ -14,7 +14,7 @@ static int GenmapHandleMax = 0;
 #ifdef MPI
 void fGenmapInit(int *handle, MPI_Fint *comm, int *nelements,
                  int *nvertices, int *facedata, int *traversal, int *err) {
-  MPI_Comm ccomm = MPI_Comm_f2c(comm);
+  MPI_Comm ccomm = MPI_Comm_f2c(*comm);
 #else
 void fGenmapInit(int *handle, int *comm, int *nelements, int *nvertices,
                  int *facedata, int *traversal, int *err) {
