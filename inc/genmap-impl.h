@@ -36,6 +36,11 @@ struct GenmapHeader_private {
   GenmapInt lelt;
   GenmapInt start;
 };
+//
+// GenmapHeader: Create, Destroy
+//
+int GenmapCreateHeader(GenmapHeader *h);
+int GenmapDestroyHeader(GenmapHeader h);
 // GenmapElements
 struct GenmapElement_private {
   GenmapScalar fiedler;
@@ -44,6 +49,12 @@ struct GenmapElement_private {
   GenmapInt edges[12];
   GenmapUInt proc;
 };
+//
+// GenmapElements: Create, Destroy
+//
+int GenmapCreateElements(GenmapElements *e);
+int GenmapDestroyElements(GenmapElements e);
+GenmapElements GenmapGetElements_default(GenmapHandle h);
 //
 // Genmap_Handle
 //
@@ -76,6 +87,9 @@ struct GenmapHandle_private {
 
   int (*Read)(GenmapHandle h, char *name);
 };
+// GenmapHandle
+int GenmapCreateHandle(GenmapHandle h);
+int GenmapDestroyHandle(GenmapHandle h);
 //
 // Genmap_Vector
 //

@@ -1,18 +1,12 @@
-TARGET=genmap
-TEST=test
-GSLIB=gslib
-
-LIB=lib$(TARGET).a
-
-GSDIR ?= $(SRCROOT)/../../$(GSLIB)/$(GSLIB)
-GSLIBDIR=$(GSDIR)/src
-
-MPI ?= 1
-VALGRIND ?= 0
-DEBUG ?= 0
-ASAN ?= 0
+MPI ?=1
+VALGRIND ?=1
+DEBUG ?=0
+ASAN ?=0
 
 SRCROOT =.
+GSDIR ?= $(SRCROOT)/../../gslib/gslib
+
+GSLIBDIR=$(GSDIR)/src
 SRCDIR  =$(SRCROOT)/src
 INCDIR  =$(SRCROOT)/inc
 BUILDDIR=$(SRCROOT)/build
@@ -22,17 +16,31 @@ READERDIR=$(SRCROOT)/readers
 DEFAULTDIR=$(READERDIR)/default
 FORTRANDIR=$(READERDIR)/fortran
 
-AFLAGS = -fsanitize=address
-CC=mpicc
+ifeq ($(MPI),0)
+CC=gcc
+endif
 CFLAGS= -std=c99 -O2 -Wall -Wextra -Wno-unused-function -Wno-unused-parameter
-FC=mpif77
+
+ifeq ($(MPI),0)
+FC=gfortran
+endif
 FFLAGS=
-CXX=mpic++
+
+ifeq ($(MPI),0)
+CXX=g++
+endif
 CXXFLAGS=
 
+TARGET=genmap
+TEST=test
+GSLIB=gslib
+LIB=lib$(TARGET).a
+
+AFLAGS = -fsanitize=address
 INCFLAGS=-I$(INCDIR) -I$(GSLIBDIR) -I$(READERDIR)
 LDFLAGS:=-L$(GSLIBDIR) -lgs
 TESTLDFLAGS:=-L. -Wl,-rpath=. -l$(TARGET) -L$(GSLIBDIR) -lgs -lm
+
 
 # Main source and readers #
 CSRCS:= $(SRCDIR)/genmap-vector.c $(SRCDIR)/genmap-algo.c \
@@ -43,10 +51,8 @@ COBJS:=$(CSRCS:.c=.o)
 FSRCS:=
 FOBJS:=$(FSRCS:.f=.o)
 
-READERSRCS = $(DEFAULTDIR)/genmap-default.c $(DEFAULTDIR)/genmap-default-comm.c \
-             $(DEFAULTDIR)/genmap-default-io.c \
-             $(FORTRANDIR)/genmap-fortran.c $(FORTRANDIR)/genmap-fortran-comm.c \
-             $(FORTRANDIR)/genmap-fortran-io.c
+READERSRCS = $(DEFAULTDIR)/genmap-default.c $(DEFAULTDIR)/genmap-default-io.c \
+             $(FORTRANDIR)/genmap-fortran.c $(FORTRANDIR)/genmap-fortran-io.c
 READEROBJS = $(READERSRCS:.c=.o)
 
 # Tests #
@@ -107,7 +113,8 @@ $(TESTFOBJ): %.o: %.f
 
 .PHONY: $(GSLIB)
 $(GSLIB):
-	make CC=$(CC) MPI=$(MPI) -C $(GSDIR)
+	make clean -C $(GSDIR)
+	export CC=$(CC) && make MPI=$(MPI) -C $(GSDIR)
 
 .PHONY: clean
 clean:

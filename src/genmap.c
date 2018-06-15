@@ -67,11 +67,11 @@ int GenmapInit(GenmapHandle *h, GenmapCommExternal ce, char *reader) {
 
   GenmapMalloc(1, h);
   (*h)->Create = GenmapReaders[matchIdx].Create;
-  (*h)->Create(*h);
+  GenmapCreateHandle(*h);
 
-  GenmapCreateComm(*h, &(*h)->global, ce);
-  GenmapCreateComm(*h, &(*h)->local, ce);
-  GenmapCreateHeader(*h, &(*h)->header);
+  GenmapCreateComm(&(*h)->global, ce);
+  GenmapCreateComm(&(*h)->local, ce);
+  GenmapCreateHeader(&(*h)->header);
 
   return 0;
 }
@@ -80,17 +80,78 @@ int GenmapInit(GenmapHandle *h, GenmapCommExternal ce, char *reader) {
 //
 int GenmapFinalize(GenmapHandle h) {
   if(h->global)
-    GenmapDestroyComm(h, h->global);
+    GenmapDestroyComm(h->global);
   if(h->local)
-    GenmapDestroyComm(h, h->local);
+    GenmapDestroyComm(h->local);
 
-  GenmapDestroyHeader(h, h->header);
+  GenmapDestroyHeader(h->header);
 
   array_free(&(h->elementArray));
 
-  GenmapFree(h);
+  GenmapDestroyHandle(h);
 
   return 0;
+}
+//
+// GenmapHandle
+//
+int GenmapCreateHandle(GenmapHandle h) {
+  h->global = NULL;
+  h->local = NULL;
+  h->CreateComm = GenmapCreateComm;
+  h->DestroyComm = GenmapDestroyComm;
+  h->Id = GenmapId;
+  h->Np = GenmapNp;
+  h->Ax = GenmapAx;
+  h->AxInit = GenmapAxInit;
+  h->Gop = GenmapGop;
+
+  h->header = NULL;
+  h->elementArray.ptr = NULL;
+  h->elementArray.n = h->elementArray.max = 0;
+
+  h->CreateHeader = GenmapCreateHeader;
+  h->DestroyHeader = GenmapDestroyHeader;
+
+  h->GetElements = GenmapGetElements;
+  h->CreateElements = GenmapCreateElements;
+  h->DestroyElements = GenmapDestroyElements;
+
+  h->Create(h);
+  h->Destroy = GenmapDestroyHandle;
+
+  return 0;
+}
+
+int GenmapDestroyHandle(GenmapHandle h) {
+  GenmapFree(h);
+  return 0;
+}
+//
+// GenmapHeader: Create, Destroy
+//
+int GenmapCreateHeader(GenmapHeader *h) {
+  GenmapMalloc(1, h);
+
+  return 0;
+}
+
+int GenmapDestroyHeader(GenmapHeader h) {
+  GenmapFree(h);
+  return 0;
+}
+//
+// GenmapElements: Create, Destroy
+//
+int GenmapCreateElements(GenmapElements *e) {
+  return 0;
+}
+
+int GenmapDestroyElements(GenmapElements e) {
+  return 0;
+}
+GenmapElements GenmapGetElements(GenmapHandle h) {
+  return (GenmapElements) h->elementArray.ptr;
 }
 //
 // GenmapMalloc, Realloc, Calloc and Free

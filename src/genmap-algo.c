@@ -365,8 +365,8 @@ void GenmapRSB(GenmapHandle h) {
     local = 0;
     done = 1;
 #endif
-    GenmapDestroyComm(h, h->local);
-    GenmapCreateComm(h, &h->local, local);
+    GenmapDestroyComm(h->local);
+    GenmapCreateComm(&h->local, local);
     GenmapFiedler(h, h->local, 0);
   } while(!done);
 

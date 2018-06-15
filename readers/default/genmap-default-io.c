@@ -2,35 +2,6 @@
 
 #include <stdio.h>
 //
-// GenmapHeader: Create, Destroy
-//
-int GenmapCreateHeader_default(GenmapHeader *h) {
-  GenmapMalloc(1, h);
-
-  return 0;
-}
-
-int GenmapDestroyHeader_default(GenmapHeader h) {
-  GenmapFree(h);
-  return 0;
-}
-//
-// GenmapElements: Create, Destroy
-//
-int GenmapCreateElements_default(GenmapElements *e) {
-//  GenmapMalloc(1, e);
-  return 0;
-}
-
-int GenmapDestroyElements_default(GenmapElements e) {
-//  GenmapFree(e);
-//  array_free(e);
-  return 0;
-}
-GenmapElements GenmapGetElements_default(GenmapHandle h) {
-  return (GenmapElements) h->elementArray.ptr;
-}
-//
 // Do File I/O in parallel
 //
 int GenmapRead_default(GenmapHandle h, char *name) {

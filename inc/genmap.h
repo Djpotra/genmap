@@ -60,15 +60,13 @@ typedef int GenmapCommExternal;
 //
 // GenmapComm
 //
-int GenmapCreateComm(GenmapHandle h, GenmapComm *c,
-                     GenmapCommExternal ce);
-int GenmapDestroyComm(GenmapHandle h, GenmapComm c);
+int GenmapCreateComm(GenmapComm *c, GenmapCommExternal ce);
+int GenmapDestroyComm(GenmapComm c);
 // Functions to return size and rank of GenmapComm
 int GenmapNp(GenmapComm c);
 int GenmapId(GenmapComm c);
 // Functions to do global operations
-int GenmapGop(GenmapHandle h, GenmapComm c, GenmapScalar *v,
-              GenmapInt size, GenmapInt op);
+int GenmapGop(GenmapComm c, GenmapScalar *v, GenmapInt size, GenmapInt op);
 //
 // File I/O
 //
@@ -82,26 +80,22 @@ int GenmapGop(GenmapHandle h, GenmapComm c, GenmapScalar *v,
 #define GENMAP_NOUTFLOW 6
 #define GENMAP_NC       7
 #define GENMAP_LELT     8
-// GenmapHeader: Create, Destroy
-int GenmapCreateHeader(GenmapHandle h, GenmapHeader *header);
-int GenmapDestroyHeader(GenmapHandle h, GenmapHeader header);
-// GenmapElements: Create, Destroy
-int GenmapCreateElements(GenmapHandle h, GenmapElements *e);
-int GenmapDestroyElements(GenmapHandle h, GenmapElements e);
+//
+// Get Elements
+//
 GenmapElements GenmapGetElements(GenmapHandle h);
 // Function to read from FILE
 int GenmapRead(GenmapHandle h, char *name);
-//
-// GenmapHandle
-//
-// GenmapHandle: Create, Destroy
-int GenmapCreateHandle(GenmapHandle *h);
-int GenmapDestroyHandle(GenmapHandle h);
 //
 // Genmap: Init, Finalize
 //
 int GenmapInit(GenmapHandle *h, GenmapCommExternal ce, char *reader);
 int GenmapFinalize(GenmapHandle h);
+// GenmapMalloc, Realloc, Calloc and Free
+int GenmapMallocArray(size_t n, size_t unit, void *p);
+int GenmapCallocArray(size_t n, size_t unit, void *p);
+int GenmapReallocArray(size_t n, size_t unit, void *p);
+int GenmapFree(void *p);
 //
 // GenmapVector operations
 //
@@ -155,12 +149,4 @@ int GenmapPowerIterNew(GenmapVector eVector, void (*Ax)(GenmapVector ax,
 
 int GenmapInvPowerIter(GenmapVector eVector, GenmapVector alpha,
                        GenmapVector beta, GenmapVector init, GenmapInt iter);
-//
-// GenmapMalloc, Realloc, Calloc and Free
-//
-int GenmapMallocArray(size_t n, size_t unit, void *p);
-int GenmapCallocArray(size_t n, size_t unit, void *p);
-int GenmapReallocArray(size_t n, size_t unit, void *p);
-int GenmapFree(void *p);
-
 #endif

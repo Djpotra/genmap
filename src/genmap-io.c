@@ -4,27 +4,27 @@
 //
 // GenmapHeader: Create, Destroy
 //
-int GenmapCreateHeader(GenmapHandle h, GenmapHeader *header) {
-  return h->CreateHeader(header);
-}
-
-int GenmapDestroyHeader(GenmapHandle h, GenmapHeader header) {
-  return h->DestroyHeader(header);
-}
+//int GenmapCreateHeader(GenmapHandle h, GenmapHeader *header) {
+//  return h->CreateHeader(header);
+//}
 //
-// GenmapElements: Create, Destroy
+//int GenmapDestroyHeader(GenmapHandle h, GenmapHeader header) {
+//  return h->DestroyHeader(header);
+//}
+////
+//// GenmapElements: Create, Destroy
+////
+//int GenmapCreateElements(GenmapHandle h, GenmapElements *e) {
+//  return h->CreateElements(e);
+//}
 //
-int GenmapCreateElements(GenmapHandle h, GenmapElements *e) {
-  return h->CreateElements(e);
-}
-
-int GenmapDestroyElements(GenmapHandle h, GenmapElements e) {
-  return h->DestroyElements(e);
-}
-
-GenmapElements GenmapGetElements(GenmapHandle h) {
-  return h->GetElements(h);
-}
+//int GenmapDestroyElements(GenmapHandle h, GenmapElements e) {
+//  return h->DestroyElements(e);
+//}
+//
+//GenmapElements GenmapGetElements(GenmapHandle h) {
+//  return h->GetElements(h);
+//}
 //
 // Do File I/O in parallel
 //
