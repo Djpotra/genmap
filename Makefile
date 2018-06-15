@@ -1,5 +1,5 @@
 MPI ?=1
-VALGRIND ?=1
+VALGRIND ?=0
 DEBUG ?=0
 ASAN ?=0
 
