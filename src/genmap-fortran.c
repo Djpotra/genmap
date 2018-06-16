@@ -26,9 +26,23 @@ void fGenmapInit(int *handle, int *comm, int *nelements, int *nvertices,
   }
 
   *err = GenmapInit(&GenmapHandleDict[GenmapHandleCount], ccomm,
-                    "default");
+                    "fortran");
   if(*err == 0) {
     *handle = GenmapHandleCount++;
     GenmapHandleActive++;
+  }
+}
+
+#define fGenmapFinalize FORTRAN_NAME(genmapfinalize,GENMAPFINALIZE)
+void fGenmapFinalize(int *handle, int *err) {
+
+  *err = GenmapFinalize(GenmapHandleDict[*handle]);
+  if(*err == 0) {
+    GenmapHandleActive--;
+    if(GenmapHandleActive == 0) {
+      GenmapFree(GenmapHandleDict);
+      GenmapHandleCount = 0;
+      GenmapHandleMax = 0;
+    }
   }
 }

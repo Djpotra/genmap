@@ -32,7 +32,7 @@ int GenmapId(GenmapComm c) {
 }
 
 int GenmapAx(GenmapHandle h, GenmapComm c, GenmapVector u,
-                     GenmapVector weights, GenmapVector v) {
+             GenmapVector weights, GenmapVector v) {
   assert(u->size == v->size);
 
   GenmapInt lelt = u->size;
@@ -72,7 +72,7 @@ int GenmapAx(GenmapHandle h, GenmapComm c, GenmapVector u,
 }
 
 int GenmapAxInit(GenmapHandle h, GenmapComm c,
-                         GenmapVector weights) {
+                 GenmapVector weights) {
   GenmapInt lelt = h->header->lelt;
   GenmapInt nc = h->header->nc;
   GenmapInt numPoints = nc * lelt;
@@ -150,7 +150,7 @@ int GenmapAxInit(GenmapHandle h, GenmapComm c,
 }
 
 int GenmapGop(GenmapComm c, GenmapScalar *v, GenmapInt size,
-                      GenmapInt op) {
+              GenmapInt op) {
 #ifdef MPI
   if(op == 0) {
     MPI_Allreduce(MPI_IN_PLACE, v, size, MPI_DOUBLE, MPI_SUM, c->gsComm.c);

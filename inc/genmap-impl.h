@@ -85,7 +85,7 @@ struct GenmapHandle_private {
 
   int (*Gop)(GenmapComm c, GenmapScalar *v, GenmapInt size, GenmapInt op);
 
-  int (*Read)(GenmapHandle h, char *name);
+  int (*Read)(GenmapHandle h, void *data);
 };
 // GenmapHandle
 int GenmapCreateHandle(GenmapHandle h);

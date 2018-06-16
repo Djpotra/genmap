@@ -28,6 +28,6 @@
 //
 // Do File I/O in parallel
 //
-int GenmapRead(GenmapHandle h, char* name) {
-  return h->Read(h, name);
+int GenmapRead(GenmapHandle h, void* data) {
+  return h->Read(h, data);
 }

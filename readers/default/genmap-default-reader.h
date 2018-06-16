@@ -12,5 +12,5 @@ int GenmapCreateHandle_default(GenmapHandle h);
 //
 // File I/O
 //
-int GenmapRead_default(GenmapHandle h, char *name);
+int GenmapRead_default(GenmapHandle h, void *data);
 #endif
