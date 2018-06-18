@@ -4,7 +4,7 @@ DEBUG ?=0
 ASAN ?=0
 
 SRCROOT =.
-GSDIR ?= $(SRCROOT)/../../gslib/gslib
+GSDIR ?= $(SRCROOT)/../gslib
 
 GSLIBDIR=$(GSDIR)/src
 SRCDIR  =$(SRCROOT)/src
