@@ -32,7 +32,7 @@ void fGenmapInit(int *handle, int *comm, int *err) {
 }
 
 #define fGenmapSet FORTRAN_NAME(genmapset,GENMAPSET)
-void fGenmapSet(int *handle, int *nelements, int ndim, int *nvertices,
+void fGenmapSet(int *handle, int *nelements, int *ndim, int *nvertices,
                 int *facedata, int *traversal, int *err) {
   int headerInfo[2];
   int *dataPtr[3] = {headerInfo, facedata, traversal};
