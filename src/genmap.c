@@ -33,7 +33,10 @@ int GenmapRegisterReader(char *name, int (*Create)(GenmapHandle h)) {
 // GenmapRegister
 //
 int GenmapRegister() {
-  return GenmapRegisterReader("default", GenmapCreateHandle_default);
+  int ierr;
+  ierr  = GenmapRegisterReader("default", GenmapCreateHandle_default);
+  ierr |= GenmapRegisterReader("fortran", GenmapCreateHandle_fortran);
+  return ierr;
 }
 //
 // GenmapInit
@@ -157,9 +160,9 @@ GenmapElements GenmapGetElements(GenmapHandle h) {
 // GenmapMalloc, Realloc, Calloc and Free
 //
 int GenmapMallocArray(size_t n, size_t unit, void *p) {
-  int ierr = posix_memalign((void **)p, GENMAP_ALIGN, n*unit);
+  int ierr = posix_memalign((void **)p, GENMAP_ALIGN, n * unit);
   if(ierr)
-    printf("GenmapMallocArray Failed: %s:%d\n",__FILE__,__LINE__);
+    printf("GenmapMallocArray Failed: %s:%d\n", __FILE__, __LINE__);
   return ierr;
 }
 
@@ -168,17 +171,17 @@ int GenmapCallocArray(size_t n, size_t unit, void *p) {
   *(void **)p = calloc(n, unit);
   if(n && unit && !*(void **)p) {
     ierr = 1;
-    printf("GenmapCallocArray Failed: %s:%d\n",__FILE__,__LINE__);
+    printf("GenmapCallocArray Failed: %s:%d\n", __FILE__, __LINE__);
   }
   return ierr;
 }
 
 int GenmapReallocArray(size_t n, size_t unit, void *p) {
-  int ierr=0;
-  *(void **)p = realloc(*(void **)p, n*unit);
+  int ierr = 0;
+  *(void **)p = realloc(*(void **)p, n * unit);
   if(n && unit && !*(void **)p) {
     ierr = 1;
-    printf("GenmapReallocArray Failed: %s:%d\n",__FILE__,__LINE__);
+    printf("GenmapReallocArray Failed: %s:%d\n", __FILE__, __LINE__);
   }
   return ierr;
 }

@@ -12,5 +12,5 @@ int GenmapCreateHandle_fortran(GenmapHandle h);
 //
 // File I/O
 //
-int GenmapRead_fortran(GenmapHandle h, char *name);
+int GenmapRead_fortran(GenmapHandle h, void *data);
 #endif

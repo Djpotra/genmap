@@ -84,10 +84,10 @@ int TestAx2(GenmapHandle h, GenmapVector weights) {
 }
 
 int TestAx3(GenmapHandle h, GenmapVector weights) {
+#ifdef MPI
   GenmapVector u, v, answer;
   GenmapInt lelt = h->header->lelt;
 
-#ifdef MPI
   GenmapCreateZerosVector(&u, lelt);
   GenmapCreateOnesVector(&v, lelt);
 

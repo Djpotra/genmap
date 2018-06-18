@@ -12,12 +12,10 @@ static int GenmapHandleMax = 0;
 
 #define fGenmapInit FORTRAN_NAME(genmapinit,GENMAPINIT)
 #ifdef MPI
-void fGenmapInit(int *handle, MPI_Fint *comm, int *nelements,
-                 int *nvertices, int *facedata, int *traversal, int *err) {
+void fGenmapInit(int *handle, MPI_Fint *comm, int *err) {
   MPI_Comm ccomm = MPI_Comm_f2c(*comm);
 #else
-void fGenmapInit(int *handle, int *comm, int *nelements, int *nvertices,
-                 int *facedata, int *traversal, int *err) {
+void fGenmapInit(int *handle, int *comm, int *err) {
   int ccomm = 1;
 #endif
   if(GenmapHandleCount == GenmapHandleMax) {
@@ -26,9 +24,48 @@ void fGenmapInit(int *handle, int *comm, int *nelements, int *nvertices,
   }
 
   *err = GenmapInit(&GenmapHandleDict[GenmapHandleCount], ccomm,
-                    "default");
+                    "fortran");
   if(*err == 0) {
     *handle = GenmapHandleCount++;
     GenmapHandleActive++;
+  }
+}
+
+#define fGenmapSet FORTRAN_NAME(genmapset,GENMAPSET)
+void fGenmapSet(int *handle, int *nelements, int *ndim, int *nvertices,
+                int *facedata, int *traversal, int *err) {
+  int headerInfo[2];
+  int *dataPtr[3] = {headerInfo, facedata, traversal};
+
+  GenmapHandle h = GenmapHandleDict[*handle];
+  *err = GenmapCreateHeader(&h->header);
+  if(*err == 0) {
+    h->header->nel      = *nelements;
+    h->header->nactive  = 0;
+    h->header->depth    = 0;
+    h->header->d2       = 0;
+    h->header->npts     = (*nvertices) * (*nelements);
+    h->header->nrank    = 0;
+    h->header->noutflow = 0;
+    h->header->nc       = *nvertices;
+    headerInfo[0] = *nelements, headerInfo[1] = *nvertices;
+  }
+
+  GenmapRead(h, dataPtr);
+
+  *err = 0;
+}
+
+#define fGenmapFinalize FORTRAN_NAME(genmapfinalize,GENMAPFINALIZE)
+void fGenmapFinalize(int *handle, int *err) {
+
+  *err = GenmapFinalize(GenmapHandleDict[*handle]);
+  if(*err == 0) {
+    GenmapHandleActive--;
+    if(GenmapHandleActive == 0) {
+      GenmapFree(GenmapHandleDict);
+      GenmapHandleCount = 0;
+      GenmapHandleMax = 0;
+    }
   }
 }

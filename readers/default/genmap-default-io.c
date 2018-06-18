@@ -4,7 +4,8 @@
 //
 // Do File I/O in parallel
 //
-int GenmapRead_default(GenmapHandle h, char *name) {
+int GenmapRead_default(GenmapHandle h, void *data) {
+  char *name = (char *)data;
 #ifdef MPI
   MPI_File fh;
   MPI_Offset offset;

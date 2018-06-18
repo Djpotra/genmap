@@ -4,7 +4,7 @@ DEBUG ?=0
 ASAN ?=0
 
 SRCROOT =.
-GSDIR ?= $(SRCROOT)/../../gslib/gslib
+GSDIR ?= $(SRCROOT)/../gslib
 
 GSLIBDIR=$(GSDIR)/src
 SRCDIR  =$(SRCROOT)/src
@@ -62,7 +62,7 @@ TESTCSRC:= $(TESTDIR)/vector-test.c $(TESTDIR)/algo-test.c \
 	   $(TESTDIR)/rsb-test.c
 TESTCOBJ:=$(TESTCSRC:.c=.o)
 
-TESTFSRC:=
+TESTFSRC:= $(TESTDIR)/fortran-test.f
 TESTFOBJ:=$(TESTFSRC:.f=.o)
 
 # Build #

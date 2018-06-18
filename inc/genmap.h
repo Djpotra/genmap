@@ -66,7 +66,8 @@ int GenmapDestroyComm(GenmapComm c);
 int GenmapNp(GenmapComm c);
 int GenmapId(GenmapComm c);
 // Functions to do global operations
-int GenmapGop(GenmapComm c, GenmapScalar *v, GenmapInt size, GenmapInt op);
+int GenmapGop(GenmapComm c, GenmapScalar *v, GenmapInt size,
+              GenmapInt op);
 //
 // File I/O
 //
@@ -85,7 +86,7 @@ int GenmapGop(GenmapComm c, GenmapScalar *v, GenmapInt size, GenmapInt op);
 //
 GenmapElements GenmapGetElements(GenmapHandle h);
 // Function to read from FILE
-int GenmapRead(GenmapHandle h, char *name);
+int GenmapRead(GenmapHandle h, void *data);
 //
 // Genmap: Init, Finalize
 //
