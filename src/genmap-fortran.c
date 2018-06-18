@@ -47,7 +47,7 @@ void fGenmapSet(int *handle, int *nelements, int *ndim, int *nvertices,
     h->header->npts     = (*nvertices) * (*nelements);
     h->header->nrank    = 0;
     h->header->noutflow = 0;
-    h->header->nc       = *nvertices;
+    h->header->nv       = *nvertices;
     headerInfo[0] = *nelements, headerInfo[1] = *nvertices;
   }
 

@@ -39,33 +39,33 @@ int GenmapAx(GenmapHandle h, GenmapComm c, GenmapVector u,
   assert(u->size == v->size);
 
   GenmapInt lelt = u->size;
-  GenmapInt nc = h->header->nc;
+  GenmapInt nv = h->header->nv;
 
   GenmapScalar *ucv;
-  GenmapMalloc(nc * lelt, &ucv);
+  GenmapMalloc(nv * lelt, &ucv);
 
   for(GenmapInt i = 0; i < lelt; i++)
-    for(GenmapInt j = 0; j < nc; j++)
-      ucv[nc * i + j] = u->data[i];
+    for(GenmapInt j = 0; j < nv; j++)
+      ucv[nv * i + j] = u->data[i];
 
   gs(ucv, gs_double, gs_add, 0, c->verticesHandle, NULL);
 
   for(GenmapInt i = 0; i < lelt; i++) {
     v->data[i] = weights->data[i] * u->data[i];
-    for(GenmapInt j = 0; j < nc; j ++) {
-      v->data[i] += ucv[nc * i + j];
+    for(GenmapInt j = 0; j < nv; j ++) {
+      v->data[i] += ucv[nv * i + j];
     }
   }
 
   for(GenmapInt i = 0; i < lelt; i++)
-    for(GenmapInt j = 0; j < nc; j++)
-      ucv[nc * i + j] = u->data[i];
+    for(GenmapInt j = 0; j < nv; j++)
+      ucv[nv * i + j] = u->data[i];
 
   gs(ucv, gs_double, gs_add, 0, c->edgesHandle, NULL);
 
   for(GenmapInt i = 0; i < lelt; i++) {
-    for(GenmapInt j = 0; j < nc; j ++) {
-      v->data[i] -= ucv[nc * i + j];
+    for(GenmapInt j = 0; j < nv; j ++) {
+      v->data[i] -= ucv[nv * i + j];
     }
   }
 
@@ -77,8 +77,8 @@ int GenmapAx(GenmapHandle h, GenmapComm c, GenmapVector u,
 int GenmapAxInit(GenmapHandle h, GenmapComm c,
                  GenmapVector weights) {
   GenmapInt lelt = h->header->lelt;
-  GenmapInt nc = h->header->nc;
-  GenmapInt numPoints = nc * lelt;
+  GenmapInt nv = h->header->nv;
+  GenmapInt numPoints = nv * lelt;
 
   GenmapInt *vertices, *edges;
   GenmapMalloc(numPoints, &vertices);
@@ -87,9 +87,9 @@ int GenmapAxInit(GenmapHandle h, GenmapComm c,
 
   GenmapElements elements = GenmapGetElements(h);
   for(GenmapInt i = 0; i < lelt; i++) {
-    for(int j = 0; j < nc; j++) {
-      vertices[i * nc + j] = elements[i].vertices[j];
-      edges[i * nc + j] = elements[i].edges[j];
+    for(int j = 0; j < nv; j++) {
+      vertices[i * nv + j] = elements[i].vertices[j];
+      edges[i * nv + j] = elements[i].edges[j];
     }
   }
 
@@ -106,8 +106,8 @@ int GenmapAxInit(GenmapHandle h, GenmapComm c,
   GenmapMalloc(numPoints, &u);
 
   for(GenmapInt i = 0; i < lelt; i++)
-    for(GenmapInt j = 0; j < nc; j++)
-      u[nc * i + j] = 1.;
+    for(GenmapInt j = 0; j < nv; j++)
+      u[nv * i + j] = 1.;
 
   gs(u, gs_double, gs_add, 0, c->verticesHandle, NULL);
 
@@ -115,8 +115,8 @@ int GenmapAxInit(GenmapHandle h, GenmapComm c,
 
   for(GenmapInt i = 0; i < lelt; i++) {
     weights->data[i] = 0.;
-    for(GenmapInt j = 0; j < nc; j++) {
-      weights->data[i] += u[nc * i + j];
+    for(GenmapInt j = 0; j < nv; j++) {
+      weights->data[i] += u[nv * i + j];
     }
   }
 
@@ -127,14 +127,14 @@ int GenmapAxInit(GenmapHandle h, GenmapComm c,
 #endif
 
   for(GenmapInt i = 0; i < lelt; i++)
-    for(GenmapInt j = 0; j < nc; j++)
-      u[nc * i + j] = 1.;
+    for(GenmapInt j = 0; j < nv; j++)
+      u[nv * i + j] = 1.;
 
   gs(u, gs_double, gs_add, 0, c->edgesHandle, NULL);
 
   for(GenmapInt i = 0; i < lelt; i++) {
-    for(GenmapInt j = 0; j < nc; j++) {
-      weights->data[i] -= u[nc * i + j];
+    for(GenmapInt j = 0; j < nv; j++) {
+      weights->data[i] -= u[nv * i + j];
     }
     weights->data[i] *= -1;
   }

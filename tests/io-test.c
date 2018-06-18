@@ -20,9 +20,9 @@ int TestIO1(GenmapHandle h) {
   assert(h->header->npts == 32);
   assert(h->header->nrank == 15);
   assert(h->header->noutflow == 0);
-  assert(h->header->nc == 4);
+  assert(h->header->nv == 4);
 
-  int nc = h->header->nc;
+  int nv = h->header->nv;
   GenmapInt verticesFirst[4] = {1, 4, 2, 5};
   GenmapInt edgesFirst[4] = {1, 4, 2, 3};
   GenmapInt verticesLast[4] = {11, 14, 12, 15};
@@ -30,7 +30,7 @@ int TestIO1(GenmapHandle h) {
 
   if(h->Id(h->global) == 0) {
     assert(elements[0].globalId == 1);
-    for(GenmapInt j = 0; j < nc; j++) {
+    for(GenmapInt j = 0; j < nv; j++) {
       assert(elements[0].vertices[j] == verticesFirst[j]);
       assert(elements[0].edges[j] == edgesFirst[j]);
     }
@@ -39,7 +39,7 @@ int TestIO1(GenmapHandle h) {
   int lelt = h->header->lelt - 1;
   if(h->Id(h->global) == h->Np(h->global) - 1) {
     assert(elements[lelt].globalId == 8);
-    for(GenmapInt j = 0; j < nc; j++) {
+    for(GenmapInt j = 0; j < nv; j++) {
       assert(elements[lelt].vertices[j] == verticesLast[j]);
       assert(elements[lelt].edges[j] == edgesLast[j]);
     }

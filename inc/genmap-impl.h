@@ -33,7 +33,7 @@ struct GenmapHeader_private {
   GenmapInt npts;
   GenmapInt nrank;
   GenmapInt noutflow;
-  GenmapInt nc;
+  GenmapInt nv;
   GenmapInt lelt;
   GenmapInt start;
 };
