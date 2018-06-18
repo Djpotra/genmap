@@ -62,7 +62,7 @@ TESTCSRC:= $(TESTDIR)/vector-test.c $(TESTDIR)/algo-test.c \
 	   $(TESTDIR)/rsb-test.c
 TESTCOBJ:=$(TESTCSRC:.c=.o)
 
-TESTFSRC:=
+TESTFSRC:= $(TESTDIR)/fortran-test.f
 TESTFOBJ:=$(TESTFSRC:.f=.o)
 
 # Build #
