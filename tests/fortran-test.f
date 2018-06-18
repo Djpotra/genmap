@@ -1,4 +1,5 @@
       program testapi
+#ifdef MPI
       implicit none
 
       include 'mpif.h'
@@ -17,4 +18,5 @@
       call genmapfinalize(h,ierror)
 
       call mpi_finalize(ierror)
+#endif
       end

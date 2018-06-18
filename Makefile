@@ -24,7 +24,7 @@ CFLAGS= -std=c99 -O2 -Wall -Wextra -Wno-unused-function -Wno-unused-parameter
 ifeq ($(MPI),0)
 FC=gfortran
 endif
-FFLAGS=
+FFLAGS= -O2 -Wall -Wextra -Wno-unused-function -Wno-unused-parameter -cpp
 
 ifeq ($(MPI),0)
 CXX=g++
