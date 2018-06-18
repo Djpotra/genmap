@@ -7,16 +7,17 @@
 int GenmapRead_fortran(GenmapHandle h, void *data) {
   int  **dataPtr = (int **)data;
 
-  GenmapInt nel  = dataPtr[0][0];
-  GenmapInt nc   = dataPtr[0][1];
+  GenmapInt nel  = h->header->nel;
+  GenmapInt nv   = h->header->nv;
+  GenmapInt ne   = h->header->ne;
   GenmapInt lelt = nel / h->Np(h->global);
 
   printf("nel  = %d\n", nel);
-  printf("nc   = %d\n", nc);
+  printf("nv   = %d\n", nv);
+  printf("ne   = %d\n", ne);
   printf("lelt = %d\n", lelt);
 
 #ifdef MPI
-  GenmapInt start = h->Id(h->global) * lelt * (2 * nc + 1);
   if(h->Id(h->global) == h->Np(h->global) - 1)
     lelt = nel - h->Id(h->global) * lelt;
 #endif

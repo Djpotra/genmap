@@ -34,6 +34,7 @@ struct GenmapHeader_private {
   GenmapInt nrank;
   GenmapInt noutflow;
   GenmapInt nv;
+  GenmapInt ne;
   GenmapInt lelt;
   GenmapInt start;
 };
@@ -48,6 +49,7 @@ struct GenmapElement_private {
   GenmapInt globalId;
   GenmapInt vertices[8];
   GenmapInt edges[12];
+  GenmapInt faces[6];
   GenmapUInt proc;
 };
 //

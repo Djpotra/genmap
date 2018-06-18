@@ -33,9 +33,8 @@ void fGenmapInit(int *handle, int *comm, int *err) {
 
 #define fGenmapSet FORTRAN_NAME(genmapset,GENMAPSET)
 void fGenmapSet(int *handle, int *nelements, int *ndim, int *nvertices,
-                int *facedata, int *traversal, int *err) {
-  int headerInfo[2];
-  int *dataPtr[3] = {headerInfo, facedata, traversal};
+                int *nedges, int *facedata, int *traversal, int *err) {
+  int *dataPtr[2] = {facedata, traversal};
 
   GenmapHandle h = GenmapHandleDict[*handle];
   *err = GenmapCreateHeader(&h->header);
@@ -48,7 +47,7 @@ void fGenmapSet(int *handle, int *nelements, int *ndim, int *nvertices,
     h->header->nrank    = 0;
     h->header->noutflow = 0;
     h->header->nv       = *nvertices;
-    headerInfo[0] = *nelements, headerInfo[1] = *nvertices;
+    h->header->ne       = *nedges;
   }
 
   GenmapRead(h, dataPtr);
