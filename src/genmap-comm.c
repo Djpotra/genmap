@@ -5,6 +5,7 @@ int GenmapCreateComm(GenmapComm *c, GenmapCommExternal ce) {
   comm_init(&(*c)->gsComm, ce);
   (*c)->verticesHandle = NULL;
   (*c)->edgesHandle = NULL;
+  (*c)->facesHandle = NULL;
   (*c)->laplacianWeights = NULL;
 
   return 0;
@@ -15,6 +16,8 @@ int GenmapDestroyComm(GenmapComm c) {
     gs_free(c->verticesHandle);
   if(c->edgesHandle)
     gs_free(c->edgesHandle);
+  if(c->facesHandle)
+    gs_free(c->facesHandle);
   if(c->laplacianWeights)
     GenmapFree(c->laplacianWeights);
   comm_free(&c->gsComm);
