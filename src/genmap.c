@@ -41,7 +41,8 @@ int GenmapRegister() {
 //
 // GenmapInit
 //
-int GenmapInit(GenmapHandle *h, GenmapCommExternal ce, char *reader) {
+int GenmapInit(GenmapHandle *h, GenmapCommExternal ce, char *reader,
+               int exact) {
   // TODO: Make this to use __attribute__((constructor))
   // Needs -fPIC in gslib :(
   if(!GenmapReadersRegistered) {
@@ -70,7 +71,7 @@ int GenmapInit(GenmapHandle *h, GenmapCommExternal ce, char *reader) {
 
   GenmapMalloc(1, h);
   (*h)->Create = GenmapReaders[matchIdx].Create;
-  GenmapCreateHandle(*h);
+  GenmapCreateHandle(*h, exact);
 
   GenmapCreateComm(&(*h)->global, ce);
   GenmapCreateComm(&(*h)->local, ce);
@@ -98,17 +99,25 @@ int GenmapFinalize(GenmapHandle h) {
 //
 // GenmapHandle
 //
-int GenmapCreateHandle(GenmapHandle h) {
+int GenmapCreateHandle(GenmapHandle h, int exactAx) {
   h->global = NULL;
   h->local = NULL;
+
   h->CreateComm = GenmapCreateComm;
   h->DestroyComm = GenmapDestroyComm;
   h->Id = GenmapId;
   h->Np = GenmapNp;
-  h->Ax = GenmapAx;
-  h->AxInit = GenmapAxInit;
-  h->Gop = GenmapGop;
 
+  h->exactAx = exactAx;
+  if(h->exactAx) {
+    h->Ax = GenmapAx_exact;
+    h->AxInit = GenmapAxInit_exact;
+  } else {
+    h->Ax = GenmapAx;
+    h->AxInit = GenmapAxInit;
+  }
+
+  h->Gop = GenmapGop;
   h->header = NULL;
   h->elementArray.ptr = NULL;
   h->elementArray.n = h->elementArray.max = 0;

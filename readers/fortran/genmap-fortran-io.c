@@ -9,8 +9,6 @@ int GenmapRead_fortran(GenmapHandle h, void *data) {
 
   GenmapInt nel = h->header->nel;
   GenmapInt nv  = h->header->nv;
-  GenmapInt ne  = h->header->ne;
-  GenmapInt ndim  = h->header->ndim;
   GenmapInt lelt = nel / h->Np(h->global);
 
 #ifdef MPI
