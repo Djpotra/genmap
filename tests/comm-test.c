@@ -159,7 +159,7 @@ int main(int argc, char **argv) {
 #endif
 
   GenmapHandle h;
-  GenmapInit(&h, MPI_COMM_WORLD, "default");
+  GenmapInit(&h, MPI_COMM_WORLD, "default", 1);
 
   char *name = "mesh/box2D_2.bin";
   GenmapRead(h, name);

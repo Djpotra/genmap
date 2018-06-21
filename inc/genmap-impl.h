@@ -90,9 +90,11 @@ struct GenmapHandle_private {
   int (*Gop)(GenmapComm c, GenmapScalar *v, GenmapInt size, GenmapInt op);
 
   int (*Read)(GenmapHandle h, void *data);
+
+  GenmapInt exactAx;
 };
 // GenmapHandle
-int GenmapCreateHandle(GenmapHandle h);
+int GenmapCreateHandle(GenmapHandle h, int exactAx);
 int GenmapDestroyHandle(GenmapHandle h);
 //
 // Genmap_Vector

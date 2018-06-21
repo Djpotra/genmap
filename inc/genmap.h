@@ -90,7 +90,8 @@ int GenmapRead(GenmapHandle h, void *data);
 //
 // Genmap: Init, Finalize
 //
-int GenmapInit(GenmapHandle *h, GenmapCommExternal ce, char *reader);
+int GenmapInit(GenmapHandle *h, GenmapCommExternal ce, char *reader,
+               int exactAx);
 int GenmapFinalize(GenmapHandle h);
 // GenmapMalloc, Realloc, Calloc and Free
 int GenmapMallocArray(size_t n, size_t unit, void *p);
@@ -128,6 +129,12 @@ int GenmapAxInit(GenmapHandle h, GenmapComm c, GenmapVector weights);
 
 int GenmapAx(GenmapHandle h, GenmapComm c, GenmapVector u,
              GenmapVector weights, GenmapVector v);
+
+int GenmapAxInit_exact(GenmapHandle h, GenmapComm c,
+                       GenmapVector weights);
+
+int GenmapAx_exact(GenmapHandle h, GenmapComm c, GenmapVector u,
+                   GenmapVector weights, GenmapVector v);
 void GenmapLanczos(GenmapHandle h, GenmapComm c, GenmapVector init,
                    GenmapInt iter, GenmapVector **q, GenmapVector alpha,
                    GenmapVector beta);

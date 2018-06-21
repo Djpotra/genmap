@@ -57,15 +57,114 @@ int GenmapAx(GenmapHandle h, GenmapComm c, GenmapVector u,
     }
   }
 
+  GenmapFree(ucv);
+
+  return 0;
+}
+
+int GenmapAxInit(GenmapHandle h, GenmapComm c,
+                 GenmapVector weights) {
+  GenmapInt lelt = h->header->lelt;
+  GenmapInt nv = h->header->nv;
+  GenmapInt numPoints = nv * lelt;
+
+  GenmapInt *vertices;
+  GenmapMalloc(numPoints, &vertices);
+
+  GenmapElements elements = GenmapGetElements(h);
+  for(GenmapInt i = 0; i < lelt; i++) {
+    for(int j = 0; j < nv; j++) {
+      vertices[i * nv + j] = elements[i].vertices[j];
+    }
+  }
+
+  if(c->verticesHandle)
+    gs_free(c->verticesHandle);
+
+  c->verticesHandle = gs_setup(vertices, numPoints, &c->gsComm, 0,
+                               gs_auto, 0);
+
+  GenmapScalar *u;
+  GenmapMalloc(numPoints, &u);
+
+  for(GenmapInt i = 0; i < lelt; i++)
+    for(GenmapInt j = 0; j < nv; j++)
+      u[nv * i + j] = 1.;
+
+  gs(u, gs_double, gs_add, 0, c->verticesHandle, NULL);
+
+  assert(weights->size == lelt);
+
+  for(GenmapInt i = 0; i < lelt; i++) {
+    weights->data[i] = 0.;
+    for(GenmapInt j = 0; j < nv; j++) {
+      weights->data[i] += u[nv * i + j];
+    }
+    weights->data[i] -= nv;
+  }
+
+#ifdef DEBUG
+  printf("proc: %d 2-weights: ", h->Id(h->global));
+  GenmapPrintVector(weights);
+  printf("\n");
+#endif
+
+  GenmapFree(u);
+  GenmapFree(vertices);
+
+  return 0;
+}
+
+int GenmapAx_exact(GenmapHandle h, GenmapComm c, GenmapVector u,
+                   GenmapVector weights, GenmapVector v) {
+  assert(u->size == v->size);
+
+  GenmapInt lelt = u->size;
+  GenmapInt ne = h->header->ne;
+  GenmapInt nv = h->header->nv;
+  GenmapInt nf = ne + 2 - nv;
+  GenmapInt nDim = h->header->ndim;
+  if(nDim == 2) nf = 0;
+
+  GenmapScalar *ucv;
+  GenmapMalloc(ne * lelt, &ucv);
+
   for(GenmapInt i = 0; i < lelt; i++)
     for(GenmapInt j = 0; j < nv; j++)
       ucv[nv * i + j] = u->data[i];
 
+  gs(ucv, gs_double, gs_add, 0, c->verticesHandle, NULL);
+
+  for(GenmapInt i = 0; i < lelt; i++) {
+    v->data[i] = weights->data[i] * u->data[i];
+    for(GenmapInt j = 0; j < nv; j ++) {
+      v->data[i] += ucv[nv * i + j];
+    }
+  }
+
+  for(GenmapInt i = 0; i < lelt; i++)
+    for(GenmapInt j = 0; j < ne; j++)
+      ucv[ne * i + j] = u->data[i];
+
   gs(ucv, gs_double, gs_add, 0, c->edgesHandle, NULL);
 
   for(GenmapInt i = 0; i < lelt; i++) {
-    for(GenmapInt j = 0; j < nv; j ++) {
-      v->data[i] -= ucv[nv * i + j];
+    for(GenmapInt j = 0; j < ne; j ++) {
+      v->data[i] -= ucv[ne * i + j];
+    }
+  }
+
+  if(nDim == 3) {
+    for(GenmapInt i = 0; i < lelt; i++)
+      for(GenmapInt j = 0; j < nf; j++)
+        ucv[nf * i + j] = u->data[i];
+
+    gs(ucv, gs_double, gs_add, 0, c->facesHandle, NULL);
+
+    for(GenmapInt i = 0; i < lelt; i++) {
+      for(GenmapInt j = 0; j < nf; j ++) {
+        v->data[i] -= ucv[nf * i + j];
+      }
     }
   }
 
@@ -74,8 +173,8 @@ int GenmapAx(GenmapHandle h, GenmapComm c, GenmapVector u,
   return 0;
 }
 
-int GenmapAxInit(GenmapHandle h, GenmapComm c,
-                 GenmapVector weights) {
+int GenmapAxInit_exact(GenmapHandle h, GenmapComm c,
+                       GenmapVector weights) {
   GenmapInt lelt = h->header->lelt;
   GenmapInt nv = h->header->nv;
   GenmapInt ne = h->header->ne;
@@ -139,12 +238,6 @@ int GenmapAxInit(GenmapHandle h, GenmapComm c,
     }
     weights->data[i] -= nv;
   }
-
-#ifdef DEBUG
-  printf("proc: %d 1-weights: ", h->Id(h->global));
-  GenmapPrintVector(weights);
-  printf("\n");
-#endif
 
   GenmapRealloc(numEdges, &u);
   for(GenmapInt i = 0; i < lelt; i++)
