@@ -137,6 +137,7 @@ int GenmapAxInit(GenmapHandle h, GenmapComm c,
     for(GenmapInt j = 0; j < nv; j++) {
       weights->data[i] += u[nv * i + j];
     }
+    weights->data[i] -= nv;
   }
 
 #ifdef DEBUG
@@ -156,6 +157,7 @@ int GenmapAxInit(GenmapHandle h, GenmapComm c,
     for(GenmapInt j = 0; j < ne; j++) {
       weights->data[i] -= u[ne * i + j];
     }
+    weights->data[i] += ne;
   }
 
   if(nDim == 3) {
@@ -170,6 +172,7 @@ int GenmapAxInit(GenmapHandle h, GenmapComm c,
       for(GenmapInt j = 0; j < nf; j++) {
         weights->data[i] += u[nf * i + j];
       }
+      weights->data[i] -= nf;
     }
   }
 

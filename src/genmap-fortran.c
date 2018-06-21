@@ -48,6 +48,7 @@ void fGenmapSet(int *handle, int *nelements, int *ndim, int *nvertices,
     h->header->noutflow = 0;
     h->header->nv       = *nvertices;
     h->header->ne       = *nedges;
+    h->header->ndim     = *ndim;
   }
 
   GenmapRead(h, dataPtr);
@@ -67,4 +68,6 @@ void fGenmapFinalize(int *handle, int *err) {
       GenmapHandleMax = 0;
     }
   }
+
+  *err = 0;
 }

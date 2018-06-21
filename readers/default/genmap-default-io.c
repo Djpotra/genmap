@@ -56,6 +56,8 @@ int GenmapRead_default(GenmapHandle h, void *data) {
   comm_scan(out, &(h->global->gsComm), gs_int, gs_add, &lelt, 1, buf);
 
   h->header->nv = nv;
+  h->header->ne = nv;
+  h->header->ndim = 2;
   h->header->lelt = lelt;
   h->header->start = out[0][0];
 
