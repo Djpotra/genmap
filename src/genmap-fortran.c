@@ -12,7 +12,7 @@ static int GenmapHandleMax = 0;
 
 #define fGenmapInit FORTRAN_NAME(genmapinit,GENMAPINIT)
 #ifdef MPI
-void fGenmapInit(int *handle, MPI_Fint *comm, int *err) {
+void fGenmapInit(int *handle, MPI_Fint *comm, int exactAx, int *err) {
   MPI_Comm ccomm = MPI_Comm_f2c(*comm);
 #else
 void fGenmapInit(int *handle, int *comm, int *err) {
@@ -24,7 +24,7 @@ void fGenmapInit(int *handle, int *comm, int *err) {
   }
 
   *err = GenmapInit(&GenmapHandleDict[GenmapHandleCount], ccomm,
-                    "fortran", 0);
+                    "fortran", exactAx);
   if(*err == 0) {
     *handle = GenmapHandleCount++;
     GenmapHandleActive++;

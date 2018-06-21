@@ -12,7 +12,7 @@
       call mpi_comm_size(mpi_comm_world,np ,ierror)
       call mpi_comm_rank(mpi_comm_world,nid,ierror)
 
-      call genmapinit(h,mpi_comm_world,ierror)
+      call genmapinit(h,mpi_comm_world,0,ierror)
       call genmapset(h,8,3,4,4,vertices,ierror)
       call genmapfinalize(h,ierror)
 
