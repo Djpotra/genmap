@@ -15,7 +15,7 @@ static int GenmapHandleMax = 0;
 void fGenmapInit(int *handle, MPI_Fint *comm, int *err) {
   MPI_Comm ccomm = MPI_Comm_f2c(*comm);
 #else
-void fGenmapInit(int *handle, int *comm, int *err) {
+void fGenmapInit(int *handle, int *comm, int exactAx, int *err) {
   int ccomm = 1;
 #endif
   if(GenmapHandleCount == GenmapHandleMax) {
