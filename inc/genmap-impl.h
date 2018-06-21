@@ -18,6 +18,7 @@ struct GenmapComm_private {
   struct comm gsComm;
   struct gs_data *verticesHandle;
   struct gs_data *edgesHandle;
+  struct gs_data *facesHandle;
   GenmapScalar *laplacianWeights;
 };
 //
@@ -32,7 +33,9 @@ struct GenmapHeader_private {
   GenmapInt npts;
   GenmapInt nrank;
   GenmapInt noutflow;
-  GenmapInt nc;
+  GenmapInt nv;
+  GenmapInt ne;
+  GenmapInt ndim;
   GenmapInt lelt;
   GenmapInt start;
 };
@@ -47,6 +50,7 @@ struct GenmapElement_private {
   GenmapInt globalId;
   GenmapInt vertices[8];
   GenmapInt edges[12];
+  GenmapInt faces[6];
   GenmapUInt proc;
 };
 //
