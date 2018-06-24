@@ -6,12 +6,15 @@
 
 #include <stdlib.h>
 #include <stddef.h>
+#include <stdio.h>
+#include <limits.h>
 #include <string.h>
 
 #include "c99.h"
 #include "types.h"
 #include "name.h"
 #include "fail.h"
+#include "types.h"
 #include "mem.h"
 #include "gs_defs.h"
 #include "comm.h"
@@ -20,5 +23,7 @@
 #include "sarray_sort.h"
 #include "crystal.h"
 #include "sarray_transfer.h"
+
+#define TYPE_DOUBLE 3
 
 #endif

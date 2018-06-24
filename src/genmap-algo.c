@@ -348,6 +348,7 @@ void GenmapFiedler(GenmapHandle h, GenmapComm c, int global) {
 
 void GenmapRSB(GenmapHandle h) {
   int done = 0;
+  buffer buf = null_buffer;
   struct crystal cr;
   // Calculate the global Fiedler vector, local communicator
   // must be initialized using the global communicator
@@ -358,6 +359,23 @@ void GenmapRSB(GenmapHandle h) {
     GenmapElements elements = GenmapGetElements(h);
     GenmapInt lelt = h->header->lelt;
 
+    // sort locally according to Fiedler vector
+    sarray_sort(struct GenmapElement_private, elements, lelt, fiedler,
+                TYPE_DOUBLE, &buf);
+
+    for(GenmapElements p = elements, e = p + lelt; p != e; p++) {
+      p->proc = GetProcessorId(h, p->fiedler, nbins);
+    }
+    crystal_init(&cr, &(h->local->gsComm));
+    sarray_transfer(struct GenmapElement_private, &(h->elementArray), proc,
+                    1, &cr);
+    elements = GenmapGetElements(h);
+    h->header->lelt = h->elementArray.n;
+
+    // sort locally again -- now we have everything sorted
+    sarray_sort(struct GenmapElement_private, elements, lelt, fiedler,
+                TYPE_DOUBLE, &buf);
+
 #ifdef DEBUG
     printf("Nbins=%d, Id=%d\n", nbins, id);
     for(GenmapInt i = 0; i < h->header->lelt; i++) {
@@ -365,16 +383,6 @@ void GenmapRSB(GenmapHandle h) {
              elements[i].globalId, elements[i].fiedler);
     }
 #endif
-
-    for(GenmapElements p = elements, e = p + lelt; p != e; p++) {
-      p->proc = GetProcessorId(h, p->fiedler, nbins);
-    }
-
-    crystal_init(&cr, &(h->local->gsComm));
-    sarray_transfer(struct GenmapElement_private, &(h->elementArray), proc,
-                    1, &cr);
-    elements = GenmapGetElements(h);
-    h->header->lelt = h->elementArray.n;
 
     GenmapCommExternal local;
 #ifdef MPI
