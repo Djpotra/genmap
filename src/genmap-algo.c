@@ -253,22 +253,33 @@ void GenmapFiedlerMinMax(GenmapHandle h, GenmapScalar *min,
       *max = e[i].fiedler;
     }
   }
-  GenmapGop(h->local, min, 1, GENMAP_MIN);
-  GenmapGop(h->local, max, 1, GENMAP_MAX);
+  h->Gop(h->local, min, 1, GENMAP_MIN);
+  h->Gop(h->local, max, 1, GENMAP_MAX);
 }
 
-GenmapInt GetProcessorId(GenmapHandle h, GenmapScalar fiedler,
-                         GenmapInt np) {
+GenmapInt SetProcessorId(GenmapHandle h) {
   GenmapScalar min, max;
   GenmapFiedlerMinMax(h, &min, &max);
   GenmapScalar range = max - min;
+
+  GenmapInt np = h->Np(h->local);
   GenmapInt nbins = np;
-  for(GenmapInt id = 0; id < np; id++) {
-    GenmapScalar start = min + (range * id) / nbins;
-    GenmapScalar end = min + (range * (id + 1)) / nbins;
-    if(start <= fiedler && fiedler < end)
-      return id;
+  GenmapInt lelt = h->header->lelt;
+  GenmapElements elements = GenmapGetElements(h);
+
+  for(GenmapElements p = elements, e = p + lelt; p != e; p++) {
+    GenmapInt id;
+    for(id = 0; id < np; id++) {
+      GenmapScalar start = min + (range * id) / nbins;
+      GenmapScalar end = min + (range * (id + 1)) / nbins;
+      if(start <= p->fiedler && p->fiedler < end) {
+        p->proc = id;
+        break;
+      }
+    }
+    if(id == np) p->proc = np - 1;
   }
+
   return 0;
 }
 
@@ -351,51 +362,71 @@ void GenmapRSB(GenmapHandle h) {
   buffer buf = null_buffer;
   struct crystal cr;
   // Calculate the global Fiedler vector, local communicator
-  // must be initialized using the global communicator
+  // must be initialized using the global communicator, we never
+  // touch global communicator
   GenmapFiedler(h, h->local, 1);
+
+  // Number of bins -- 2 because bisection
+  GenmapInt nbins = 2;
   do {
-    GenmapInt nbins = h->Np(h->local);
+    GenmapInt bin = 1;
     GenmapInt id = h->Id(h->local);
     GenmapElements elements = GenmapGetElements(h);
     GenmapInt lelt = h->header->lelt;
+    GenmapInt nel = h->header->nel;
+    GenmapInt start = h->header->start;
 
     // sort locally according to Fiedler vector
     sarray_sort(struct GenmapElement_private, elements, lelt, fiedler,
                 TYPE_DOUBLE, &buf);
 
-    for(GenmapElements p = elements, e = p + lelt; p != e; p++) {
-      p->proc = GetProcessorId(h, p->fiedler, nbins);
-    }
-    crystal_init(&cr, &(h->local->gsComm));
-    sarray_transfer(struct GenmapElement_private, &(h->elementArray), proc,
-                    1, &cr);
-    elements = GenmapGetElements(h);
-    h->header->lelt = h->elementArray.n;
+    // We proceed with bisection only if we have more than 1 processor in
+    // communicator; otherwise, return and set values for Fortran rsb
+    if(h->Np(h->local) > 1) {
+      // Transfer elements to processors based on fiedler value to find the
+      // median
+      SetProcessorId(h);
+      crystal_init(&cr, &(h->local->gsComm));
+      sarray_transfer(struct GenmapElement_private, &(h->elementArray), proc,
+                      1, &cr);
+      elements = GenmapGetElements(h);
+      lelt = h->header->lelt = h->elementArray.n;
 
-    // sort locally again -- now we have everything sorted
-    sarray_sort(struct GenmapElement_private, elements, lelt, fiedler,
-                TYPE_DOUBLE, &buf);
-
+      // sort locally again -- now we have everything sorted
+      sarray_sort(struct GenmapElement_private, elements, lelt, fiedler,
+                  TYPE_DOUBLE, &buf);
 #ifdef DEBUG
-    printf("Nbins=%d, Id=%d\n", nbins, id);
-    for(GenmapInt i = 0; i < h->header->lelt; i++) {
-      printf("proc = %d id = %d fiedler = %lf\n", h->Id(h->local),
-             elements[i].globalId, elements[i].fiedler);
-    }
+      printf("Nbins=%d, Id=%d\n", nbins, id);
+      for(GenmapInt i = 0; i < h->header->lelt; i++) {
+        printf("proc = %d id = %d fiedler = %lf\n", h->Id(h->local),
+               elements[i].globalId, elements[i].fiedler);
+      }
 #endif
 
-    GenmapCommExternal local;
-#ifdef MPI
-    int partition = 0;
-    if(id >= nbins / 2) partition = 1;
-    MPI_Comm_split(h->local->gsComm.c, partition, id, &local);
-    if(nbins == 1) done = 1;
-#else
-    local = 0;
-    done = 1;
-#endif
-    GenmapDestroyComm(h->local);
-    GenmapCreateComm(&h->local, local);
+      // find the median -- first do a scan to find position of my
+      // elements
+      GenmapInt out[2][1], buf[2][1];
+      comm_scan(out, &(h->local->gsComm), gs_int, gs_add, &lelt, 1, buf);
+      start = h->header->start = out[0][0];
+
+      GenmapInt medianId = -1;
+      GenmapInt medianPos = (nel + 1) / 2 - 1;
+      if(start <=  medianPos && medianPos < start+lelt) {
+        medianId = h->Id(h->local);
+	// sarray_transfer -- elements with higher fiedler values are sent
+	// into processor with medianId+1 if it exist, otherwise elements
+	// with lower fiedler values are sent into processor medianId-1
+      }
+
+      if(h->Id(h->local) <= medianId) bin = 0;
+
+      GenmapCommExternal local;
+      MPI_Comm_split(h->local->gsComm.c, bin, id, &local);
+      GenmapDestroyComm(h->local);
+      GenmapCreateComm(&h->local, local);
+    } else done = 1;
+
+    // update nel,lelt, ...
     GenmapFiedler(h, h->local, 0);
   } while(!done);
 

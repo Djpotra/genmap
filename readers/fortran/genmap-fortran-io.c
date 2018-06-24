@@ -7,10 +7,10 @@
 int GenmapRead_fortran(GenmapHandle h, void *data) {
   GenmapInt  *vertices = (GenmapInt *)data;
 
-  GenmapInt nel = h->header->nel;
+  GenmapInt lelt = h->header->lelt;
   GenmapInt nv  = h->header->nv;
 #ifdef DEBUG
-  for(int i = 0; i < nel; i++) {
+  for(int i = 0; i < lelt; i++) {
     for(int j = 0; j < nv; j++) {
 //      printf("rvertices:%d\n",vertices[i*nv+j]);
     }
@@ -18,17 +18,20 @@ int GenmapRead_fortran(GenmapHandle h, void *data) {
 #endif
 
   GenmapInt out[2][1], buf[2][1];
-  comm_scan(out, &(h->global->gsComm), gs_int, gs_add, &nel, 1, buf);
+  comm_scan(out, &(h->global->gsComm), gs_int, gs_add, &lelt, 1, buf);
   h->header->start = out[0][0];
 
-  array_reserve(struct GenmapElement_private, &(h->elementArray), nel);
-  h->elementArray.n = nel;
-  h->header->lelt = nel;
+  array_reserve(struct GenmapElement_private, &(h->elementArray), lelt);
+  h->elementArray.n = lelt;
+  h->header->lelt = lelt;
+  h->header->nel = lelt;
+  GenmapGop(h->global, &(h->header->nel), 1, GENMAP_SUM);
+
   GenmapElements elements = GenmapGetElements(h);
 
   GenmapInt count = 0;
-  GenmapInt start = h->header->start;
-  for(GenmapInt i = 0; i < nel; i++) {
+  GenmapInt start = h->header->start + 1; // 1 for fortran index
+  for(GenmapInt i = 0; i < lelt; i++) {
     elements[i].globalId = start + i;
     for(GenmapInt j = 0; j < nv; j++) {
       elements[i].vertices[j] = vertices[count];

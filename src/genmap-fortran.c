@@ -51,7 +51,7 @@ void fGenmapSet(int *handle, int *nelements, int *ndim, int *nvertices,
 
   GenmapHandle h = GenmapHandleDict[*handle];
   *err = GenmapCreateHeader(&h->header);
-  h->header->nel      = *nelements;
+  h->header->lelt     = *nelements;
   h->header->nactive  = 0;
   h->header->depth    = 0;
   h->header->d2       = 0;
