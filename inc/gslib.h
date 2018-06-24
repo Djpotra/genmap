@@ -24,6 +24,9 @@
 #include "crystal.h"
 #include "sarray_transfer.h"
 
+#define TYPE_INT    0
+#define TYPE_LONG   1
+#define TYPE_FLOAT  2
 #define TYPE_DOUBLE 3
 
 #endif

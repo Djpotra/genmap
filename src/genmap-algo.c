@@ -382,8 +382,8 @@ void GenmapRSB(GenmapHandle h) {
 
     // sort locally according to Fiedler vector
     buffer buf0 = null_buffer;
-    sarray_sort(struct GenmapElement_private, elements, lelt, fiedler,
-                TYPE_DOUBLE, &buf0);
+    sarray_sort_2(struct GenmapElement_private, elements, lelt, fiedler,
+                TYPE_DOUBLE, globalId,TYPE_INT,&buf0);
 
     // We proceed with bisection only if we have more than 1 processor in
     // communicator; otherwise, return and set values for Fortran rsb
@@ -399,8 +399,8 @@ void GenmapRSB(GenmapHandle h) {
 
       // sort locally again -- now we have everything sorted
       buffer buf1 = null_buffer;
-      sarray_sort(struct GenmapElement_private, elements, lelt, fiedler,
-                  TYPE_DOUBLE, &buf1);
+      sarray_sort_2(struct GenmapElement_private, elements, lelt, fiedler,
+                  TYPE_DOUBLE, globalId, TYPE_INT, &buf1);
 #ifdef DEBUG
       printf("Nbins=%d, Id=%d\n", nbins, id);
       for(GenmapInt i = 0; i < h->header->lelt; i++) {
@@ -424,11 +424,11 @@ void GenmapRSB(GenmapHandle h) {
 	// into processor with medianId+1 if it exist, otherwise elements
 	// with lower fiedler values are sent into processor medianId-1
 	if(medianId+1 < h->Np(h->local)) {
-	  for(int i=medianPos-start; i<lelt; i++) {
+	  for(int i=medianPos-start+1; i<lelt; i++) {
 	    elements[i].proc = medianId+1;
 	  }
 	} else {
-	  for(int i=0; i<=medianPos-start; i++) {
+	  for(int i=0; i<medianPos-start; i++) {
 	    elements[i].proc = medianId-1;
 	  }
 	  medianId--;
@@ -450,21 +450,21 @@ void GenmapRSB(GenmapHandle h) {
 #endif
       // sort locally again -- now we have everything sorted
       buffer buf2=null_buffer;
-      sarray_sort(struct GenmapElement_private, elements, lelt, fiedler,
-                  TYPE_DOUBLE, &buf2);
-//
-//      printf("after sort\n", lelt);
-//      // Now it is time to split the communicator
-//      if(h->Id(h->local) <= medianId) bin = 0;
-//
-//      GenmapCommExternal local;
-//      MPI_Comm_split(h->local->gsComm.c, bin, id, &local);
-//      GenmapDestroyComm(h->local);
-//      GenmapCreateComm(&h->local, local);
-//
-//      // update nel,start
-//      GenmapInt nel = h->header->nel;
-//      GenmapInt start = h->header->start;
+      sarray_sort_2(struct GenmapElement_private, elements, lelt, fiedler,
+                  TYPE_DOUBLE, globalId, TYPE_INT,&buf2);
+
+      printf("after sort\n", lelt);
+      // Now it is time to split the communicator
+      if(h->Id(h->local) <= medianId) bin = 0;
+
+      GenmapCommExternal local;
+      MPI_Comm_split(h->local->gsComm.c, bin, id, &local);
+      GenmapDestroyComm(h->local);
+      GenmapCreateComm(&h->local, local);
+
+      // update nel,start
+      GenmapInt nel = h->header->nel;
+      GenmapInt start = h->header->start;
 //
 //      printf("I am here 0\n");
 //      GenmapFiedler(h, h->local, 0);
