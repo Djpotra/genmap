@@ -260,7 +260,7 @@ void GenmapFiedlerMinMax(GenmapHandle h, GenmapScalar *min,
 //GenmapInt GenmapMedianTransfer(h) {
 //}
 
-GenmapInt SetProcessorId(GenmapHandle h) {
+GenmapInt GenmapSetProcessorId(GenmapHandle h) {
   GenmapScalar min, max;
   GenmapFiedlerMinMax(h, &min, &max);
   GenmapScalar range = max - min;
@@ -362,45 +362,49 @@ void GenmapFiedler(GenmapHandle h, GenmapComm c, int global) {
 
 void GenmapRSB(GenmapHandle h) {
   int done = 0;
+  // Number of bins -- 2 because bisection
+  GenmapInt nbins = 2;
+  GenmapInt bin = 1;
+
+  GenmapInt id = h->Id(h->local);
+  GenmapInt lelt = h->header->lelt;
+  GenmapInt nel = h->header->nel;
+  GenmapInt start = h->header->start;
+  GenmapElements elements = GenmapGetElements(h);
+
+  // Data needed to use gslib
   struct crystal cr;
+  crystal_init(&cr, &(h->local->gsComm));
+  GenmapInt out[2][1], buf[2][1];
+
   // Calculate the global Fiedler vector, local communicator
   // must be initialized using the global communicator, we never
   // touch global communicator
   GenmapFiedler(h, h->local, 1);
-
-  // Number of bins -- 2 because bisection
-  GenmapInt nbins = 2;
   do {
-    GenmapInt bin = 1;
-    GenmapInt id = h->Id(h->local);
-    GenmapElements elements = GenmapGetElements(h);
-    GenmapInt lelt = h->header->lelt;
-    GenmapInt nel = h->header->nel;
-    GenmapInt start = h->header->start;
     printf("nel = %d\n", nel);
     printf("start = %d\n", start);
 
     // sort locally according to Fiedler vector
     buffer buf0 = null_buffer;
     sarray_sort_2(struct GenmapElement_private, elements, lelt, fiedler,
-                TYPE_DOUBLE, globalId,TYPE_INT,&buf0);
+                  TYPE_DOUBLE, globalId, TYPE_INT, &buf0);
 
     // We proceed with bisection only if we have more than 1 processor in
     // communicator; otherwise, return and set values for Fortran rsb
     if(h->Np(h->local) > 1) {
       // Transfer elements to processors based on fiedler value to find the
       // median
-      SetProcessorId(h);
-      crystal_init(&cr, &(h->local->gsComm));
+      GenmapSetProcessorId(h);
       sarray_transfer(struct GenmapElement_private, &(h->elementArray), proc,
-                      1, &cr);
+                      0, &cr);
       elements = GenmapGetElements(h);
       lelt = h->header->lelt = h->elementArray.n;
 
       // sort locally again -- now we have everything sorted
       buffer buf1 = null_buffer;
       sarray_sort_2(struct GenmapElement_private, elements, lelt, fiedler,
-                  TYPE_DOUBLE, globalId, TYPE_INT, &buf1);
+                    TYPE_DOUBLE, globalId, TYPE_INT, &buf1);
 #ifdef DEBUG
       printf("Nbins=%d, Id=%d\n", nbins, id);
       for(GenmapInt i = 0; i < h->header->lelt; i++) {
@@ -411,36 +415,37 @@ void GenmapRSB(GenmapHandle h) {
 
       // find the median -- first do a scan to find position of my
       // elements
-      GenmapInt out[2][1], buf[2][1];
       comm_scan(out, &(h->local->gsComm), gs_int, gs_add, &lelt, 1, buf);
       start = h->header->start = out[0][0];
 
       GenmapInt medianId = -1;
       GenmapInt medianPos = (nel + 1) / 2;
-      if(start <=  medianPos && medianPos < start+lelt) {
+      if(start <=  medianPos && medianPos < start + lelt) {
         medianId = h->Id(h->local);
         printf("median id = %d\n", medianId);
-	// sarray_transfer -- elements with higher fiedler values are sent
-	// into processor with medianId+1 if it exist, otherwise elements
-	// with lower fiedler values are sent into processor medianId-1
-	if(medianId+1 < h->Np(h->local)) {
-	  for(int i=medianPos-start+1; i<lelt; i++) {
-	    elements[i].proc = medianId+1;
-	  }
-	} else {
-	  for(int i=0; i<medianPos-start; i++) {
-	    elements[i].proc = medianId-1;
-	  }
-	  medianId--;
-	}
+        // sarray_transfer -- elements with higher fiedler values are sent
+        // into processor with medianId+1 if it exist, otherwise elements
+        // with lower fiedler values are sent into processor medianId-1
+        if(medianId + 1 < h->Np(h->local)) {
+          for(int i = medianPos - start + 1; i < lelt; i++) {
+            elements[i].proc = medianId + 1;
+          }
+        } else {
+          for(int i = 0; i < medianPos - start; i++) {
+            elements[i].proc = medianId - 1;
+          }
+        }
       }
 
       // Do the transfer again
       sarray_transfer(struct GenmapElement_private, &(h->elementArray), proc,
-                      1, &cr);
-      lelt = h->header->lelt = h->elementArray.n;
+                      0, &cr);
       elements = GenmapGetElements(h);
-
+      lelt = h->header->lelt = h->elementArray.n;
+      // sort locally again -- now we have everything sorted
+      buffer buf2 = null_buffer;
+      sarray_sort_2(struct GenmapElement_private, elements, lelt, fiedler,
+                    TYPE_DOUBLE, globalId, TYPE_INT, &buf2);
 #ifdef DEBUG
       printf("After second transfer\n");
       for(GenmapInt i = 0; i < h->header->lelt; i++) {
@@ -448,31 +453,32 @@ void GenmapRSB(GenmapHandle h) {
                elements[i].globalId, elements[i].fiedler);
       }
 #endif
-      // sort locally again -- now we have everything sorted
-      buffer buf2=null_buffer;
-      sarray_sort_2(struct GenmapElement_private, elements, lelt, fiedler,
-                  TYPE_DOUBLE, globalId, TYPE_INT,&buf2);
-
-      printf("after sort\n", lelt);
       // Now it is time to split the communicator
       if(h->Id(h->local) <= medianId) bin = 0;
 
       GenmapCommExternal local;
+#ifdef MPI
       MPI_Comm_split(h->local->gsComm.c, bin, id, &local);
+#else
+      local = 0;
+#endif
+      // finalize the crystal router
+      crystal_free(&cr);
       GenmapDestroyComm(h->local);
+
+      // Create new communicator
       GenmapCreateComm(&h->local, local);
 
       // update nel,start
-      GenmapInt nel = h->header->nel;
-      GenmapInt start = h->header->start;
-//
-//      printf("I am here 0\n");
-//      GenmapFiedler(h, h->local, 0);
-//      printf("I am here 1\n");
+      comm_scan(out, &(h->local->gsComm), gs_int, gs_add, &lelt, 1, buf);
+      start = h->header->start = out[0][0];
+      GenmapInt nel = lelt;
+      h->Gop(h->local,&nel,1,GENMAP_SUM);
+
+      printf("I am here 0\n");
+      GenmapFiedler(h, h->local, 0);
+      printf("I am here 1\n");
     } else done = 1;
-    done = 1;
   } while(!done);
 
-  // finalize the crystal router
-  crystal_free(&cr);
 }
