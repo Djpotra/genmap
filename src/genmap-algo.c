@@ -257,6 +257,9 @@ void GenmapFiedlerMinMax(GenmapHandle h, GenmapScalar *min,
   h->Gop(h->local, max, 1, GENMAP_MAX);
 }
 
+//GenmapInt GenmapMedianTransfer(h) {
+//}
+
 GenmapInt SetProcessorId(GenmapHandle h) {
   GenmapScalar min, max;
   GenmapFiedlerMinMax(h, &min, &max);
@@ -359,7 +362,6 @@ void GenmapFiedler(GenmapHandle h, GenmapComm c, int global) {
 
 void GenmapRSB(GenmapHandle h) {
   int done = 0;
-  buffer buf = null_buffer;
   struct crystal cr;
   // Calculate the global Fiedler vector, local communicator
   // must be initialized using the global communicator, we never
@@ -375,10 +377,13 @@ void GenmapRSB(GenmapHandle h) {
     GenmapInt lelt = h->header->lelt;
     GenmapInt nel = h->header->nel;
     GenmapInt start = h->header->start;
+    printf("nel = %d\n", nel);
+    printf("start = %d\n", start);
 
     // sort locally according to Fiedler vector
+    buffer buf0 = null_buffer;
     sarray_sort(struct GenmapElement_private, elements, lelt, fiedler,
-                TYPE_DOUBLE, &buf);
+                TYPE_DOUBLE, &buf0);
 
     // We proceed with bisection only if we have more than 1 processor in
     // communicator; otherwise, return and set values for Fortran rsb
@@ -393,8 +398,9 @@ void GenmapRSB(GenmapHandle h) {
       lelt = h->header->lelt = h->elementArray.n;
 
       // sort locally again -- now we have everything sorted
+      buffer buf1 = null_buffer;
       sarray_sort(struct GenmapElement_private, elements, lelt, fiedler,
-                  TYPE_DOUBLE, &buf);
+                  TYPE_DOUBLE, &buf1);
 #ifdef DEBUG
       printf("Nbins=%d, Id=%d\n", nbins, id);
       for(GenmapInt i = 0; i < h->header->lelt; i++) {
@@ -410,25 +416,63 @@ void GenmapRSB(GenmapHandle h) {
       start = h->header->start = out[0][0];
 
       GenmapInt medianId = -1;
-      GenmapInt medianPos = (nel + 1) / 2 - 1;
+      GenmapInt medianPos = (nel + 1) / 2;
       if(start <=  medianPos && medianPos < start+lelt) {
         medianId = h->Id(h->local);
+        printf("median id = %d\n", medianId);
 	// sarray_transfer -- elements with higher fiedler values are sent
 	// into processor with medianId+1 if it exist, otherwise elements
 	// with lower fiedler values are sent into processor medianId-1
+	if(medianId+1 < h->Np(h->local)) {
+	  for(int i=medianPos-start; i<lelt; i++) {
+	    elements[i].proc = medianId+1;
+	  }
+	} else {
+	  for(int i=0; i<=medianPos-start; i++) {
+	    elements[i].proc = medianId-1;
+	  }
+	  medianId--;
+	}
       }
 
-      if(h->Id(h->local) <= medianId) bin = 0;
+      // Do the transfer again
+      sarray_transfer(struct GenmapElement_private, &(h->elementArray), proc,
+                      1, &cr);
+      lelt = h->header->lelt = h->elementArray.n;
+      elements = GenmapGetElements(h);
 
-      GenmapCommExternal local;
-      MPI_Comm_split(h->local->gsComm.c, bin, id, &local);
-      GenmapDestroyComm(h->local);
-      GenmapCreateComm(&h->local, local);
+#ifdef DEBUG
+      printf("After second transfer\n");
+      for(GenmapInt i = 0; i < h->header->lelt; i++) {
+        printf("proc = %d id = %d fiedler = %lf\n", h->Id(h->local),
+               elements[i].globalId, elements[i].fiedler);
+      }
+#endif
+      // sort locally again -- now we have everything sorted
+      buffer buf2=null_buffer;
+      sarray_sort(struct GenmapElement_private, elements, lelt, fiedler,
+                  TYPE_DOUBLE, &buf2);
+//
+//      printf("after sort\n", lelt);
+//      // Now it is time to split the communicator
+//      if(h->Id(h->local) <= medianId) bin = 0;
+//
+//      GenmapCommExternal local;
+//      MPI_Comm_split(h->local->gsComm.c, bin, id, &local);
+//      GenmapDestroyComm(h->local);
+//      GenmapCreateComm(&h->local, local);
+//
+//      // update nel,start
+//      GenmapInt nel = h->header->nel;
+//      GenmapInt start = h->header->start;
+//
+//      printf("I am here 0\n");
+//      GenmapFiedler(h, h->local, 0);
+//      printf("I am here 1\n");
     } else done = 1;
-
-    // update nel,lelt, ...
-    GenmapFiedler(h, h->local, 0);
+    done = 1;
   } while(!done);
 
+  // finalize the crystal router
   crystal_free(&cr);
 }
