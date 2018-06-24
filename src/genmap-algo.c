@@ -240,8 +240,27 @@ void GenmapRQI(GenmapHandle h, GenmapVector v) {
   // Calculate Lv, v^T(Lv)
 }
 
-GenmapInt GetProcessorId(GenmapScalar fiedler, GenmapInt np) {
-  GenmapScalar min = -1.0, max = 1.0;
+void GenmapFiedlerMinMax(GenmapHandle h, GenmapScalar *min,
+                         GenmapScalar *max) {
+  *min = 1; *max = -1;
+
+  GenmapElements e = GenmapGetElements(h);
+  for(int i = 0; i < h->header->lelt; i++) {
+    if(e[i].fiedler < *min) {
+      *min = e[i].fiedler;
+    }
+    if(e[i].fiedler > *max) {
+      *max = e[i].fiedler;
+    }
+  }
+  GenmapGop(h->local, min, 1, GENMAP_MIN);
+  GenmapGop(h->local, max, 1, GENMAP_MAX);
+}
+
+GenmapInt GetProcessorId(GenmapHandle h, GenmapScalar fiedler,
+                         GenmapInt np) {
+  GenmapScalar min, max;
+  GenmapFiedlerMinMax(h, &min, &max);
   GenmapScalar range = max - min;
   GenmapInt nbins = np;
   for(GenmapInt id = 0; id < np; id++) {
@@ -336,12 +355,19 @@ void GenmapRSB(GenmapHandle h) {
   do {
     GenmapInt nbins = h->Np(h->local);
     GenmapInt id = h->Id(h->local);
-    printf("Nbins=%d, Id=%d\n", nbins, id);
-
     GenmapElements elements = GenmapGetElements(h);
     GenmapInt lelt = h->header->lelt;
+
+#ifdef DEBUG
+    printf("Nbins=%d, Id=%d\n", nbins, id);
+    for(GenmapInt i = 0; i < h->header->lelt; i++) {
+      printf("proc = %d id = %d fiedler = %lf\n", h->Id(h->local),
+             elements[i].globalId, elements[i].fiedler);
+    }
+#endif
+
     for(GenmapElements p = elements, e = p + lelt; p != e; p++) {
-      p->proc = GetProcessorId(p->fiedler, nbins);
+      p->proc = GetProcessorId(h, p->fiedler, nbins);
     }
 
     crystal_init(&cr, &(h->local->gsComm));
@@ -349,11 +375,6 @@ void GenmapRSB(GenmapHandle h) {
                     1, &cr);
     elements = GenmapGetElements(h);
     h->header->lelt = h->elementArray.n;
-
-    for(GenmapInt i = 0; i < h->header->lelt; i++) {
-      printf("proc = %d id = %d fiedler = %lf\n", h->Id(h->local),
-             elements[i].globalId, elements[i].fiedler);
-    }
 
     GenmapCommExternal local;
 #ifdef MPI

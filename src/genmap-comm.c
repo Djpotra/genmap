@@ -75,6 +75,7 @@ int GenmapAxInit(GenmapHandle h, GenmapComm c,
   for(GenmapInt i = 0; i < lelt; i++) {
     for(int j = 0; j < nv; j++) {
       vertices[i * nv + j] = elements[i].vertices[j];
+//      printf("%s:%d v=%d\n",__FILE__,__LINE__,vertices[i*nv+j]);
     }
   }
 
@@ -101,6 +102,10 @@ int GenmapAxInit(GenmapHandle h, GenmapComm c,
       weights->data[i] += u[nv * i + j];
     }
     weights->data[i] -= nv;
+  }
+
+  for(GenmapInt i = 0; i < lelt; i++) {
+    weights->data[i] *= -1;
   }
 
 #ifdef DEBUG
@@ -290,8 +295,12 @@ int GenmapAxInit_exact(GenmapHandle h, GenmapComm c,
 int GenmapGop(GenmapComm c, GenmapScalar *v, GenmapInt size,
               GenmapInt op) {
 #ifdef MPI
-  if(op == 0) {
+  if(op == GENMAP_SUM) {
     MPI_Allreduce(MPI_IN_PLACE, v, size, MPI_DOUBLE, MPI_SUM, c->gsComm.c);
+  } else if(op == GENMAP_MAX) {
+    MPI_Allreduce(MPI_IN_PLACE, v, size, MPI_DOUBLE, MPI_MAX, c->gsComm.c);
+  } else if(op == GENMAP_MIN) {
+    MPI_Allreduce(MPI_IN_PLACE, v, size, MPI_DOUBLE, MPI_MIN, c->gsComm.c);
   }
 #endif
 

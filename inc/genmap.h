@@ -68,6 +68,9 @@ int GenmapId(GenmapComm c);
 // Functions to do global operations
 int GenmapGop(GenmapComm c, GenmapScalar *v, GenmapInt size,
               GenmapInt op);
+#define GENMAP_SUM 0
+#define GENMAP_MAX 1
+#define GENMAP_MIN 2
 //
 // File I/O
 //
