@@ -20,12 +20,11 @@ int GenmapRead_fortran(GenmapHandle h, void *data) {
   GenmapInt out[2][1], buf[2][1];
   comm_scan(out, &(h->global->gsComm), gs_int, gs_add, &lelt, 1, buf);
   h->header->start = out[0][0];
+  h->header->nel = out[1][0];
 
   array_reserve(struct GenmapElement_private, &(h->elementArray), lelt);
   h->elementArray.n = lelt;
   h->header->lelt = lelt;
-  h->header->nel = lelt;
-  GenmapGop(h->global, &(h->header->nel), 1, GENMAP_SUM);
 
   GenmapElements elements = GenmapGetElements(h);
 
