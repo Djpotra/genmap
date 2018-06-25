@@ -314,8 +314,11 @@ void GenmapFiedler(GenmapHandle h, GenmapComm c, int global) {
   GenmapCreateVector(&alphaVec, iter);
   GenmapCreateVector(&betaVec, iter - 1);
   GenmapVector *q = NULL;
+  // TODO: Lanczos doesn't work well for smaller matrices
+  // We need to fix this
   GenmapLanczos(h, c, initVec, iter, &q, alphaVec, betaVec);
   iter = alphaVec->size;
+  //printf("iter: %d ",iter); GenmapPrintVector(alphaVec);
 
   // 2. Do inverse power iteration on local communicator and find
   // local Fiedler vector.
@@ -332,19 +335,24 @@ void GenmapFiedler(GenmapHandle h, GenmapComm c, int global) {
   GenmapCreateZerosVector(&evLanczos, lelt);
   for(GenmapInt i = 0; i < lelt; i++) {
     for(GenmapInt j = 0; j < iter; j++) {
+//      printf("evTriDiag: %lf\n",evTriDiag->data[j]);
       evLanczos->data[i] += q[j]->data[i] * evTriDiag->data[j];
     }
   }
 
   GenmapScalar lNorm = 0;
   for(GenmapInt i = 0; i < lelt; i++) {
+//    printf("evLanczos: %lf\n",evLanczos->data[i]);
     lNorm += evLanczos->data[i] * evLanczos->data[i];
+//    printf("lNorm: %lf\n",lNorm);
   }
 
   h->Gop(c, &lNorm, 1, GENMAP_SUM);
+//  printf("lNorm2: %lf\n",lNorm);
   GenmapScaleVector(evLanczos, evLanczos, 1. / sqrt(lNorm));
   for(GenmapInt i = 0; i < lelt; i++) {
     elements[i].fiedler = evLanczos->data[i];
+//    printf("fiedler: %lf\n",elements[i].fiedler);
   }
 
   // n. Destory the data structures
@@ -373,7 +381,7 @@ void GenmapRSB(GenmapHandle h) {
   GenmapInt start = h->header->start;
   GenmapElements elements = GenmapGetElements(h);
 
-  printf("Id = %d nel = %d lelt=%d\n", h->Id(h->global), nel, lelt);
+//  printf("Id = %d nel = %d lelt=%d\n", h->Id(h->global), nel, lelt);
 
   // Data needed to use gslib
   struct crystal cr;
@@ -550,7 +558,7 @@ void GenmapRSB(GenmapHandle h) {
 
 //      printf("nel = %d start= %d\n", nel, start);
 
-      GenmapFiedler(h, h->local, 0);
+      GenmapFiedler(h, h->local, 1);
     } else done = 1;
 //    MPI_Barrier(h->global->gsComm.c);
 //    printf("New Id = %d Old Id = %d\n", h->Id(h->local), h->Id(h->global));
