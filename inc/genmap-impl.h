@@ -8,7 +8,7 @@
 #include <assert.h>
 #include <math.h>
 
-#ifdef DEBUG
+#ifdef GENMAP_DEBUG
 #include <stdio.h>
 #endif
 //

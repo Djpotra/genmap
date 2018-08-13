@@ -1,13 +1,13 @@
 #include <genmap.h>
 
-#ifdef MPI
+#ifdef GENMAP_MPI
 #include <mpi.h>
 #endif
 //
 // Test GenmapInit, GenmpaFinalize, etc.
 //
 int main(int argc, char **argv) {
-#ifdef MPI
+#ifdef GENMAP_MPI
   MPI_Init(&argc, &argv);
 #else
   int MPI_COMM_WORLD = 0;
@@ -17,7 +17,7 @@ int main(int argc, char **argv) {
   GenmapInit(&h, MPI_COMM_WORLD, "default", 1);
   GenmapFinalize(h);
 
-#ifdef MPI
+#ifdef GENMAP_MPI
   MPI_Finalize();
 #endif
 }

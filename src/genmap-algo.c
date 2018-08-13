@@ -457,7 +457,6 @@ void GenmapRSB(GenmapHandle h) {
       }
 
       idStart = 0;
-      idEnd;
       futureNel = lowNel/lowNp;
       nrem = lowNel - (futureNel*lowNp);
       printf("lowNel=%d,lowNp=%d,nrem=%d\n",lowNel,lowNp,nrem);
@@ -517,7 +516,7 @@ void GenmapRSB(GenmapHandle h) {
 //      printf("Old Id = %d bin = %d\n", h->Id(h->global), bin);
 
       GenmapCommExternal local;
-#ifdef MPI
+#ifdef GENMAP_MPI
       MPI_Comm_split(h->local->gsComm.c, bin, id, &local);
 #else
       local = 0;

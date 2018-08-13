@@ -12,7 +12,7 @@ static int GenmapHandleActive = 0;
 static int GenmapHandleMax = 0;
 
 #define fGenmapInit FORTRAN_NAME(genmapinit,GENMAPINIT)
-#ifdef MPI
+#ifdef GENMAP_MPI
 void fGenmapInit(int *handle, MPI_Fint *comm, int *exactAx, int *err) {
   MPI_Comm ccomm = MPI_Comm_f2c(*comm);
 #else
@@ -41,7 +41,7 @@ void fGenmapInit(int *handle, int *comm, int *exactAx, int *err) {
 void fGenmapSet(int *handle, int *nelements, int *ndim, int *nvertices,
                 int *nedges, int *vertices, int *err) {
 
-#ifdef DEBUG
+#ifdef GENMAP_DEBUG
   for(int i = 0; i < *nelements; i++) {
     for(int j = 0; j < *nvertices; j++) {
 //      printf("fvertices:%d\n",vertices[i*(*nvertices)+j]);
@@ -62,7 +62,7 @@ void fGenmapSet(int *handle, int *nelements, int *ndim, int *nvertices,
   h->header->ne       = *nedges;
   h->header->ndim     = *ndim;
 
-#ifdef DEBUG
+#ifdef GENMAP_DEBUG
   printf("%s:%d nelements:%d\n", __FILE__, __LINE__, h->header->nel);
   printf("%s:%d ndim:%d\n", __FILE__, __LINE__, h->header->ndim);
   printf("%s:%d nvertices:%d\n", __FILE__, __LINE__, h->header->nv);
@@ -71,7 +71,7 @@ void fGenmapSet(int *handle, int *nelements, int *ndim, int *nvertices,
 
   GenmapRead(h, vertices);
 
-#ifdef DEBUG
+#ifdef GENMAP_DEBUG
   GenmapElements elem = GenmapGetElements(h);
   for(int i = 0; i < h->header->nel; i++) {
 //    printf("%s:%d %d nel:%d\n",__FILE__,__LINE__,h->Id(h->global),elem[i].globalId);

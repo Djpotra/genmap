@@ -1,6 +1,6 @@
 #include <genmap-impl.h>
 
-#ifdef MPI
+#ifdef GENMAP_MPI
 #include <mpi.h>
 #endif
 //
@@ -28,7 +28,7 @@ int TestAx1(GenmapHandle h, GenmapVector weights) {
 
   h->Ax(h, h->global, u, weights, v);
 
-#ifdef DEBUG
+#ifdef GENMAP_DEBUG
   printf("%s:%d proc: %d v: ", __FILE__, __LINE__, h->Id(h->global));
   GenmapPrintVector(v);
   printf("\n");
@@ -54,7 +54,7 @@ int TestAx2(GenmapHandle h, GenmapVector weights) {
 
   h->Ax(h, h->global, u, weights, v);
 
-#ifdef DEBUG
+#ifdef GENMAP_DEBUG
   printf("%s:%d proc: %d v: ", __FILE__, __LINE__, h->Id(h->global));
   GenmapPrintVector(v);
   printf("\n");
@@ -62,7 +62,7 @@ int TestAx2(GenmapHandle h, GenmapVector weights) {
 
   GenmapCreateZerosVector(&answer, lelt);
 
-#ifdef MPI
+#ifdef GENMAP_MPI
   if(h->Np(h->global) == 2) {
     if(h->Id(h->global) == 0) {
       answer->data[0] = -3.;
@@ -84,7 +84,7 @@ int TestAx2(GenmapHandle h, GenmapVector weights) {
 }
 
 int TestAx3(GenmapHandle h, GenmapVector weights) {
-#ifdef MPI
+#ifdef GENMAP_MPI
   GenmapVector u, v, answer;
   GenmapInt lelt = h->header->lelt;
 
@@ -97,7 +97,7 @@ int TestAx3(GenmapHandle h, GenmapVector weights) {
 
     h->Ax(h, h->global, u, weights, v);
 
-#ifdef DEBUG
+#ifdef GENMAP_DEBUG
     printf("%s:%d proc: %d v: ", __FILE__, __LINE__, h->Id(h->global));
     GenmapPrintVector(v);
     printf("\n");
@@ -120,7 +120,7 @@ int TestAx3(GenmapHandle h, GenmapVector weights) {
 
     h->Ax(h, h->global, u, weights, v);
 
-#ifdef DEBUG
+#ifdef GENMAP_DEBUG
     printf("%s:%d proc: %d v: ", __FILE__, __LINE__, h->Id(h->global));
     GenmapPrintVector(v);
     printf("\n");
@@ -142,7 +142,7 @@ int TestAx3(GenmapHandle h, GenmapVector weights) {
   assert(GenmapVectorsEqual(v, answer, GENMAP_TOL) == 1);
 #endif
 
-#ifdef MPI
+#ifdef GENMAP_MPI
   GenmapDestroyVector(u);
   GenmapDestroyVector(v);
   GenmapDestroyVector(answer);
@@ -152,7 +152,7 @@ int TestAx3(GenmapHandle h, GenmapVector weights) {
 }
 
 int main(int argc, char **argv) {
-#ifdef MPI
+#ifdef GENMAP_MPI
   MPI_Init(&argc, &argv);
 #else
   int MPI_COMM_WORLD = 0;
@@ -178,7 +178,7 @@ int main(int argc, char **argv) {
 
   GenmapFinalize(h);
 
-#ifdef MPI
+#ifdef GENMAP_MPI
   MPI_Finalize();
 #endif
 }

@@ -1,6 +1,6 @@
 #include <genmap-impl.h>
 
-#ifdef MPI
+#ifdef GENMAP_MPI
 #include <mpi.h>
 #endif
 #include <stdio.h>
@@ -56,7 +56,7 @@ void TestLanczos1(GenmapHandle h) {
   }
   h->Gop(h->global, &lNorm, 1, GENMAP_SUM);
   GenmapScaleVector(evLanczos, evLanczos, 1. / sqrt(lNorm));
-#ifdef DEBUG
+#ifdef GENMAP_DEBUG
   printf("proc : %d (lanczos power) ", h->Id(h->global));
   GenmapPrintVector(evLanczos);
   printf("\n");
@@ -142,7 +142,7 @@ void TestLanczos2(GenmapHandle h) {
   }
   h->Gop(h->global, &lNorm, 1, GENMAP_SUM);
   GenmapScaleVector(evLanczos, evLanczos, 1. / sqrt(lNorm));
-#ifdef DEBUG
+#ifdef GENMAP_DEBUG
   printf("proc : %d (lanczos invpower) ", h->Id(h->global));
   GenmapPrintVector(evLanczos);
   printf("\n");
@@ -237,7 +237,7 @@ void TestLanczos3(GenmapHandle h) {
   }
   h->Gop(h->global, &lNorm, 1, GENMAP_SUM);
   GenmapScaleVector(evLanczos, evLanczos, 1. / sqrt(lNorm));
-#ifdef DEBUG
+#ifdef GENMAP_DEBUG
   printf("proc : %d (lanczos fiedler) ", h->Id(h->global));
   GenmapPrintVector(evLanczos);
   printf("\n");
@@ -273,7 +273,7 @@ void TestLanczos3(GenmapHandle h) {
 }
 
 int main(int argc, char **argv) {
-#ifdef MPI
+#ifdef GENMAP_MPI
   MPI_Init(&argc, &argv);
 #else
   int MPI_COMM_WORLD = 0;
@@ -288,7 +288,7 @@ int main(int argc, char **argv) {
 
   GenmapFinalize(h);
 
-#ifdef MPI
+#ifdef GENMAP_MPI
   MPI_Finalize();
 #endif
   return 0;
