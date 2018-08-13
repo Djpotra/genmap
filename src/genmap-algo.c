@@ -370,9 +370,6 @@ void GenmapFiedler(GenmapHandle h, GenmapComm c, int global) {
 
 void GenmapRSB(GenmapHandle h) {
   int done = 0;
-  // Number of bins -- 2 because bisection
-  GenmapInt nbins = 2;
-  GenmapInt bin;
 
   GenmapInt id = h->Id(h->local);
   GenmapInt np = h->Np(h->local);

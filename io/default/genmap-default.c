@@ -1,6 +1,14 @@
-#include <genmap-readers.h>
+#include <genmap-io.h>
 
 #include <stdio.h>
+//
+// GenmapHandle: Create
+//
+int GenmapCreateHandle_default(GenmapHandle h) {
+  h->Read = GenmapRead_default;
+
+  return 0;
+}
 //
 // Do File I/O in parallel
 //
@@ -35,12 +43,7 @@ int GenmapRead_default(GenmapHandle h, void *data) {
 
   // nel, nactive, depth, d2, npts, nrank, noutflow
   h->header->nel = headerArray[GENMAP_NEL];
-  h->header->nactive = headerArray[GENMAP_NACTIVE];
-  h->header->depth = headerArray[GENMAP_DEPTH];
-  h->header->d2 = headerArray[GENMAP_D2];
   h->header->npts = headerArray[GENMAP_NPTS];
-  h->header->nrank = headerArray[GENMAP_NRANK];
-  h->header->noutflow = headerArray[GENMAP_NOUTFLOW];
 
   GenmapInt nel = headerArray[GENMAP_NEL];
   GenmapInt nv = headerArray[GENMAP_NPTS] / nel;

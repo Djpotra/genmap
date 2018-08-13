@@ -27,12 +27,7 @@ struct GenmapComm_private {
 // Genmap Input File header
 struct GenmapHeader_private {
   GenmapInt nel;
-  GenmapInt nactive;
-  GenmapInt depth;
-  GenmapInt d2;
   GenmapInt npts;
-  GenmapInt nrank;
-  GenmapInt noutflow;
   GenmapInt nv;
   GenmapInt ne;
   GenmapInt ndim;

@@ -1,6 +1,14 @@
-#include <genmap-readers.h>
+#include <genmap-io.h>
 
 #include <stdio.h>
+//
+// GenmapHandle: Create
+//
+int GenmapCreateHandle_fortran(GenmapHandle h) {
+  h->Read = GenmapRead_fortran;
+
+  return 0;
+}
 //
 // Do File I/O in parallel
 //
