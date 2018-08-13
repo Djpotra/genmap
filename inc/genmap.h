@@ -6,7 +6,6 @@
 #ifdef GENMAP_MPI
 #include <mpi.h>
 #endif
-
 //
 // Genmap Operators
 //
@@ -42,6 +41,14 @@ typedef struct GenmapVector_private *GenmapVector;
 typedef struct GenmapElement_private *GenmapElements;
 
 typedef struct GenmapHeader_private *GenmapHeader;
+//
+// Genmap Debug routines
+//
+#ifdef GENMAP_DEBUG
+#  define dbgfl printf("%s:%d\n",__FILE__,__LINE__);
+#else
+#  define dbgfl ;
+#endif
 //
 // Genmap tolerances
 //
