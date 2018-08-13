@@ -108,7 +108,7 @@ int GenmapAxInit(GenmapHandle h, GenmapComm c,
     weights->data[i] *= -1;
   }
 
-#ifdef DEBUG
+#ifdef GENMAP_DEBUG
   printf("proc: %d 2-weights: ", h->Id(h->global));
   GenmapPrintVector(weights);
   printf("\n");
@@ -278,7 +278,7 @@ int GenmapAxInit_exact(GenmapHandle h, GenmapComm c,
     weights->data[i] *= -1;
   }
 
-#ifdef DEBUG
+#ifdef GENMAP_DEBUG
   printf("proc: %d 2-weights: ", h->Id(h->global));
   GenmapPrintVector(weights);
   printf("\n");
@@ -294,7 +294,7 @@ int GenmapAxInit_exact(GenmapHandle h, GenmapComm c,
 
 int GenmapGop(GenmapComm c, GenmapScalar *v, GenmapInt size,
               GenmapInt op) {
-#ifdef MPI
+#ifdef GENMAP_MPI
   if(op == GENMAP_SUM) {
     MPI_Allreduce(MPI_IN_PLACE, v, size, MPI_DOUBLE, MPI_SUM, c->gsComm.c);
   } else if(op == GENMAP_MAX) {

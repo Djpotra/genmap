@@ -9,10 +9,10 @@ int GenmapRead_fortran(GenmapHandle h, void *data) {
 
   GenmapInt lelt = h->header->lelt;
   GenmapInt nv  = h->header->nv;
-#ifdef DEBUG
+#ifdef GENMAP_DEBUG
   for(int i = 0; i < lelt; i++) {
     for(int j = 0; j < nv; j++) {
-//      printf("rvertices:%d\n",vertices[i*nv+j]);
+        printf("rvertices:%d\n",vertices[i*nv+j]);
     }
   }
 #endif

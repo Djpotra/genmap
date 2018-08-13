@@ -1,6 +1,6 @@
 #include <genmap-impl.h>
 
-#ifdef MPI
+#ifdef GENMAP_MPI
 #include <mpi.h>
 #endif
 #include <stdio.h>
@@ -12,7 +12,7 @@ void TestRSB1(GenmapHandle h) {
 }
 
 int main(int argc, char **argv) {
-#ifdef MPI
+#ifdef GENMAP_MPI
   MPI_Init(&argc, &argv);
 #else
   int MPI_COMM_WORLD = 0;
@@ -25,7 +25,7 @@ int main(int argc, char **argv) {
 
   GenmapFinalize(h);
 
-#ifdef MPI
+#ifdef GENMAP_MPI
   MPI_Finalize();
 #endif
   return 0;

@@ -2,6 +2,9 @@ MPI ?=1
 VALGRIND ?=0
 DEBUG ?=0
 ASAN ?=0
+UNDERSCORE ?=1
+CC ?=mpicc
+FC ?=mpif77
 
 SRCROOT =.
 GSDIR ?= $(SRCROOT)/../gslib
@@ -16,20 +19,8 @@ READERDIR=$(SRCROOT)/readers
 DEFAULTDIR=$(READERDIR)/default
 FORTRANDIR=$(READERDIR)/fortran
 
-ifeq ($(MPI),0)
-CC=gcc
-endif
 CFLAGS= -std=c99 -O2 -Wall -Wextra -Wno-unused-function -Wno-unused-parameter
-
-ifeq ($(MPI),0)
-FC=gfortran
-endif
 FFLAGS= -O2 -Wall -Wextra -Wno-unused-function -Wno-unused-parameter -cpp
-
-ifeq ($(MPI),0)
-CXX=g++
-endif
-CXXFLAGS=
 
 TARGET=genmap
 TEST=test
@@ -75,12 +66,15 @@ ifeq ($(ASAN),1)
 	LDFLAGS+= $(AFLAGS)
 	TESTLDFLAGS+= $(AFLAGS)
 endif
-ifeq ($(MPI),1)
-	CFLAGS+= -DMPI
+ifneq ($(MPI),0)
+	CFLAGS+= -DGENMAP_MPI
 endif
-ifeq ($(DEBUG),1)
-	CFLAGS+= -DDEBUG
+ifneq ($(DEBUG),0)
+	CFLAGS+= -DGENMAP_DEBUG
 	CFLAGS+= -g3
+endif
+ifneq ($(UNDERSCORE),0)
+	CFLAGS+= -DGENMAP_UNDERSCORE
 endif
 
 .PHONY: all
@@ -126,3 +120,11 @@ astyle:
 	    --keep-one-line-statements --keep-one-line-blocks --lineend=linux \
             --suffix=none --preserve-date --formatted --pad-oper \
 	    --unpad-paren tests/*.[ch] src/*.[ch] inc/*.[ch] readers/*/*.[ch]
+
+print-%:
+	$(info [ variable name]: $*)
+	$(info [        origin]: $(origin $*))
+	$(info [         value]: $(value $*))
+	$(info [expanded value]: $($*))
+	$(info)
+	@true

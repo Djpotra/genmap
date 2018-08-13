@@ -6,7 +6,7 @@
 //
 int GenmapRead_default(GenmapHandle h, void *data) {
   char *name = (char *)data;
-#ifdef MPI
+#ifdef GENMAP_MPI
   MPI_File fh;
   MPI_Offset offset;
   MPI_Status st;
@@ -26,7 +26,7 @@ int GenmapRead_default(GenmapHandle h, void *data) {
 
   GenmapInt *headerArray;
   GenmapMalloc(GENMAP_HEADER_SIZE, &headerArray);
-#ifdef MPI
+#ifdef GENMAP_MPI
   MPI_File_read(fh, headerArray, GENMAP_HEADER_SIZE, MPI_INT, &st);
 #else
   GenmapInt result = fread(headerArray, sizeof(GenmapInt),
@@ -46,7 +46,7 @@ int GenmapRead_default(GenmapHandle h, void *data) {
   GenmapInt nv = headerArray[GENMAP_NPTS] / nel;
   GenmapInt lelt = nel / h->Np(h->global);
 
-#ifdef MPI
+#ifdef GENMAP_MPI
   GenmapInt start = h->Id(h->global) * lelt * (2 * nv + 1);
   if(h->Id(h->global) == h->Np(h->global) - 1)
     lelt = nel - h->Id(h->global) * lelt;
@@ -65,13 +65,13 @@ int GenmapRead_default(GenmapHandle h, void *data) {
   h->elementArray.n = lelt;
   GenmapElements elements = GenmapGetElements(h);
 
-#ifdef MPI
+#ifdef GENMAP_MPI
   MPI_File_seek(fh, (GENMAP_HEADER_SIZE + start)*sizeof(GenmapInt),
                 MPI_SEEK_SET);
 #endif
 
   for(GenmapInt i = 0; i < lelt; i++) {
-#ifdef MPI
+#ifdef GENMAP_MPI
     MPI_File_read(fh, &(elements[i].globalId), 1, MPI_INT, &st);
     MPI_File_read(fh, elements[i].vertices, nv, MPI_INT, &st);
     MPI_File_read(fh, elements[i].edges, nv, MPI_INT, &st);
@@ -82,7 +82,7 @@ int GenmapRead_default(GenmapHandle h, void *data) {
 #endif
   }
 
-#ifdef MPI
+#ifdef GENMAP_MPI
   MPI_File_close(&fh);
 #else
   fclose(fp);

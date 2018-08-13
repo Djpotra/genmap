@@ -2,7 +2,13 @@
 #define _GSLIB_H_
 
 //#define USE_LONG
-#define UNDERSCORE
+#ifdef GENMAP_UNDERSCORE
+#  define UNDERSCORE
+#endif
+
+#ifdef GENMAP_MPI
+#  define MPI
+#endif
 
 #include <stdlib.h>
 #include <stddef.h>

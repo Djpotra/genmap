@@ -2,6 +2,10 @@
 #define _GENMAP_H_
 
 #include <gslib.h>
+
+#ifdef GENMAP_MPI
+#include <mpi.h>
+#endif
 //
 // Genmap Operators
 //
@@ -38,10 +42,19 @@ typedef struct GenmapElement_private *GenmapElements;
 
 typedef struct GenmapHeader_private *GenmapHeader;
 //
+// Genmap Debug routines
+//
+#ifdef GENMAP_DEBUG
+#  define dbgfl printf("%s:%d\n",__FILE__,__LINE__);
+#else
+#  define dbgfl ;
+#endif
+//
 // Genmap tolerances
 //
-#define GENMAP_TOL 1e-12
-#define GENMAP_SP_TOL 1e-8
+#define GENMAP_SP_TOL 1e-08
+#define GENMAP_DP_TOL 1e-12
+#define GENMAP_TOL GENMAP_DP_TOL
 //
 // Genmap Readers
 //
@@ -52,7 +65,7 @@ int GenmapRegisterReader(char *name, int (*Create)(GenmapHandle h));
 //
 // GenmapCommExternal
 //
-#ifdef MPI
+#ifdef GENMAP_MPI
 typedef MPI_Comm GenmapCommExternal;
 #else
 typedef int GenmapCommExternal;
