@@ -36,6 +36,7 @@ int GenmapRegister() {
   int ierr;
   ierr  = GenmapRegisterReader("default", GenmapCreateHandle_default);
   ierr |= GenmapRegisterReader("fortran", GenmapCreateHandle_fortran);
+  ierr |= GenmapRegisterReader("gmsh", GenmapCreateHandle_gmsh);
   return ierr;
 }
 //

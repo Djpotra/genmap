@@ -378,8 +378,6 @@ void GenmapRSB(GenmapHandle h) {
   GenmapInt start = h->header->start;
   GenmapElements elements = GenmapGetElements(h);
 
-//  printf("Id = %d nel = %d lelt=%d\n", h->Id(h->global), nel, lelt);
-
   // Data needed to use gslib
   struct crystal cr;
   crystal_init(&cr, &(h->local->gsComm));
@@ -394,13 +392,6 @@ void GenmapRSB(GenmapHandle h) {
     buffer buf0 = null_buffer;
     sarray_sort_2(struct GenmapElement_private, elements, lelt, fiedler,
                   TYPE_DOUBLE, globalId, TYPE_INT, &buf0);
-//    MPI_Barrier(h->local->gsComm.c);
-//    for(GenmapInt i = 0; i < h->header->lelt; i++) {
-//      printf("0-proc = %d id = %d fiedler = %lf\n", h->Id(h->global),
-//             elements[i].globalId, elements[i].fiedler);
-//    }
-//    MPI_Barrier(h->local->gsComm.c);
-
     // We proceed with bisection only if we have more than 1 processor in
     // communicator; otherwise, return and set values for Fortran rsb
     if(h->Np(h->local) > 1) {
@@ -421,13 +412,6 @@ void GenmapRSB(GenmapHandle h) {
       buffer buf1 = null_buffer;
       sarray_sort_2(struct GenmapElement_private, elements, lelt, fiedler,
                     TYPE_DOUBLE, globalId, TYPE_INT, &buf1);
-
-//      MPI_Barrier(h->local->gsComm.c);
-//      for(GenmapInt i = 0; i < h->header->lelt; i++) {
-//        printf("1-proc = %d id = %d fiedler = %lf\n", h->Id(h->global),
-//               elements[i].globalId, elements[i].fiedler);
-//      }
-//      MPI_Barrier(h->local->gsComm.c);
 
       GenmapInt lowNel = (nel + 1) / 2;
       GenmapInt highNel = nel - lowNel;

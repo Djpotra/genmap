@@ -75,7 +75,6 @@ int GenmapAxInit(GenmapHandle h, GenmapComm c,
   for(GenmapInt i = 0; i < lelt; i++) {
     for(int j = 0; j < nv; j++) {
       vertices[i * nv + j] = elements[i].vertices[j];
-//      printf("%s:%d v=%d\n",__FILE__,__LINE__,vertices[i*nv+j]);
     }
   }
 
