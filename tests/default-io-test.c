@@ -14,7 +14,6 @@ int TestIO1(GenmapHandle h) {
   GenmapElements elements = GenmapGetElements(h);
 
   assert(h->header->nel == 8);
-  assert(h->header->npts == 32);
   assert(h->header->nv == 4);
 
   int nv = h->header->nv;

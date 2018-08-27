@@ -423,30 +423,30 @@ void GenmapRSB(GenmapHandle h) {
 
       // Start - numbering elements to the correct processor
       // Let's numnber the elements which will go in upper part
-      GenmapInt idStart = (nel+1)/2;
+      GenmapInt idStart = (nel + 1) / 2;
       GenmapInt idEnd;
-      GenmapInt futureNel = highNel/highNp;
-      GenmapInt nrem = highNel - (futureNel*highNp);
+      GenmapInt futureNel = highNel / highNp;
+      GenmapInt nrem = highNel - (futureNel * highNp);
       for(GenmapInt i = lowNp; i < np; i++) {
         if(i - lowNp < nrem) idEnd = idStart + futureNel + 1;
         else idEnd = idStart + futureNel;
 
-        for(GenmapInt j = idStart; j<idEnd; j++) {
-          if(j >=start && j < start +lelt) elements[j-start].proc=i;
+        for(GenmapInt j = idStart; j < idEnd; j++) {
+          if(j >= start && j < start + lelt) elements[j - start].proc = i;
         }
         idStart = idEnd;
       }
 
       idStart = 0;
-      futureNel = lowNel/lowNp;
-      nrem = lowNel - (futureNel*lowNp);
-      printf("lowNel=%d,lowNp=%d,nrem=%d\n",lowNel,lowNp,nrem);
+      futureNel = lowNel / lowNp;
+      nrem = lowNel - (futureNel * lowNp);
+      printf("lowNel=%d,lowNp=%d,nrem=%d\n", lowNel, lowNp, nrem);
       for(GenmapInt i = 0; i < lowNp; i++) {
         if(i < nrem) idEnd = idStart + futureNel + 1;
         else idEnd = idStart + futureNel;
 
-        for(GenmapInt j = idStart; j<idEnd; j++) {
-          if(j >=start && j < start +lelt) elements[j-start].proc=i;
+        for(GenmapInt j = idStart; j < idEnd; j++) {
+          if(j >= start && j < start + lelt) elements[j - start].proc = i;
         }
         idStart = idEnd;
       }

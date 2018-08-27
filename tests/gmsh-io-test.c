@@ -11,34 +11,25 @@ int TestIO1(GenmapHandle h) {
   char *name = "mesh/cubeHexE8Thilina.msh";
 
   GenmapRead(h, name);
+
+  assert(h->header->nel == 8);
+  assert(h->header->ndim == 3);
+  assert(h->header->nv == 8);
+  assert(h->header->ne == 12);
+
   GenmapElements elements = GenmapGetElements(h);
+  int v0[8] = {8, 7, 5, 6, 28, 27, 25, 26};
+  int v1[8] = {12, 11, 9, 10, 4, 3, 1, 2};
 
-//assert(h->header->nel == 8);
-//assert(h->header->npts == 32);
-//assert(h->header->nv == 4);
+  if(h->Id(h->global) == 0) {
+    for(int i = 0; i < 8; i++)
+      assert(v0[i] == elements[0].vertices[i]);
+  }
 
-//int nv = h->header->nv;
-//GenmapInt verticesFirst[4] = {1, 4, 2, 5};
-//GenmapInt edgesFirst[4] = {1, 4, 2, 3};
-//GenmapInt verticesLast[4] = {11, 14, 12, 15};
-//GenmapInt edgesLast[4] = {20, 22, 16, 21};
-
-//if(h->Id(h->global) == 0) {
-//  assert(elements[0].globalId == 1);
-//  for(GenmapInt j = 0; j < nv; j++) {
-//    assert(elements[0].vertices[j] == verticesFirst[j]);
-//    assert(elements[0].edges[j] == edgesFirst[j]);
-//  }
-//}
-
-//int lelt = h->header->lelt - 1;
-//if(h->Id(h->global) == h->Np(h->global) - 1) {
-//  assert(elements[lelt].globalId == 8);
-//  for(GenmapInt j = 0; j < nv; j++) {
-//    assert(elements[lelt].vertices[j] == verticesLast[j]);
-//    assert(elements[lelt].edges[j] == edgesLast[j]);
-//  }
-//}
+  if(h->Id(h->global) == h->Np(h->global) - 1) {
+    for(int i = 0; i < 8; i++)
+      assert(v1[i] == elements[h->header->lelt - 1].vertices[i]);
+  }
 
   return 0;
 }
@@ -52,7 +43,7 @@ int main(int argc, char **argv) {
 
   GenmapHandle h;
   GenmapInit(&h, MPI_COMM_WORLD, "gmsh", 0);
-//TestIO1(h);
+  TestIO1(h);
   GenmapFinalize(h);
 
 #ifdef GENMAP_MPI
