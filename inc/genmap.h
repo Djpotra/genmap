@@ -109,7 +109,9 @@ int GenmapRead(GenmapHandle h, void *data);
 int GenmapInit(GenmapHandle *h, GenmapCommExternal ce, char *reader,
                int exactAx);
 int GenmapFinalize(GenmapHandle h);
+//
 // GenmapMalloc, Realloc, Calloc and Free
+//
 int GenmapMallocArray(size_t n, size_t unit, void *p);
 int GenmapCallocArray(size_t n, size_t unit, void *p);
 int GenmapReallocArray(size_t n, size_t unit, void *p);
@@ -140,7 +142,9 @@ GenmapScalar GenmapNormVector(GenmapVector x, GenmapInt p);
 
 int GenmapPrintVector(GenmapVector x);
 int GenmapDestroyVector(GenmapVector x);
+//
 // Functions to do Laplacian
+//
 int GenmapAxInit(GenmapHandle h, GenmapComm c, GenmapVector weights);
 
 int GenmapAx(GenmapHandle h, GenmapComm c, GenmapVector u,

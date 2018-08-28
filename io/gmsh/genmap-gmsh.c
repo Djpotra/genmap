@@ -19,7 +19,7 @@ int GenmapRead_gmsh(GenmapHandle h, void *data) {
   char *status;
   char buf[BUFSIZ];
 
-  GenmapInt NglobalElements, NlocalElements;
+  GenmapInt NglobalElements, NlocalElements, NglobalNodes;
 
   int rank, size;
   MPI_Comm_rank(h->global->gsComm.c, &rank);
@@ -28,6 +28,23 @@ int GenmapRead_gmsh(GenmapHandle h, void *data) {
   FILE *fp = fopen(fileName, "r");
   if(fp == NULL) {
     printf("GenmapRead_gmsh:%s:%d can't open file.\n", __FILE__, __LINE__);
+  }
+
+  do {
+    status = fgets(buf, BUFSIZ, fp);
+  } while(!strstr(buf, "$Nodes"));
+
+  status = fgets(buf, BUFSIZ, fp);
+  sscanf(buf, "%d", &NglobalNodes);
+  h->header->Nnodes = NglobalNodes;
+
+  GenmapScalar *VX, *VY, *VZ; 
+  GenmapCalloc(NglobalNodes, &VX);
+  GenmapCalloc(NglobalNodes, &VY);
+  GenmapCalloc(NglobalNodes, &VZ);
+  for(GenmapInt i = 0; i < NglobalNodes; i++) {
+    status = fgets(buf, BUFSIZ, fp);
+    sscanf(buf, "%*d %lf %lf %lf", VX+i, VY+i, VZ+i);
   }
 
   do {
@@ -42,7 +59,6 @@ int GenmapRead_gmsh(GenmapHandle h, void *data) {
                 NglobalElements);
   globalElements.n = NglobalElements;
   GenmapElements elements = (GenmapElements)(globalElements.ptr);
-  printf("NglobalElements = %d\n", NglobalElements);
 
   GenmapInt count = 0;
 
@@ -64,6 +80,11 @@ int GenmapRead_gmsh(GenmapHandle h, void *data) {
       elements[count].vertices[5] = v6;
       elements[count].vertices[6] = v7;
       elements[count].vertices[7] = v8;
+      for(GenmapInt j = 0; j < 8; j++) {
+        elements[count].x[j] = VX[elements[count].vertices[j] - 1];
+        elements[count].y[j] = VY[elements[count].vertices[j] - 1];
+        elements[count].z[j] = VZ[elements[count].vertices[j] - 1];
+      }
       count++;
     }
   }
@@ -97,5 +118,13 @@ int GenmapRead_gmsh(GenmapHandle h, void *data) {
 
   array_free(&globalElements);
 
+  GenmapFree(VX);
+  GenmapFree(VY);
+  GenmapFree(VZ);
+
+  return 0;
+}
+
+int GenmapWrite_gmsh(GenmapHandle h, char *fileName) {
   return 0;
 }

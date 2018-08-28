@@ -33,6 +33,7 @@ struct GenmapHeader_private {
   GenmapInt ndim;
   GenmapInt lelt;
   GenmapInt start;
+  GenmapInt Nnodes;
 };
 //
 // GenmapHeader: Create, Destroy
@@ -47,6 +48,9 @@ struct GenmapElement_private {
   GenmapInt edges[12];
   GenmapInt faces[6];
   GenmapUInt proc;
+  GenmapScalar x[8];
+  GenmapScalar y[8];
+  GenmapScalar z[8];
 };
 //
 // GenmapElements: Create, Destroy
