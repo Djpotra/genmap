@@ -90,6 +90,8 @@ struct GenmapHandle_private {
 
   int (*Read)(GenmapHandle h, void *data);
 
+  int (*Write)(GenmapHandle h, char *fileNameBase);
+
   GenmapInt exactAx;
 };
 // GenmapHandle

@@ -8,6 +8,7 @@
 //
 int GenmapCreateHandle_gmsh(GenmapHandle h) {
   h->Read = GenmapRead_gmsh;
+  h->Write = GenmapWrite_gmsh;
 
   return 0;
 }
@@ -125,6 +126,43 @@ int GenmapRead_gmsh(GenmapHandle h, void *data) {
   return 0;
 }
 
-int GenmapWrite_gmsh(GenmapHandle h, char *fileName) {
+int GenmapWrite_gmsh(GenmapHandle h, char *fileNameBase) {
+  FILE *fp;
+  char fileName[BUFSIZ]; 
+
+  GenmapInt rank = h->Id(h->global);
+  sprintf(fileName, "%s_%09d.vtu", fileNameBase, rank);
+
+  fp = fopen(fileName, "w");
+
+  GenmapInt Nq = 2;
+  GenmapInt Np = Nq*Nq*Nq;
+  GenmapInt Eloc = (Nq-1)*(Nq-1)*(Nq-1);
+
+  fprintf(fp, "<VTKFile type=\"UnstructuredGrid\" version=\"0.1\" byte_order=\"BigEndian\">\n");
+  fprintf(fp, "  <UnstructuredGrid>\n");
+  fprintf(fp, "    <Piece NumberOfPoints=\"%d\" NumberOfCells=\"%d\">\n",
+    h->header->lelt*Np, h->header->lelt*Eloc);
+
+  fprintf(fp, "      <Points>\n");
+  fprintf(fp, "        <DataArray type=\"Float32\" NumberOfComponents=\"3\" Format=\"ascii\">\n");
+  GenmapElements elements = GenmapGetElements(h);
+  for(GenmapInt i = 0; i < h->header->lelt; i++) {
+    for(GenmapInt j = 0; j < Np; j++) {
+      fprintf(fp, "          ");
+      fprintf(fp, "%g %g %g\n", elements[i].x[j],
+		                elements[i].y[j],
+				elements[i].z[j]);
+    }
+  }
+  fprintf(fp, "       </DataArray>\n");
+  fprintf(fp, "      </Points>\n");
+
+  fprintf(fp, "    </Piece>\n");
+  fprintf(fp, "  </UnstructuredGrid>\n");
+  fprintf(fp, "</VTKFile>\n");
+
+  fclose(fp);
+
   return 0;
 }

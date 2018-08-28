@@ -13,4 +13,5 @@ int GenmapCreateHandle_gmsh(GenmapHandle h);
 // File I/O
 //
 int GenmapRead_gmsh(GenmapHandle h, void *data);
+int GenmapWrite_gmsh(GenmapHandle h, char *fileNameBase);
 #endif

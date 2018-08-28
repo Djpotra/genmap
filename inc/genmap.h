@@ -101,8 +101,9 @@ int GenmapGop(GenmapComm c, GenmapScalar *v, GenmapInt size,
 // Get Elements
 //
 GenmapElements GenmapGetElements(GenmapHandle h);
-// Function to read from FILE
+// Function to read/write from/to FILE
 int GenmapRead(GenmapHandle h, void *data);
+int GenmapWrite(GenmapHandle h, char *fileNameBase);
 //
 // Genmap: Init, Finalize
 //
