@@ -27,17 +27,13 @@ struct GenmapComm_private {
 // Genmap Input File header
 struct GenmapHeader_private {
   GenmapInt nel;
-  GenmapInt nactive;
-  GenmapInt depth;
-  GenmapInt d2;
   GenmapInt npts;
-  GenmapInt nrank;
-  GenmapInt noutflow;
   GenmapInt nv;
   GenmapInt ne;
   GenmapInt ndim;
   GenmapInt lelt;
   GenmapInt start;
+  GenmapInt Nnodes;
 };
 //
 // GenmapHeader: Create, Destroy
@@ -52,6 +48,9 @@ struct GenmapElement_private {
   GenmapInt edges[12];
   GenmapInt faces[6];
   GenmapUInt proc;
+  GenmapScalar x[8];
+  GenmapScalar y[8];
+  GenmapScalar z[8];
 };
 //
 // GenmapElements: Create, Destroy
@@ -90,6 +89,8 @@ struct GenmapHandle_private {
   int (*Gop)(GenmapComm c, GenmapScalar *v, GenmapInt size, GenmapInt op);
 
   int (*Read)(GenmapHandle h, void *data);
+
+  int (*Write)(GenmapHandle h, char *fileNameBase);
 
   GenmapInt exactAx;
 };

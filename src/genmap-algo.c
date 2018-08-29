@@ -370,9 +370,6 @@ void GenmapFiedler(GenmapHandle h, GenmapComm c, int global) {
 
 void GenmapRSB(GenmapHandle h) {
   int done = 0;
-  // Number of bins -- 2 because bisection
-  GenmapInt nbins = 2;
-  GenmapInt bin;
 
   GenmapInt id = h->Id(h->local);
   GenmapInt np = h->Np(h->local);
@@ -380,8 +377,6 @@ void GenmapRSB(GenmapHandle h) {
   GenmapInt nel = h->header->nel;
   GenmapInt start = h->header->start;
   GenmapElements elements = GenmapGetElements(h);
-
-//  printf("Id = %d nel = %d lelt=%d\n", h->Id(h->global), nel, lelt);
 
   // Data needed to use gslib
   struct crystal cr;
@@ -397,13 +392,6 @@ void GenmapRSB(GenmapHandle h) {
     buffer buf0 = null_buffer;
     sarray_sort_2(struct GenmapElement_private, elements, lelt, fiedler,
                   TYPE_DOUBLE, globalId, TYPE_INT, &buf0);
-//    MPI_Barrier(h->local->gsComm.c);
-//    for(GenmapInt i = 0; i < h->header->lelt; i++) {
-//      printf("0-proc = %d id = %d fiedler = %lf\n", h->Id(h->global),
-//             elements[i].globalId, elements[i].fiedler);
-//    }
-//    MPI_Barrier(h->local->gsComm.c);
-
     // We proceed with bisection only if we have more than 1 processor in
     // communicator; otherwise, return and set values for Fortran rsb
     if(h->Np(h->local) > 1) {
@@ -425,13 +413,6 @@ void GenmapRSB(GenmapHandle h) {
       sarray_sort_2(struct GenmapElement_private, elements, lelt, fiedler,
                     TYPE_DOUBLE, globalId, TYPE_INT, &buf1);
 
-//      MPI_Barrier(h->local->gsComm.c);
-//      for(GenmapInt i = 0; i < h->header->lelt; i++) {
-//        printf("1-proc = %d id = %d fiedler = %lf\n", h->Id(h->global),
-//               elements[i].globalId, elements[i].fiedler);
-//      }
-//      MPI_Barrier(h->local->gsComm.c);
-
       GenmapInt lowNel = (nel + 1) / 2;
       GenmapInt highNel = nel - lowNel;
       GenmapInt lowNp = (np + 1) / 2;
@@ -442,30 +423,30 @@ void GenmapRSB(GenmapHandle h) {
 
       // Start - numbering elements to the correct processor
       // Let's numnber the elements which will go in upper part
-      GenmapInt idStart = (nel+1)/2;
+      GenmapInt idStart = (nel + 1) / 2;
       GenmapInt idEnd;
-      GenmapInt futureNel = highNel/highNp;
-      GenmapInt nrem = highNel - (futureNel*highNp);
+      GenmapInt futureNel = highNel / highNp;
+      GenmapInt nrem = highNel - (futureNel * highNp);
       for(GenmapInt i = lowNp; i < np; i++) {
         if(i - lowNp < nrem) idEnd = idStart + futureNel + 1;
         else idEnd = idStart + futureNel;
 
-        for(GenmapInt j = idStart; j<idEnd; j++) {
-          if(j >=start && j < start +lelt) elements[j-start].proc=i;
+        for(GenmapInt j = idStart; j < idEnd; j++) {
+          if(j >= start && j < start + lelt) elements[j - start].proc = i;
         }
         idStart = idEnd;
       }
 
       idStart = 0;
-      futureNel = lowNel/lowNp;
-      nrem = lowNel - (futureNel*lowNp);
-      printf("lowNel=%d,lowNp=%d,nrem=%d\n",lowNel,lowNp,nrem);
+      futureNel = lowNel / lowNp;
+      nrem = lowNel - (futureNel * lowNp);
+      printf("lowNel=%d,lowNp=%d,nrem=%d\n", lowNel, lowNp, nrem);
       for(GenmapInt i = 0; i < lowNp; i++) {
         if(i < nrem) idEnd = idStart + futureNel + 1;
         else idEnd = idStart + futureNel;
 
-        for(GenmapInt j = idStart; j<idEnd; j++) {
-          if(j >=start && j < start +lelt) elements[j-start].proc=i;
+        for(GenmapInt j = idStart; j < idEnd; j++) {
+          if(j >= start && j < start + lelt) elements[j - start].proc = i;
         }
         idStart = idEnd;
       }
@@ -561,6 +542,7 @@ void GenmapRSB(GenmapHandle h) {
     } else done = 1;
 //    MPI_Barrier(h->global->gsComm.c);
 //    printf("New Id = %d Old Id = %d\n", h->Id(h->local), h->Id(h->global));
+    done = 1;
   } while(!done);
 
   MPI_Barrier(h->local->gsComm.c);

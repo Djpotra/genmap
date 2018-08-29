@@ -31,3 +31,7 @@
 int GenmapRead(GenmapHandle h, void* data) {
   return h->Read(h, data);
 }
+
+int GenmapWrite(GenmapHandle h, char *fileNameBase) {
+  return h->Write(h, fileNameBase);
+}

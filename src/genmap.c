@@ -1,6 +1,6 @@
 #define _POSIX_C_SOURCE 200112
 #include <genmap-impl.h>
-#include <genmap-readers.h>
+#include <genmap-io.h>
 
 #include <stdlib.h>
 #include <stdarg.h>
@@ -36,6 +36,7 @@ int GenmapRegister() {
   int ierr;
   ierr  = GenmapRegisterReader("default", GenmapCreateHandle_default);
   ierr |= GenmapRegisterReader("fortran", GenmapCreateHandle_fortran);
+  ierr |= GenmapRegisterReader("gmsh", GenmapCreateHandle_gmsh);
   return ierr;
 }
 //

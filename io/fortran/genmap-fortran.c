@@ -1,6 +1,14 @@
-#include <genmap-readers.h>
+#include <genmap-io.h>
 
 #include <stdio.h>
+//
+// GenmapHandle: Create
+//
+int GenmapCreateHandle_fortran(GenmapHandle h) {
+  h->Read = GenmapRead_fortran;
+
+  return 0;
+}
 //
 // Do File I/O in parallel
 //
@@ -12,7 +20,7 @@ int GenmapRead_fortran(GenmapHandle h, void *data) {
 #ifdef GENMAP_DEBUG
   for(int i = 0; i < lelt; i++) {
     for(int j = 0; j < nv; j++) {
-        printf("rvertices:%d\n",vertices[i*nv+j]);
+      printf("rvertices:%d\n", vertices[i * nv + j]);
     }
   }
 #endif

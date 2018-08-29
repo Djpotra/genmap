@@ -1,6 +1,6 @@
 MPI ?=1
 VALGRIND ?=0
-DEBUG ?=0
+DEBUG ?=1
 ASAN ?=0
 UNDERSCORE ?=1
 CC ?=mpicc
@@ -15,9 +15,10 @@ INCDIR  =$(SRCROOT)/inc
 BUILDDIR=$(SRCROOT)/build
 TESTDIR =$(SRCROOT)/tests
 
-READERDIR=$(SRCROOT)/readers
-DEFAULTDIR=$(READERDIR)/default
-FORTRANDIR=$(READERDIR)/fortran
+IODIR=$(SRCROOT)/io
+DEFAULTDIR=$(IODIR)/default
+FORTRANDIR=$(IODIR)/fortran
+GMSHDIR=$(IODIR)/gmsh
 
 CFLAGS= -std=c99 -O2 -Wall -Wextra -Wno-unused-function -Wno-unused-parameter
 FFLAGS= -O2 -Wall -Wextra -Wno-unused-function -Wno-unused-parameter -cpp
@@ -28,12 +29,12 @@ GSLIB=gslib
 LIB=lib$(TARGET).a
 
 AFLAGS = -fsanitize=address
-INCFLAGS=-I$(INCDIR) -I$(GSLIBDIR) -I$(READERDIR)
+INCFLAGS=-I$(INCDIR) -I$(GSLIBDIR) -I$(IODIR)
 LDFLAGS:=-L$(GSLIBDIR) -lgs
 TESTLDFLAGS:=-L. -Wl,-rpath=. -l$(TARGET) -L$(GSLIBDIR) -lgs -lm
 
 
-# Main source and readers #
+# Main source and io #
 CSRCS:= $(SRCDIR)/genmap-vector.c $(SRCDIR)/genmap-algo.c \
 	$(SRCDIR)/genmap-io.c $(SRCDIR)/genmap-comm.c $(SRCDIR)/genmap.c \
 	$(SRCDIR)/genmap-fortran.c
@@ -42,13 +43,15 @@ COBJS:=$(CSRCS:.c=.o)
 FSRCS:=
 FOBJS:=$(FSRCS:.f=.o)
 
-READERSRCS = $(DEFAULTDIR)/genmap-default.c $(DEFAULTDIR)/genmap-default-io.c \
-             $(FORTRANDIR)/genmap-fortran.c $(FORTRANDIR)/genmap-fortran-io.c
-READEROBJS = $(READERSRCS:.c=.o)
+IOSRCS = $(DEFAULTDIR)/genmap-default.c \
+         $(FORTRANDIR)/genmap-fortran.c \
+         $(GMSHDIR)/genmap-gmsh.c
+IOOBJS = $(IOSRCS:.c=.o)
 
 # Tests #
 TESTCSRC:= $(TESTDIR)/vector-test.c $(TESTDIR)/algo-test.c \
-	   $(TESTDIR)/genmap-test.c $(TESTDIR)/io-test.c \
+	   $(TESTDIR)/genmap-test.c $(TESTDIR)/default-io-test.c \
+	   $(TESTDIR)/gmsh-io-test.c $(TESTDIR)/gmsh-io1-test.c \
 	   $(TESTDIR)/comm-test.c $(TESTDIR)/lanczos-test.c \
 	   $(TESTDIR)/rsb-test.c
 TESTCOBJ:=$(TESTCSRC:.c=.o)
@@ -57,10 +60,10 @@ TESTFSRC:= $(TESTDIR)/fortran-test.f
 TESTFOBJ:=$(TESTFSRC:.f=.o)
 
 # Build #
-SRCOBJS :=$(COBJS) $(FOBJS) $(READEROBJS)
+SRCOBJS :=$(COBJS) $(FOBJS) $(IOOBJS)
 TESTOBJS:=$(TESTCOBJ) $(TESTFOBJ)
 
-ifeq ($(ASAN),1)
+ifneq ($(ASAN),0)
 	CFLAGS+= $(AFLAGS)
 	FFLAGS+= $(AFLAGS)
 	LDFLAGS+= $(AFLAGS)
@@ -92,7 +95,7 @@ $(COBJS): %.o: %.c
 $(FOBJS): %.o: %.f
 	$(FC) $(FFLAGS) $(INCFLAGS) -c $< -o $@
 
-$(READEROBJS): %.o: %.c
+$(IOOBJS): %.o: %.c
 	$(CC) $(CFLAGS) $(INCFLAGS) -c $< -o $@
 
 .PHONY: $(TEST)
@@ -119,7 +122,7 @@ astyle:
 	astyle --style=google --indent=spaces=2 --max-code-length=72 \
 	    --keep-one-line-statements --keep-one-line-blocks --lineend=linux \
             --suffix=none --preserve-date --formatted --pad-oper \
-	    --unpad-paren tests/*.[ch] src/*.[ch] inc/*.[ch] readers/*/*.[ch]
+	    --unpad-paren tests/*.[ch] src/*.[ch] inc/*.[ch] io/*/*.[ch]
 
 print-%:
 	$(info [ variable name]: $*)
