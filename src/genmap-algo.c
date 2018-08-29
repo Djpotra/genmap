@@ -542,6 +542,7 @@ void GenmapRSB(GenmapHandle h) {
     } else done = 1;
 //    MPI_Barrier(h->global->gsComm.c);
 //    printf("New Id = %d Old Id = %d\n", h->Id(h->local), h->Id(h->global));
+    done = 1;
   } while(!done);
 
   MPI_Barrier(h->local->gsComm.c);

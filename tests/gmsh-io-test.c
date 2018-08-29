@@ -55,6 +55,7 @@ int main(int argc, char **argv) {
   GenmapHandle h;
   GenmapInit(&h, MPI_COMM_WORLD, "gmsh", 0);
   TestIO1(h);
+  GenmapRSB(h);
   GenmapWrite(h, "cubeThilina");
   GenmapFinalize(h);
 

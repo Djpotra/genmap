@@ -131,7 +131,7 @@ int GenmapWrite_gmsh(GenmapHandle h, char *fileNameBase) {
   char fileName[BUFSIZ]; 
 
   GenmapInt rank = h->Id(h->global);
-  sprintf(fileName, "%s_%09d.vtu", fileNameBase, rank);
+  sprintf(fileName, "%s_%04d.vtu", fileNameBase, rank);
 
   fp = fopen(fileName, "w");
 
@@ -150,13 +150,68 @@ int GenmapWrite_gmsh(GenmapHandle h, char *fileNameBase) {
   for(GenmapInt i = 0; i < h->header->lelt; i++) {
     for(GenmapInt j = 0; j < Np; j++) {
       fprintf(fp, "          ");
-      fprintf(fp, "%g %g %g\n", elements[i].x[j],
-		                elements[i].y[j],
-				elements[i].z[j]);
+      fprintf(fp, "%lf %lf %lf\n", elements[i].x[j],
+		                   elements[i].y[j],
+				   elements[i].z[j]);
     }
   }
-  fprintf(fp, "       </DataArray>\n");
+  fprintf(fp, "        </DataArray>\n");
   fprintf(fp, "      </Points>\n");
+
+  fprintf(fp, "      <PointData Scalars=\"scalars\">\n");
+  fprintf(fp, "      </PointData>\n"); 
+
+  fprintf(fp, "      <Cells>\n");
+  fprintf(fp, "        <DataArray type=\"Int32\" Name=\"connectivity\" Format=\"ascii\">\n");
+  for(GenmapInt e=0;e<h->header->lelt;++e){
+    for(int k=0;k<Nq-1;++k){
+      for(int j=0;j<Nq-1;++j){
+	for(int i=0;i<Nq-1;++i){
+	  int b = e*Np + i + j*Nq + k*Nq*Nq;
+	  fprintf(fp, 
+		  "%d "
+		  "%d "
+		  "%d "
+		  "%d "
+		  "%d "
+		  "%d "
+		  "%d "
+		  "%d\n ",
+		  b,
+		  b+1,
+		  b+Nq,
+		  b+Nq+1,
+		  b+Nq*Nq,
+		  b+1+Nq*Nq,
+		  b+Nq+Nq*Nq,
+		  b+Nq+1+Nq*Nq);
+	}
+      }
+    }
+  }
+  
+  fprintf(fp, "        </DataArray>\n");
+
+  fprintf(fp, "        <DataArray type=\"Int32\" Name=\"offsets\" Format=\"ascii\">\n");
+  GenmapInt cnt = 0;
+  for(GenmapInt e=0;e<h->header->lelt;++e){
+    for(int n=0;n<Eloc;++n){
+      cnt += 8;
+      fprintf(fp, "       ");
+      fprintf(fp, "%d\n", cnt);
+    }
+  }
+  fprintf(fp, "        </DataArray>\n");
+
+  fprintf(fp, "        <DataArray type=\"Int32\" Name=\"types\" Format=\"ascii\">\n");
+  for(GenmapInt e=0;e<h->header->lelt;++e){
+    for(int n=0;n<Eloc;++n){
+      fprintf(fp, "12\n");
+    }
+  }
+  fprintf(fp, "        </DataArray>\n");
+
+  fprintf(fp, "      </Cells>\n");
 
   fprintf(fp, "    </Piece>\n");
   fprintf(fp, "  </UnstructuredGrid>\n");

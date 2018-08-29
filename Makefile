@@ -51,7 +51,7 @@ IOOBJS = $(IOSRCS:.c=.o)
 # Tests #
 TESTCSRC:= $(TESTDIR)/vector-test.c $(TESTDIR)/algo-test.c \
 	   $(TESTDIR)/genmap-test.c $(TESTDIR)/default-io-test.c \
-	   $(TESTDIR)/gmsh-io-test.c \
+	   $(TESTDIR)/gmsh-io-test.c $(TESTDIR)/gmsh-io1-test.c \
 	   $(TESTDIR)/comm-test.c $(TESTDIR)/lanczos-test.c \
 	   $(TESTDIR)/rsb-test.c
 TESTCOBJ:=$(TESTCSRC:.c=.o)
