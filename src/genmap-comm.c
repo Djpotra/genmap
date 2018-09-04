@@ -52,6 +52,7 @@ int GenmapAx(GenmapHandle h, GenmapComm c, GenmapVector u,
 
   for(GenmapInt i = 0; i < lelt; i++) {
     v->data[i] = weights->data[i] * u->data[i];
+//    printf("v->data[%d]=%lf\n",i,v->data[i]);
     for(GenmapInt j = 0; j < nv; j ++) {
       v->data[i] += ucv[nv * i + j];
     }
@@ -100,7 +101,7 @@ int GenmapAxInit(GenmapHandle h, GenmapComm c,
     for(GenmapInt j = 0; j < nv; j++) {
       weights->data[i] += u[nv * i + j];
     }
-    weights->data[i] -= nv;
+//    weights->data[i] -= nv;
   }
 
   for(GenmapInt i = 0; i < lelt; i++) {
@@ -126,7 +127,7 @@ int GenmapAx_exact(GenmapHandle h, GenmapComm c, GenmapVector u,
   GenmapInt lelt = u->size;
   GenmapInt ne = h->header->ne;
   GenmapInt nv = h->header->nv;
-  GenmapInt nf = ne + 2 - nv;
+  GenmapInt nf = h->header->nf;
   GenmapInt nDim = h->header->ndim;
   if(nDim == 2) nf = 0;
 
@@ -240,13 +241,13 @@ int GenmapAxInit_exact(GenmapHandle h, GenmapComm c,
     for(GenmapInt j = 0; j < nv; j++) {
       weights->data[i] += u[nv * i + j];
     }
-    weights->data[i] -= nv;
+//    weights->data[i] -= nv;
   }
 
   GenmapRealloc(numEdges, &u);
   for(GenmapInt i = 0; i < lelt; i++)
     for(GenmapInt j = 0; j < ne; j++)
-      u[ne * i + j] = 1.;
+      u[ne * i + j] = 2.;
 
   gs(u, gs_double, gs_add, 0, c->edgesHandle, NULL);
 
@@ -254,14 +255,14 @@ int GenmapAxInit_exact(GenmapHandle h, GenmapComm c,
     for(GenmapInt j = 0; j < ne; j++) {
       weights->data[i] -= u[ne * i + j];
     }
-    weights->data[i] += ne;
+//    weights->data[i] += ne;
   }
 
   if(nDim == 3) {
     GenmapRealloc(numFaces, &u);
     for(GenmapInt i = 0; i < lelt; i++)
       for(GenmapInt j = 0; j < nf; j++)
-        u[nf * i + j] = 1.;
+        u[nf * i + j] = 4.;
 
     gs(u, gs_double, gs_add, 0, c->facesHandle, NULL);
 
@@ -269,7 +270,7 @@ int GenmapAxInit_exact(GenmapHandle h, GenmapComm c,
       for(GenmapInt j = 0; j < nf; j++) {
         weights->data[i] += u[nf * i + j];
       }
-      weights->data[i] -= nf;
+//      weights->data[i] -= nf;
     }
   }
 

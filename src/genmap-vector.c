@@ -177,11 +177,11 @@ int GenmapPrintVector(GenmapVector x) {
 
   printf("(%lf", x->data[0]);
   for(GenmapInt i = 1; i < x->size - 1; i++) {
-    printf(", %lf", x->data[i]);
+    printf(", %.10lf", x->data[i]);
   }
 
   if(x->size > 1) {
-    printf(", %lf)", x->data[x->size - 1]);
+    printf(", %.10lf)", x->data[x->size - 1]);
   } else {
     printf(")");
   }

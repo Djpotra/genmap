@@ -30,6 +30,7 @@ struct GenmapHeader_private {
   GenmapInt npts;
   GenmapInt nv;
   GenmapInt ne;
+  GenmapInt nf;
   GenmapInt ndim;
   GenmapInt lelt;
   GenmapInt start;

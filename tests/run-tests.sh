@@ -18,7 +18,7 @@ if [ $test_valgrind -eq 1 ]; then
   VALGRIND_CMD="valgrind --leak-check=full"
 fi
 if [ $test_mpi -eq 1 ]; then
-  NP_LIST="2"
+  NP_LIST="4"
   MPI_CMD="mpirun -np"
   if [ $test_valgrind -eq 1 ]; then
     VALGRIND_CMD="${VALGRIND_CMD} --suppressions=/usr/share/openmpi/openmpi-valgrind.supp"

@@ -288,7 +288,7 @@ GenmapInt GenmapSetProcessorId(GenmapHandle h) {
 
 void GenmapFiedler(GenmapHandle h, GenmapComm c, int global) {
   // 1. Do lanczos in local communicator.
-  GenmapInt iter = 10;
+  GenmapInt iter = 500;
   GenmapInt lelt = h->header->lelt;
   GenmapVector initVec, alphaVec, betaVec;
 
@@ -318,18 +318,28 @@ void GenmapFiedler(GenmapHandle h, GenmapComm c, int global) {
   // We need to fix this
   GenmapLanczos(h, c, initVec, iter, &q, alphaVec, betaVec);
   iter = alphaVec->size;
-  //printf("iter: %d ",iter); GenmapPrintVector(alphaVec);
+  printf("alpha(%d): ",iter); GenmapPrintVector(alphaVec);
+  printf("\n");
+  printf("beta(%d): ",iter); GenmapPrintVector(betaVec);
+  printf("\n");
 
   // 2. Do inverse power iteration on local communicator and find
   // local Fiedler vector.
   GenmapVector evLanczos, evTriDiag, evInit;
   GenmapCreateVector(&evTriDiag, iter);
   GenmapCreateVector(&evInit, iter);
+  sum = 0.0;
   for(GenmapInt i = 0; i < iter; i++) {
     evInit->data[i] = i + 1;
+    sum += evInit->data[i];
   }
+//for(GenmapInt i = 0;  i < iter; i++) {
+//  evInit->data[i] -= sum / iter;
+//}
 
-  GenmapInvPowerIter(evTriDiag, alphaVec, betaVec, evInit, iter * 30);
+  printf("evTriDiag: "); GenmapInvPowerIter(evTriDiag, alphaVec, betaVec, evInit, 100);
+  printf("\n");
+  GenmapPrintVector(evTriDiag);
 
   // Multiply tri-diagonal matrix by [q1, q2, ...q_{iter}]
   GenmapCreateZerosVector(&evLanczos, lelt);
@@ -353,6 +363,16 @@ void GenmapFiedler(GenmapHandle h, GenmapComm c, int global) {
   for(GenmapInt i = 0; i < lelt; i++) {
     elements[i].fiedler = evLanczos->data[i];
 //    printf("fiedler: %lf\n",elements[i].fiedler);
+  }
+
+  MPI_Barrier(c->gsComm.c);
+  for(int i = 0; i<h->Np(c); i++) {
+    if(i == h->Id(c)) {
+      for(int j = 0; j < h->header->lelt; j++) {
+	printf("proc=%d id=%d, fiedler=%lf\n",i,elements[j].globalId,elements[j].fiedler);
+      }
+    }
+    MPI_Barrier(c->gsComm.c);
   }
 
   // n. Destory the data structures
@@ -386,15 +406,15 @@ void GenmapRSB(GenmapHandle h) {
   // Calculate the global Fiedler vector, local communicator
   // must be initialized using the global communicator, we never
   // touch global communicator
-  GenmapFiedler(h, h->local, 1);
-  do {
-    // sort locally according to Fiedler vector
-    buffer buf0 = null_buffer;
-    sarray_sort_2(struct GenmapElement_private, elements, lelt, fiedler,
+  if(h->Np(h->local) > 1) {
+    do {
+      GenmapFiedler(h, h->local, 1);
+      // sort locally according to Fiedler vector
+      buffer buf0 = null_buffer;
+      sarray_sort_2(struct GenmapElement_private, elements, lelt, fiedler,
                   TYPE_DOUBLE, globalId, TYPE_INT, &buf0);
-    // We proceed with bisection only if we have more than 1 processor in
-    // communicator; otherwise, return and set values for Fortran rsb
-    if(h->Np(h->local) > 1) {
+      // We proceed with bisection only if we have more than 1 processor in
+      // communicator; otherwise, return and set values for Fortran rsb
       // Transfer elements to processors based on fiedler value to find the
       // median
       GenmapSetProcessorId(h);
@@ -413,10 +433,23 @@ void GenmapRSB(GenmapHandle h) {
       sarray_sort_2(struct GenmapElement_private, elements, lelt, fiedler,
                     TYPE_DOUBLE, globalId, TYPE_INT, &buf1);
 
+#ifdef GENMAP_MPI
+      MPI_Barrier(h->local->gsComm.c);
+      for(int i = 0; i < h->Np(h->local); i++) {
+        if(i == h->Id(h->local)) {
+        for(GenmapInt j = 0; j < h->header->lelt; j++) {
+          printf("1-proc = %d id = %d fiedler = %lf\n", h->Id(h->local),
+                 elements[j].globalId, elements[j].fiedler);
+        }
+        }
+        MPI_Barrier(h->local->gsComm.c);
+      }
+#endif
+
       GenmapInt lowNel = (nel + 1) / 2;
       GenmapInt highNel = nel - lowNel;
       GenmapInt lowNp = (np + 1) / 2;
-      GenmapInt highNp = np - (np + 1) / 2;
+      GenmapInt highNp = np - lowNp;
       id = h->Id(h->local);
       np = h->Np(h->local);
       GenmapInt bin = (id >= (np + 1) / 2);
@@ -537,19 +570,21 @@ void GenmapRSB(GenmapHandle h) {
 //      nel = out[1][0];
 
 //      printf("nel = %d start= %d\n", nel, start);
-
-      GenmapFiedler(h, h->local, 1);
-    } else done = 1;
 //    MPI_Barrier(h->global->gsComm.c);
 //    printf("New Id = %d Old Id = %d\n", h->Id(h->local), h->Id(h->global));
-    done = 1;
-  } while(!done);
+      if(np == 1) done = 1;
+    } while(!done);
+  } 
 
-  MPI_Barrier(h->local->gsComm.c);
-  for(GenmapInt i = 0; i < h->header->lelt; i++) {
-    printf("2-proc = %d id = %d fiedler = %lf\n", h->Id(h->global),
-           elements[i].globalId, elements[i].fiedler);
-  }
-  MPI_Barrier(h->local->gsComm.c);
+//MPI_Barrier(h->global->gsComm.c);
+//for(int i = 0; i < h->Np(h->global); i++) {
+//  if(i == h->Id(h->global)) {
+//  for(GenmapInt i = 0; i < h->header->lelt; i++) {
+//    printf("2-proc = %d id = %d fiedler = %lf\n", h->Id(h->global),
+//           elements[i].globalId, elements[i].fiedler);
+//  }
+//  }
+//  MPI_Barrier(h->global->gsComm.c);
+//}
 
 }
