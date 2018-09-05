@@ -69,10 +69,11 @@ void fGenmapSet(int *handle, int *nelements, int *ndim, int *nvertices,
 #ifdef GENMAP_DEBUG
   GenmapElements elem = GenmapGetElements(h);
   for(int i = 0; i < h->header->nel; i++) {
-      printf("%s:%d %d nel:%d\n",__FILE__,__LINE__,h->Id(h->global),elem[i].globalId);
+    printf("%s:%d %d nel:%d\n", __FILE__, __LINE__, h->Id(h->global),
+           elem[i].globalId);
     GenmapInt nv = h->header->nv;
     for(int j = 0; j < nv; j++) {
-        printf("%d vertices:%d\n",h->Id(h->global),elem[i].vertices[j]);
+      printf("%d vertices:%d\n", h->Id(h->global), elem[i].vertices[j]);
     }
   }
 #endif

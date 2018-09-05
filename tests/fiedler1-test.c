@@ -25,12 +25,12 @@ int TestIO1(GenmapHandle h) {
   GenmapPrintVector(v);
   printf("1*laplacian\n");
   for(int i = 0; i < lelt; i++) {
-    for(int j= 0; j < lelt; j++) {
+    for(int j = 0; j < lelt; j++) {
       u->data[j] = 0.0;
       if(i == j) u->data[j] = 1.0;
     }
     h->Ax(h, h->global, u, weights, v);
-    GenmapPrintVector(v); 
+    GenmapPrintVector(v);
     printf("\n");
   }
 
