@@ -39,13 +39,13 @@ int GenmapRead_gmsh(GenmapHandle h, void *data) {
   sscanf(buf, "%d", &NglobalNodes);
   h->header->Nnodes = NglobalNodes;
 
-  GenmapScalar *VX, *VY, *VZ; 
+  GenmapScalar *VX, *VY, *VZ;
   GenmapCalloc(NglobalNodes, &VX);
   GenmapCalloc(NglobalNodes, &VY);
   GenmapCalloc(NglobalNodes, &VZ);
   for(GenmapInt i = 0; i < NglobalNodes; i++) {
     status = fgets(buf, BUFSIZ, fp);
-    sscanf(buf, "%*d %lf %lf %lf", VX+i, VY+i, VZ+i);
+    sscanf(buf, "%*d %lf %lf %lf", VX + i, VY + i, VZ + i);
   }
 
   do {
@@ -104,6 +104,7 @@ int GenmapRead_gmsh(GenmapHandle h, void *data) {
   h->header->ndim = 3;
   h->header->nv = 8;
   h->header->ne = 12;
+  h->header->nf = 6;
   h->header->lelt = NlocalElements;
 
   array_reserve(struct GenmapElement_private, &(h->elementArray),
@@ -128,7 +129,7 @@ int GenmapRead_gmsh(GenmapHandle h, void *data) {
 
 int GenmapWrite_gmsh(GenmapHandle h, char *fileNameBase) {
   FILE *fp;
-  char fileName[BUFSIZ]; 
+  char fileName[BUFSIZ];
 
   GenmapInt rank = h->Id(h->global);
   sprintf(fileName, "%s_%04d.vtu", fileNameBase, rank);
@@ -136,66 +137,70 @@ int GenmapWrite_gmsh(GenmapHandle h, char *fileNameBase) {
   fp = fopen(fileName, "w");
 
   GenmapInt Nq = 2;
-  GenmapInt Np = Nq*Nq*Nq;
-  GenmapInt Eloc = (Nq-1)*(Nq-1)*(Nq-1);
+  GenmapInt Np = Nq * Nq * Nq;
+  GenmapInt Eloc = (Nq - 1) * (Nq - 1) * (Nq - 1);
 
-  fprintf(fp, "<VTKFile type=\"UnstructuredGrid\" version=\"0.1\" byte_order=\"BigEndian\">\n");
+  fprintf(fp,
+          "<VTKFile type=\"UnstructuredGrid\" version=\"0.1\" byte_order=\"BigEndian\">\n");
   fprintf(fp, "  <UnstructuredGrid>\n");
   fprintf(fp, "    <Piece NumberOfPoints=\"%d\" NumberOfCells=\"%d\">\n",
-    h->header->lelt*Np, h->header->lelt*Eloc);
+          h->header->lelt * Np, h->header->lelt * Eloc);
 
   fprintf(fp, "      <Points>\n");
-  fprintf(fp, "        <DataArray type=\"Float32\" NumberOfComponents=\"3\" Format=\"ascii\">\n");
+  fprintf(fp,
+          "        <DataArray type=\"Float32\" NumberOfComponents=\"3\" Format=\"ascii\">\n");
   GenmapElements elements = GenmapGetElements(h);
   for(GenmapInt i = 0; i < h->header->lelt; i++) {
     for(GenmapInt j = 0; j < Np; j++) {
       fprintf(fp, "          ");
       fprintf(fp, "%lf %lf %lf\n", elements[i].x[j],
-		                   elements[i].y[j],
-				   elements[i].z[j]);
+              elements[i].y[j],
+              elements[i].z[j]);
     }
   }
   fprintf(fp, "        </DataArray>\n");
   fprintf(fp, "      </Points>\n");
 
   fprintf(fp, "      <PointData Scalars=\"scalars\">\n");
-  fprintf(fp, "      </PointData>\n"); 
+  fprintf(fp, "      </PointData>\n");
 
   fprintf(fp, "      <Cells>\n");
-  fprintf(fp, "        <DataArray type=\"Int32\" Name=\"connectivity\" Format=\"ascii\">\n");
-  for(GenmapInt e=0;e<h->header->lelt;++e){
-    for(int k=0;k<Nq-1;++k){
-      for(int j=0;j<Nq-1;++j){
-	for(int i=0;i<Nq-1;++i){
-	  int b = e*Np + i + j*Nq + k*Nq*Nq;
-	  fprintf(fp, 
-		  "%d "
-		  "%d "
-		  "%d "
-		  "%d "
-		  "%d "
-		  "%d "
-		  "%d "
-		  "%d\n ",
-		  b,
-		  b+1,
-		  b+Nq,
-		  b+Nq+1,
-		  b+Nq*Nq,
-		  b+1+Nq*Nq,
-		  b+Nq+Nq*Nq,
-		  b+Nq+1+Nq*Nq);
-	}
+  fprintf(fp,
+          "        <DataArray type=\"Int32\" Name=\"connectivity\" Format=\"ascii\">\n");
+  for(GenmapInt e = 0; e < h->header->lelt; ++e) {
+    for(int k = 0; k < Nq - 1; ++k) {
+      for(int j = 0; j < Nq - 1; ++j) {
+        for(int i = 0; i < Nq - 1; ++i) {
+          int b = e * Np + i + j * Nq + k * Nq * Nq;
+          fprintf(fp,
+                  "%d "
+                  "%d "
+                  "%d "
+                  "%d "
+                  "%d "
+                  "%d "
+                  "%d "
+                  "%d\n ",
+                  b,
+                  b + 1,
+                  b + Nq,
+                  b + Nq + 1,
+                  b + Nq * Nq,
+                  b + 1 + Nq * Nq,
+                  b + Nq + Nq * Nq,
+                  b + Nq + 1 + Nq * Nq);
+        }
       }
     }
   }
-  
+
   fprintf(fp, "        </DataArray>\n");
 
-  fprintf(fp, "        <DataArray type=\"Int32\" Name=\"offsets\" Format=\"ascii\">\n");
+  fprintf(fp,
+          "        <DataArray type=\"Int32\" Name=\"offsets\" Format=\"ascii\">\n");
   GenmapInt cnt = 0;
-  for(GenmapInt e=0;e<h->header->lelt;++e){
-    for(int n=0;n<Eloc;++n){
+  for(GenmapInt e = 0; e < h->header->lelt; ++e) {
+    for(int n = 0; n < Eloc; ++n) {
       cnt += 8;
       fprintf(fp, "       ");
       fprintf(fp, "%d\n", cnt);
@@ -203,9 +208,10 @@ int GenmapWrite_gmsh(GenmapHandle h, char *fileNameBase) {
   }
   fprintf(fp, "        </DataArray>\n");
 
-  fprintf(fp, "        <DataArray type=\"Int32\" Name=\"types\" Format=\"ascii\">\n");
-  for(GenmapInt e=0;e<h->header->lelt;++e){
-    for(int n=0;n<Eloc;++n){
+  fprintf(fp,
+          "        <DataArray type=\"Int32\" Name=\"types\" Format=\"ascii\">\n");
+  for(GenmapInt e = 0; e < h->header->lelt; ++e) {
+    for(int n = 0; n < Eloc; ++n) {
       fprintf(fp, "12\n");
     }
   }

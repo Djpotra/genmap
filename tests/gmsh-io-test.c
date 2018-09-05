@@ -37,9 +37,9 @@ int TestIO1(GenmapHandle h) {
     for(int i = 0; i < 8; i++)
       assert(e1[i] == elements[h->header->lelt - 1].vertices[i]);
 
-    assert(fabs(elements[h->header->lelt-1].x[0] - v12[0]) < GENMAP_TOL);
-    assert(fabs(elements[h->header->lelt-1].y[0] - v12[1]) < GENMAP_TOL);
-    assert(fabs(elements[h->header->lelt-1].z[0] - v12[2]) < GENMAP_TOL);
+    assert(fabs(elements[h->header->lelt - 1].x[0] - v12[0]) < GENMAP_TOL);
+    assert(fabs(elements[h->header->lelt - 1].y[0] - v12[1]) < GENMAP_TOL);
+    assert(fabs(elements[h->header->lelt - 1].z[0] - v12[2]) < GENMAP_TOL);
   }
 
   return 0;
