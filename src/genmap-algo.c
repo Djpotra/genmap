@@ -318,10 +318,13 @@ void GenmapFiedler(GenmapHandle h, GenmapComm c, int global) {
   // We need to fix this
   GenmapLanczos(h, c, initVec, iter, &q, alphaVec, betaVec);
   iter = alphaVec->size;
+
+#ifdef GENMAP_DEBUG
   printf("alpha(%d): ",iter); GenmapPrintVector(alphaVec);
   printf("\n");
   printf("beta(%d): ",iter); GenmapPrintVector(betaVec);
   printf("\n");
+#endif
 
   // 2. Do inverse power iteration on local communicator and find
   // local Fiedler vector.
@@ -333,38 +336,36 @@ void GenmapFiedler(GenmapHandle h, GenmapComm c, int global) {
     evInit->data[i] = i + 1;
     sum += evInit->data[i];
   }
-//for(GenmapInt i = 0;  i < iter; i++) {
-//  evInit->data[i] -= sum / iter;
-//}
+  for(GenmapInt i = 0;  i < iter; i++) {
+    evInit->data[i] -= sum / iter;
+  }
 
-  printf("evTriDiag: "); GenmapInvPowerIter(evTriDiag, alphaVec, betaVec, evInit, 100);
-  printf("\n");
-  GenmapPrintVector(evTriDiag);
+  GenmapInvPowerIter(evTriDiag, alphaVec, betaVec, evInit, 100);
+
+#ifdef GENMAP_DEBUG
+  printf("evTriDiag: "); GenmapPrintVector(evTriDiag);
+#endif
 
   // Multiply tri-diagonal matrix by [q1, q2, ...q_{iter}]
   GenmapCreateZerosVector(&evLanczos, lelt);
   for(GenmapInt i = 0; i < lelt; i++) {
     for(GenmapInt j = 0; j < iter; j++) {
-//      printf("evTriDiag: %lf\n",evTriDiag->data[j]);
       evLanczos->data[i] += q[j]->data[i] * evTriDiag->data[j];
     }
   }
 
   GenmapScalar lNorm = 0;
   for(GenmapInt i = 0; i < lelt; i++) {
-//    printf("evLanczos: %lf\n",evLanczos->data[i]);
     lNorm += evLanczos->data[i] * evLanczos->data[i];
-//    printf("lNorm: %lf\n",lNorm);
   }
 
   h->Gop(c, &lNorm, 1, GENMAP_SUM);
-//  printf("lNorm2: %lf\n",lNorm);
   GenmapScaleVector(evLanczos, evLanczos, 1. / sqrt(lNorm));
   for(GenmapInt i = 0; i < lelt; i++) {
     elements[i].fiedler = evLanczos->data[i];
-//    printf("fiedler: %lf\n",elements[i].fiedler);
   }
 
+#ifdef GENMAP_DEBUG
   MPI_Barrier(c->gsComm.c);
   for(int i = 0; i<h->Np(c); i++) {
     if(i == h->Id(c)) {
@@ -374,6 +375,7 @@ void GenmapFiedler(GenmapHandle h, GenmapComm c, int global) {
     }
     MPI_Barrier(c->gsComm.c);
   }
+#endif
 
   // n. Destory the data structures
   GenmapDestroyVector(initVec);

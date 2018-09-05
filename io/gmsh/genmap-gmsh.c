@@ -104,6 +104,7 @@ int GenmapRead_gmsh(GenmapHandle h, void *data) {
   h->header->ndim = 3;
   h->header->nv = 8;
   h->header->ne = 12;
+  h->header->nf = 6;
   h->header->lelt = NlocalElements;
 
   array_reserve(struct GenmapElement_private, &(h->elementArray),
