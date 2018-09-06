@@ -108,12 +108,6 @@ int GenmapAxInit(GenmapHandle h, GenmapComm c,
     weights->data[i] *= -1;
   }
 
-#ifdef GENMAP_DEBUG
-  printf("proc: %d 2-weights: ", h->Id(h->global));
-  GenmapPrintVector(weights);
-  printf("\n");
-#endif
-
   GenmapFree(u);
   GenmapFree(vertices);
 
@@ -277,12 +271,6 @@ int GenmapAxInit_exact(GenmapHandle h, GenmapComm c,
   for(GenmapInt i = 0; i < lelt; i++) {
     weights->data[i] *= -1;
   }
-
-#ifdef GENMAP_DEBUG
-  printf("proc: %d 2-weights: ", h->Id(h->global));
-  GenmapPrintVector(weights);
-  printf("\n");
-#endif
 
   GenmapFree(u);
   GenmapFree(vertices);
