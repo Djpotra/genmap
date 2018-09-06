@@ -1,0 +1,10 @@
+set(SOURCE
+    ${SOURCE}
+    genmap-algo.c
+    genmap.c
+    genmap-comm.c
+    genmap-fortran.c
+    genmap-io.c
+    genmap-vector.c
+    PARENT_SCOPE
+)
