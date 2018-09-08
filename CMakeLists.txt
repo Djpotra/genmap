@@ -19,7 +19,6 @@ add_library(gs UNKNOWN IMPORTED)
 set_target_properties(gs PROPERTIES IMPORTED_LOCATION ${GSLIB_LIBRARY})
 
 add_subdirectory(src)
-add_subdirectory(io)
 
 add_library(genmap STATIC ${SOURCE})
 target_link_libraries(genmap gs)
