@@ -1,7 +1,7 @@
 #ifndef _GENMAP_DEFAULT_READER_H_
 #define _GENMAP_DEFAULT_READER_H_
 
-#include <genmap-impl.h>
+#include "genmap-impl.h"
 
 #include <stddef.h>
 #include <stdlib.h>

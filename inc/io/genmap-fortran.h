@@ -1,7 +1,7 @@
 #ifndef _GENMAP_FORTRAN_READER_
 #define _GENMAP_FORTRAN_READER_
 
-#include <genmap-impl.h>
+#include "genmap-impl.h"
 
 #include <stddef.h>
 #include <stdlib.h>
